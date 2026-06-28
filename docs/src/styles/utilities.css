@@ -1,0 +1,173 @@
+/* UTILITIES */
+
+/* Screen reader only */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus visible */
+
+:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+
+/* Hidden */
+
+.is-hidden {
+  display: none !important;
+}
+
+/* Visually hidden but takes space */
+
+.is-invisible {
+  visibility: hidden;
+}
+
+/* Text utilities */
+
+.text-amber {
+  color: var(--amber);
+}
+.text-green {
+  color: var(--green-on);
+}
+.text-red {
+  color: var(--red-alert);
+}
+.text-blue {
+  color: var(--blue-info);
+}
+.text-muted {
+  color: var(--text-muted);
+}
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+/* Spacing utilities */
+
+.mt-0 {
+  margin-top: 0;
+}
+.mt-sm {
+  margin-top: var(--space-sm);
+}
+.mt-md {
+  margin-top: var(--space-md);
+}
+.mt-lg {
+  margin-top: var(--space-lg);
+}
+.mt-xl {
+  margin-top: var(--space-xl);
+}
+.mb-0 {
+  margin-bottom: 0;
+}
+.mb-sm {
+  margin-bottom: var(--space-sm);
+}
+.mb-md {
+  margin-bottom: var(--space-md);
+}
+.mb-lg {
+  margin-bottom: var(--space-lg);
+}
+.mb-xl {
+  margin-bottom: var(--space-xl);
+}
+
+/* Scrollbar styling */
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-mid);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-hi);
+}
+
+/* Keyboard shortcuts overlay */
+
+.shortcuts-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 300;
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+
+.shortcuts-overlay.is-open {
+  display: flex;
+}
+
+.shortcuts-panel {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.shortcuts-panel__title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  letter-spacing: 1.5px;
+  color: var(--text-primary);
+  margin-bottom: var(--space-lg);
+}
+
+.shortcuts-panel__group {
+  margin-bottom: var(--space-lg);
+}
+
+.shortcuts-panel__group-title {
+  font-family: var(--font-mono);
+  font-size: 0.733rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.shortcut-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-xs) 0;
+}
+
+.shortcut-row__desc {
+  font-size: 0.867rem;
+  color: var(--text-secondary);
+}
+
+.shortcut-row__keys {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

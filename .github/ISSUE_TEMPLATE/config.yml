@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Docs, foundation & guides
+    url: https://ui.pudgestudio.com
+    about: Read the foundation, component specs, and integration guides first.
+  - name: Questions & discussion
+    url: https://github.com/pudgestudio/pudge-ui/discussions
+    about: Ask questions, share what you built, or discuss ideas before filing an issue.

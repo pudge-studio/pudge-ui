@@ -1,0 +1,203 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const breadcrumbs = [{ label: "Framework Integration" }];
+const headings = [
+  { text: "Vanilla HTML/CSS", id: "vanilla", depth: 2 },
+  { text: "React", id: "react", depth: 2 },
+  { text: "Vue", id: "vue", depth: 2 },
+  { text: "Svelte", id: "svelte", depth: 2 },
+  { text: "Web Components", id: "web-components", depth: 2 },
+];
+
+// Store code examples as strings in frontmatter to avoid Vite import resolution
+const vanillaHtml = `<!-- Include pudge-ui tokens + component CSS -->
+<link rel="stylesheet" href="pudge-ui.css" />
+
+<!-- Use the component -->
+<button class="push-btn">MENU</button>
+<button class="push-btn active">AF-ON</button>
+<button class="push-btn lg">PLAY</button>
+<button class="push-btn rubber">START</button>`;
+
+const vanillaJs = `<div data-toggle>
+  <div class="toggle-track">
+    <div class="toggle-thumb"></div>
+  </div>
+</div>
+
+<script>
+  document.querySelectorAll('[data-toggle]').forEach(el => {
+    el.addEventListener('click', () => {
+      el.querySelector('.toggle-track')?.classList.toggle('on');
+    });
+  });
+<\/script>`;
+
+const reactButton = `// PushButton.tsx
+import './pudge-ui.css';
+
+interface PushButtonProps {
+  children: React.ReactNode;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+  material?: 'panel' | 'rubber' | 'glossy';
+  active?: boolean;
+  disabled?: boolean;
+  onClick?: () => void;
+}
+
+export function PushButton({
+  children, size, material, active, disabled, onClick,
+}: PushButtonProps) {
+  const classes = [
+    'push-btn',
+    size && size !== 'md' ? size : '',
+    material && material !== 'panel' ? material : '',
+    active ? 'active' : '',
+  ].filter(Boolean).join(' ');
+
+  return (
+    <button className={classes} disabled={disabled} onClick={onClick}>
+      {children}
+    </button>
+  );
+}`;
+
+const reactToggle = `// ToggleSwitch.tsx
+// import { useState } from 'react';
+// import './pudge-ui.css';
+
+export function ToggleSwitch({ defaultOn = false, onChange }) {
+  const [on, setOn] = useState(defaultOn);
+
+  return (
+    <div data-toggle onClick={() => { setOn(!on); onChange?.(!on); }}>
+      <div className={"toggle-track " + (on ? "on" : "")}>
+        <div className="toggle-thumb" />
+      </div>
+    </div>
+  );
+}`;
+
+const vueComponent = `<!-- PushButton.vue -->
+<template>
+  <button :class="classes" :disabled="disabled" @click="$emit('click')">
+    <slot />
+  </button>
+</template>
+
+<!-- script setup -->
+<!-- import { computed } from 'vue'; -->
+<!--
+const props = defineProps({
+  size: { type: String, default: 'md' },
+  material: { type: String, default: 'panel' },
+  active: Boolean,
+  disabled: Boolean,
+});
+
+const classes = computed(() => [
+  'push-btn',
+  props.size !== 'md' && props.size,
+  props.material !== 'panel' && props.material,
+  props.active && 'active',
+].filter(Boolean));
+-->`;
+
+const svelteComponent = `<!-- PushButton.svelte -->
+<!-- export let size = 'md'; -->
+<!-- export let material = 'panel'; -->
+<!-- export let active = false; -->
+<!-- export let disabled = false; -->
+<!--
+$: classes = [
+  'push-btn',
+  size !== 'md' && size,
+  material !== 'panel' && material,
+  active && 'active',
+].filter(Boolean).join(' ');
+-->
+
+<button class={classes} {disabled} on:click>
+  <slot />
+</button>`;
+
+const webComponent = `class PudgePushButton extends HTMLElement {
+  static observedAttributes = ['size', 'material', 'active', 'disabled'];
+
+  constructor() {
+    super();
+    this.attachShadow({ mode: 'open' });
+  }
+
+  connectedCallback() { this.render(); }
+  attributeChangedCallback() { this.render(); }
+
+  render() {
+    const size = this.getAttribute('size') || 'md';
+    const material = this.getAttribute('material') || 'panel';
+    const active = this.hasAttribute('active');
+    const disabled = this.hasAttribute('disabled');
+    const classes = ['push-btn',
+      size !== 'md' && size,
+      material !== 'panel' && material,
+      active && 'active',
+    ].filter(Boolean).join(' ');
+
+    this.shadowRoot.innerHTML =
+      '<style>@import "./pudge-ui.css";</style>' +
+      '<button class="' + classes + '">' +
+      '<slot></slot></button>';
+  }
+}
+customElements.define('pudge-push-btn', PudgePushButton);`;
+---
+
+<DocsLayout
+  title="Framework Integration"
+  breadcrumbs={breadcrumbs}
+  headings={headings}
+  pudgePose="notes"
+  pudgeMessage="Same spec, any framework. The CSS translates cleanly to any rendering engine."
+>
+  <h1>Framework Integration</h1>
+  <p>
+    pudge-ui components are defined as CSS + HTML specs. This guide shows how to wrap them as
+    components in popular frameworks. All examples use the Push Button (<code>.push-btn</code>) as
+    the canonical example.
+  </p>
+
+  <h2 id="vanilla">Vanilla HTML/CSS</h2>
+  <p>
+    The baseline — what the specs provide directly. Include the CSS and use the HTML structure from
+    the spec.
+  </p>
+  <pre><code>{vanillaHtml}</code></pre>
+
+  <p>
+    For interactive components (toggles, steppers, etc.), wire event listeners using data
+    attributes:
+  </p>
+  <pre><code>{vanillaJs}</code></pre>
+
+  <h2 id="react">React</h2>
+  <p>Wrap the CSS class and HTML structure in a React component. Manage state with hooks.</p>
+  <pre><code>{reactButton}</code></pre>
+
+  <p>For toggle components, manage state with <code>useState</code>:</p>
+  <pre><code>{reactToggle}</code></pre>
+
+  <h2 id="vue">Vue</h2>
+  <p>Same pattern as a Vue Single File Component:</p>
+  <pre><code>{vueComponent}</code></pre>
+
+  <h2 id="svelte">Svelte</h2>
+  <pre><code>{svelteComponent}</code></pre>
+
+  <h2 id="web-components">Web Components</h2>
+  <p>Wrap as a Custom Element with Shadow DOM for full encapsulation:</p>
+  <pre><code>{webComponent}</code></pre>
+
+  <p>Then use in HTML:</p>
+  <pre><code>{'<pudge-push-btn size="lg" material="rubber">START</pudge-push-btn>'}</code></pre>
+</DocsLayout>

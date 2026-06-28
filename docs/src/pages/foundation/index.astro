@@ -1,0 +1,77 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const breadcrumbs = [{ label: "Foundation" }];
+
+const foundationPages = [
+  {
+    href: "/foundation/tokens",
+    title: "Design Tokens",
+    desc: "Color palette, spacing scale, typography, border radius, motion easing, and shadow values.",
+  },
+  {
+    href: "/foundation/materials",
+    title: "Materials",
+    desc: "Six canonical material recipes: brushed metal, chrome, rubber, glossy polycarbonate, glass, phosphor screen.",
+  },
+  {
+    href: "/foundation/depth",
+    title: "Depth Model",
+    desc: "Three-plane shadow system, raised/recessed elements, press interactions, and glow effects.",
+  },
+  {
+    href: "/foundation/philosophy",
+    title: "Philosophy",
+    desc: "Core design principles: physical analog commitment, warm neutrals, material honesty.",
+  },
+  {
+    href: "/foundation/naming",
+    title: "Naming Conventions",
+    desc: "CSS class naming patterns, state classes, material variants, and size modifiers.",
+  },
+  {
+    href: "/foundation/layout",
+    title: "Layout",
+    desc: "Grid system, spacing rules, and page structure patterns.",
+  },
+  {
+    href: "/foundation/theme",
+    title: "Theme",
+    desc: "Dark and light mode token sets and switching mechanism.",
+  },
+  {
+    href: "/foundation/canvas",
+    title: "Canvas",
+    desc: "Canvas rendering patterns for animated and procedural components.",
+  },
+  {
+    href: "/foundation/accessibility",
+    title: "Accessibility",
+    desc: "WCAG compliance, ARIA patterns, keyboard navigation, and screen reader support.",
+  },
+];
+---
+
+<DocsLayout
+  title="Foundation"
+  breadcrumbs={breadcrumbs}
+  pudgePose="happytalk"
+  pudgeMessage="The foundation defines the visual language. Start here to understand how pudge-ui works."
+>
+  <h1>Foundation</h1>
+  <p>
+    The foundation defines the design system's rules — the visual language that all {93} components share.
+    Start here to understand how pudge-ui works.
+  </p>
+
+  <div class="category-grid" style="margin-top: var(--space-xl);">
+    {
+      foundationPages.map((page) => (
+        <a href={page.href} class="foundation-card">
+          <div class="foundation-card__title">{page.title}</div>
+          <div class="foundation-card__desc">{page.desc}</div>
+        </a>
+      ))
+    }
+  </div>
+</DocsLayout>

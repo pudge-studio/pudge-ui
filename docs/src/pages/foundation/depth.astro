@@ -1,0 +1,45 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "depth-model.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Depth Model" }];
+---
+
+<DocsLayout
+  title="Depth Model"
+  breadcrumbs={breadcrumbs}
+  pudgePose="think"
+  pudgeMessage="The three-plane model is what makes this system feel physical. Light from above, shadow below."
+>
+  <h1>Depth Model</h1>
+  <p>The three-plane shadow system that gives every element physical presence.</p>
+
+  <div class="depth-demo">
+    <div class="depth-demo__item">
+      <div class="depth-demo__label">FLUSH</div>
+      <div class="depth-demo__box depth-demo__box--raised-sm">Tier 1</div>
+    </div>
+    <div class="depth-demo__item">
+      <div class="depth-demo__label">STANDARD</div>
+      <div class="depth-demo__box depth-demo__box--raised-md">Tier 2</div>
+    </div>
+    <div class="depth-demo__item">
+      <div class="depth-demo__label">ELEVATED</div>
+      <div class="depth-demo__box depth-demo__box--raised-lg">Tier 3</div>
+    </div>
+    <div class="depth-demo__item">
+      <div class="depth-demo__label">RECESSED</div>
+      <div class="depth-demo__box depth-demo__box--recessed">Inset</div>
+    </div>
+  </div>
+
+  <hr />
+
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

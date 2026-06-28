@@ -1,0 +1,56 @@
+---
+interface Props {
+  headings: Array<{ text: string; id: string; depth: number }>;
+}
+
+const { headings } = Astro.props;
+const filtered = headings.filter((h) => h.depth <= 3);
+---
+
+{
+  filtered.length > 0 && (
+    <div class="site-content__toc">
+      <nav class="toc" aria-label="Table of contents">
+        <div class="toc__title">On this page</div>
+        {filtered.map((h) => (
+          <a
+            href={`#${h.id}`}
+            class:list={["toc__link", h.depth === 3 && "toc__link--nested"]}
+            data-toc-link={h.id}
+          >
+            {h.text}
+          </a>
+        ))}
+      </nav>
+    </div>
+  )
+}
+
+<script>
+  const tocLinks = document.querySelectorAll<HTMLAnchorElement>("[data-toc-link]");
+  if (tocLinks.length > 0) {
+    const headingEls = Array.from(tocLinks)
+      .map((link) => {
+        const id = link.dataset.tocLink || "";
+        return document.getElementById(id);
+      })
+      .filter(Boolean) as HTMLElement[];
+
+    const setActive = () => {
+      const scrollY = window.scrollY + 100;
+      let activeIndex = 0;
+      for (let i = headingEls.length - 1; i >= 0; i--) {
+        if (headingEls[i].offsetTop <= scrollY) {
+          activeIndex = i;
+          break;
+        }
+      }
+      tocLinks.forEach((link, i) => {
+        link.classList.toggle("is-active", i === activeIndex);
+      });
+    };
+
+    window.addEventListener("scroll", setActive, { passive: true });
+    setActive();
+  }
+</script>

@@ -1,0 +1,37 @@
+{
+  "name": "pudge-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "An LLM-agnostic, tech-stack-agnostic design system inspired by 2000s consumer electronics. Not a component library — a design specification that any coding agent can consume to generate pixel-perfect skeuomorphic UI.",
+  "author": "Pudge Studio",
+  "license": "MIT",
+  "homepage": "https://ui.pudgestudio.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pudgestudio/pudge-ui"
+  },
+  "bugs": "https://github.com/pudgestudio/pudge-ui/issues",
+  "workspaces": [
+    "packages/*",
+    "docs"
+  ],
+  "scripts": {
+    "dev:docs": "cd docs && npm run dev",
+    "build:docs": "cd docs && npm run build",
+    "build:mcp": "cd packages/mcp-server && npm run build",
+    "version:sync": "node scripts/version.mjs write",
+    "version:check": "node scripts/version.mjs check",
+    "lint": "eslint packages/mcp-server",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "verify:precommit": "npm run version:check && npm run lint && npm run typecheck -w @pudge-ui/mcp-server && npm run test -w @pudge-ui/mcp-server",
+    "prepare": "git config core.hooksPath .githooks || true"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.6.0",
+    "prettier": "^3.9.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript-eslint": "^8.62.0"
+  }
+}

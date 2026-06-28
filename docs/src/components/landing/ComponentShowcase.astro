@@ -1,0 +1,38 @@
+---
+interface Props {
+  components: Array<{
+    name: string;
+    id: string;
+    category: string;
+    html: string;
+    css: string;
+  }>;
+}
+
+const { components } = Astro.props;
+---
+
+<section class="scene scene--showcase" id="scene-showcase" aria-label="Component showcase">
+  <div class="scene__inner">
+    <div class="scene__eyebrow">INTERACTIVE COMPONENTS</div>
+    <h2 class="scene__heading">Touch everything</h2>
+    <div class="showcase-scroll-wrap">
+      <div class="showcase-grid" id="showcase-grid">
+        {
+          components.map((item) => (
+            <a href={`/components/${item.id}`} class="showcase-tile reveal-item">
+              <div class="showcase-tile__stage">
+                <style set:html={item.css} />
+                <div set:html={item.html} />
+              </div>
+              <div class="showcase-tile__meta">
+                <span class="showcase-tile__name">{item.name}</span>
+                <span class="showcase-tile__category">{item.category}</span>
+              </div>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,48 @@
+name: New component proposal
+description: Propose a new pudge-ui component spec
+title: "[component]: "
+labels: ["new-component"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every pudge-ui component must map to a **real 2000s-era physical analog** and document its
+        mechanical working principle — see the [extension guide](https://github.com/pudgestudio/pudge-ui/blob/main/spec/guides/extension.md).
+  - type: input
+    id: name
+    attributes:
+      label: Component name
+    validations:
+      required: true
+  - type: input
+    id: category
+    attributes:
+      label: Category
+      description: e.g. buttons, toggles, dials, meters, readouts, sliders, data, overlays, indicators, navigation, forms
+    validations:
+      required: true
+  - type: input
+    id: analog
+    attributes:
+      label: 2000s physical analog
+      description: The real device/control this is based on (e.g. iPod click wheel, rocker switch)
+    validations:
+      required: true
+  - type: textarea
+    id: principle
+    attributes:
+      label: Mechanical working principle
+      description: How does the physical thing actually work? (This drives the depth/material/motion of the spec.)
+    validations:
+      required: true
+  - type: textarea
+    id: rationale
+    attributes:
+      label: Why it belongs / use cases
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: Before submitting
+      options:
+        - label: I've read the extension guide and can provide an exact CSS recipe (not prose)
+          required: true

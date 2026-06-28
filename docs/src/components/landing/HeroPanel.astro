@@ -1,0 +1,71 @@
+---
+interface Props {
+  components: Array<{
+    name: string;
+    id: string;
+    category: string;
+    html: string;
+    css: string;
+  }>;
+}
+
+const { components } = Astro.props;
+
+const gridMap: Record<string, { label: string; wide?: boolean }> = {
+  "rotary-encoder": { label: "Rotary Encoder" },
+  "push-button": { label: "Push Button" },
+  "lcd-readout": { label: "LCD Readout", wide: true },
+  "toggle-switch": { label: "Toggle Switch" },
+  "vu-meter": { label: "VU Meter" },
+  "segmented-control": { label: "Segmented Control" },
+};
+---
+
+<section class="scene scene--hero" id="scene-hero" aria-label="pudge-ui hero">
+  <div class="device-panel">
+    <div class="device-panel__chassis">
+      <div class="device-panel__header">
+        <div class="device-panel__brand">
+          <img src="/pudge/hello.svg" alt="Pudge" width="48" height="48" />
+          <h1 class="device-panel__wordmark">PUDGE<span class="accent">/</span>UI</h1>
+        </div>
+        <div class="device-panel__leds">
+          <span class="led led--green" aria-hidden="true"></span>
+          <span class="led led--amber" aria-hidden="true"></span>
+        </div>
+      </div>
+
+      <div class="device-panel__grid">
+        {
+          components.map((comp) => {
+            const info = gridMap[comp.id] || { label: comp.name };
+            return (
+              <div
+                class={`device-panel__cell${info.wide ? " device-panel__cell--wide" : ""}`}
+                data-component={comp.id}
+              >
+                <div class="device-panel__cell-stage">
+                  <style set:html={comp.css} />
+                  <div set:html={comp.html} />
+                </div>
+                <span class="device-panel__cell-label">{info.label}</span>
+              </div>
+            );
+          })
+        }
+      </div>
+
+      <div class="device-panel__readout">
+        <div class="phosphor-screen">
+          <span class="device-panel__typewriter">
+            The agentic design system for 2000s-inspired interfaces
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint" aria-hidden="true">
+      <span class="scroll-hint__chevron"></span>
+    </div>
+  </div>
+</section>

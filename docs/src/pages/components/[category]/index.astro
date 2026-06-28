@@ -1,0 +1,73 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+
+export function getStaticPaths() {
+  const specRoot = path.resolve(process.cwd(), "..", "spec");
+  const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+  const catalog = yaml.parse(indexYaml);
+
+  return catalog.categories.map((cat: any) => {
+    const comps = catalog.components.filter((c: any) => c.category === cat.id);
+    return {
+      params: { category: cat.id },
+      props: { category: cat, components: comps },
+    };
+  });
+}
+
+const { category, components } = Astro.props;
+
+const breadcrumbs = [{ label: "Components", href: "/components" }, { label: category.label }];
+
+const pudgePoses: Record<string, string> = {
+  buttons: "thumbsup",
+  toggles: "1step",
+  dials: "think",
+  sliders: "planner",
+  readouts: "whiteboard",
+  meters: "notes",
+  navigation: "walk",
+  forms: "happytalk",
+  overlays: "cape",
+  indicators: "side",
+  data: "front-sit",
+};
+const pose = pudgePoses[category.id] || "hello";
+---
+
+<DocsLayout
+  title={category.label}
+  description={category.description}
+  breadcrumbs={breadcrumbs}
+  pudgePose={pose}
+  pudgeMessage={`${components.length} components in this category. ${category.description}`}
+>
+  <div class="comp-header">
+    <div class="eyebrow">CATEGORY &middot; {category.prefix}</div>
+    <h1 class="comp-header__name">{category.label}</h1>
+    <p class="comp-header__desc">{category.description}</p>
+  </div>
+
+  <div class="comp-grid">
+    {
+      components.map((comp: any) => (
+        <a href={`/components/${comp.category}/${comp.id}`} class="comp-card">
+          <div class="comp-card__body">
+            <div class="comp-card__name">{comp.name}</div>
+            <div class="comp-card__class">{comp.class}</div>
+            <p class="comp-card__desc">{comp.description}</p>
+            <div class="comp-card__footer">
+              <span class="category-badge">
+                <span class="category-badge__dot" />
+                {comp.category}
+              </span>
+            </div>
+          </div>
+        </a>
+      ))
+    }
+  </div>
+</DocsLayout>

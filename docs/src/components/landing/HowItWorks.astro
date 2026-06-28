@@ -1,0 +1,63 @@
+---
+interface Props {
+  componentCount: number;
+}
+
+const { componentCount } = Astro.props;
+---
+
+<section class="scene scene--howitworks" id="scene-howitworks" aria-label="How it works">
+  <div class="scene__inner">
+    <div class="scene__eyebrow">HOW IT WORKS</div>
+    <h2 class="scene__heading">Describe it. Feed it. Ship it.</h2>
+    <ol class="steps">
+      <li class="step reveal-item">
+        <div class="step__marker">
+          <div class="step__avatar">
+            <img src="/pudge/planner.svg" alt="" width="72" height="72" loading="lazy" />
+          </div>
+          <span class="step__badge">01</span>
+        </div>
+        <div class="step__content">
+          <h3 class="step__title">Describe your interface</h3>
+          <p class="step__desc">
+            Pick from {componentCount} spec-first components across 11 categories. Each spec documents
+            the physical analog, mechanical principle, CSS recipe, and constraints that prevent "close
+            but wrong" implementations.
+          </p>
+        </div>
+      </li>
+      <li class="step reveal-item">
+        <div class="step__marker">
+          <div class="step__avatar">
+            <img src="/pudge/whiteboard.svg" alt="" width="72" height="72" loading="lazy" />
+          </div>
+          <span class="step__badge">02</span>
+        </div>
+        <div class="step__content">
+          <h3 class="step__title">Feed the spec to any agent</h3>
+          <p class="step__desc">
+            Works with any MCP-compatible tool — Claude Code, Cursor, Copilot — or manually
+            copy-paste specs into your LLM of choice. The MCP server serves foundation context
+            automatically.
+          </p>
+        </div>
+      </li>
+      <li class="step reveal-item">
+        <div class="step__marker">
+          <div class="step__avatar">
+            <img src="/pudge/thumbsup.svg" alt="" width="72" height="72" loading="lazy" />
+          </div>
+          <span class="step__badge">03</span>
+        </div>
+        <div class="step__content">
+          <h3 class="step__title">Get native components</h3>
+          <p class="step__desc">
+            React, Vue, Svelte, SwiftUI, Jetpack Compose, Flutter — framework-native output, not
+            wrappers. The agent generates pixel-perfect 2000s-inspired UI in your stack.
+          </p>
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>

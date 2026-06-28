@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "layout.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Layout" }];
+---
+
+<DocsLayout
+  title="Layout"
+  breadcrumbs={breadcrumbs}
+  pudgePose="planner"
+  pudgeMessage="Grid and spacing rules. Everything sits on the 4px/8px scale."
+>
+  <h1>Layout</h1>
+  <p>Grid system, spacing, and page structure rules.</p>
+
+  <hr />
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

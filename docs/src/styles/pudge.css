@@ -1,0 +1,173 @@
+/* PUDGE SIDEKICK — Fixed companion with thought bubble */
+
+/* Avatar white backdrop (removes SVG white backgrounds) */
+
+.pudge-avatar-wrap {
+  background: #ffffff;
+  border-radius: 50%;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pudge-avatar-wrap img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  object-position: center center;
+}
+
+/* Float animation */
+
+@keyframes pudge-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+/* Sidekick (fixed bottom-right) */
+
+.pudge-sidekick {
+  position: fixed;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  max-width: 280px;
+  pointer-events: none;
+}
+
+.pudge-sidekick__avatar {
+  width: var(--pudge-avatar-size);
+  height: var(--pudge-avatar-size);
+  animation: pudge-float 4s ease-in-out infinite;
+  pointer-events: auto;
+  cursor: default;
+  transition: transform 0.2s var(--snap-fast);
+}
+
+.pudge-sidekick__avatar:hover {
+  animation-play-state: paused;
+  transform: translateY(-4px) scale(1.05);
+}
+
+/* Thought bubble */
+
+.pudge-sidekick__thought {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  position: relative;
+  margin-bottom: var(--space-lg);
+  pointer-events: auto;
+  transition:
+    box-shadow 0.2s,
+    border-color 0.2s;
+}
+
+.pudge-sidekick__thought:hover {
+  box-shadow: 0 4px 24px rgba(245, 166, 35, 0.15);
+  border-color: var(--amber-dim);
+}
+
+.pudge-sidekick__text {
+  font-size: 0.833rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.pudge-sidekick__link {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.733rem;
+  color: var(--amber);
+  margin-top: var(--space-sm);
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.pudge-sidekick__link:hover {
+  color: var(--gold-warm);
+}
+
+/* Thought bubble tail — two decreasing circles descending toward avatar */
+.pudge-sidekick__tail {
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  margin-left: 8px;
+  width: 12px;
+  height: 12px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: 50%;
+}
+
+.pudge-sidekick__tail-sm {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  margin-left: 2px;
+  width: 8px;
+  height: 8px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: 50%;
+}
+
+/* Responsive */
+
+@media (max-width: 1024px) {
+  .pudge-sidekick {
+    bottom: var(--space-md);
+    right: var(--space-md);
+    max-width: 220px;
+  }
+
+  .pudge-sidekick__avatar {
+    width: var(--avatar-lg);
+    height: var(--avatar-lg);
+  }
+
+  .pudge-sidekick__thought {
+    padding: var(--space-sm);
+  }
+
+  .pudge-sidekick__text {
+    font-size: 0.767rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .pudge-sidekick__thought {
+    display: none;
+  }
+
+  .pudge-sidekick {
+    bottom: var(--space-sm);
+    right: var(--space-sm);
+  }
+
+  .pudge-sidekick__avatar {
+    width: var(--avatar-md);
+    height: var(--avatar-md);
+  }
+}
+
+@media (max-width: 480px) {
+  .pudge-sidekick {
+    display: none;
+  }
+}

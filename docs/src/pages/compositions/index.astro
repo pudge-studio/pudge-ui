@@ -1,0 +1,39 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const compositionsDir = path.join(specRoot, "compositions");
+const files = fs.readdirSync(compositionsDir).filter((f) => f.endsWith(".md"));
+
+const compositions = files.map((file) => {
+  const slug = file.replace(".md", "");
+  const raw = fs.readFileSync(path.join(compositionsDir, file), "utf-8");
+  const titleMatch = raw.match(/^#\s+(.+)$/m) || raw.match(/name:\s*(.+)/m);
+  const title = titleMatch ? titleMatch[1] : slug.replace(/-/g, " ");
+  const descMatch = raw.match(/^(?!#)(.{20,})/m);
+  const desc = descMatch ? descMatch[1].slice(0, 120) : "Multi-component assembly example";
+  return { slug, title, desc };
+});
+
+const breadcrumbs = [{ label: "Compositions" }];
+---
+
+<DocsLayout title="Compositions" breadcrumbs={breadcrumbs}>
+  <h1>Compositions</h1>
+  <p>
+    Example assemblies showing how multiple components work together to form complete interfaces.
+  </p>
+
+  <div class="category-grid" style="margin-top: var(--space-xl);">
+    {
+      compositions.map((comp) => (
+        <a href={`/compositions/${comp.slug}`} class="foundation-card">
+          <div class="foundation-card__title">{comp.title}</div>
+          <div class="foundation-card__desc">{comp.desc}</div>
+        </a>
+      ))
+    }
+  </div>
+</DocsLayout>

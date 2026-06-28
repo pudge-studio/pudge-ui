@@ -1,0 +1,125 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+
+interface Props {
+  activeId?: string;
+  currentPath?: string;
+}
+
+const { activeId = "", currentPath = "" } = Astro.props;
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+const catalog = yaml.parse(indexYaml);
+
+const grouped: Record<string, typeof catalog.components> = {};
+for (const cat of catalog.categories) {
+  grouped[cat.id] = [];
+}
+for (const comp of catalog.components) {
+  if (!grouped[comp.category]) grouped[comp.category] = [];
+  grouped[comp.category].push(comp);
+}
+
+const quickLinks = [
+  { href: "/getting-started", label: "Getting Started" },
+  { href: "/guides/framework-integration", label: "Web Frameworks" },
+  { href: "/guides/native-integration", label: "Native & Mobile" },
+  { href: "/for-llms", label: "For LLMs" },
+];
+
+const foundationLinks = [
+  { href: "/foundation/tokens", label: "Design Tokens" },
+  { href: "/foundation/materials", label: "Materials" },
+  { href: "/foundation/depth", label: "Depth Model" },
+  { href: "/foundation/philosophy", label: "Philosophy" },
+  { href: "/foundation/naming", label: "Naming" },
+  { href: "/foundation/layout", label: "Layout" },
+  { href: "/foundation/theme", label: "Theme" },
+  { href: "/foundation/canvas", label: "Canvas" },
+  { href: "/foundation/accessibility", label: "Accessibility" },
+];
+---
+
+<aside class="site-sidebar" id="site-sidebar">
+  <nav aria-label="Documentation">
+    <div class="sidebar-section">
+      <div class="sidebar-section__title">Guides</div>
+      {
+        quickLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={["sidebar-link", currentPath === link.href && "is-active"]}
+          >
+            {link.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <hr class="sidebar-divider" />
+
+    <div class="sidebar-section">
+      <div class="sidebar-category is-open" data-sidebar-cat>
+        <button class="sidebar-category__header" type="button" data-toggle-cat>
+          <span>Foundation</span>
+          <span class="sidebar-category__chevron">&#9654;</span>
+        </button>
+        <div class="sidebar-category__items">
+          {
+            foundationLinks.map((link) => (
+              <a
+                href={link.href}
+                class:list={["sidebar-link", currentPath === link.href && "is-active"]}
+              >
+                {link.label}
+              </a>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+
+    <hr class="sidebar-divider" />
+
+    <div class="sidebar-section">
+      <div class="sidebar-section__title">Components</div>
+      {
+        catalog.categories.map((cat: any) => {
+          const comps = grouped[cat.id] || [];
+          const hasActive = comps.some((c: any) => c.id === activeId);
+          return (
+            <div class:list={["sidebar-category", hasActive && "is-open"]} data-sidebar-cat>
+              <button class="sidebar-category__header" type="button" data-toggle-cat>
+                <span>{cat.label}</span>
+                <span class="sidebar-category__count">{cat.count}</span>
+                <span class="sidebar-category__chevron">&#9654;</span>
+              </button>
+              <div class="sidebar-category__items">
+                {comps.map((comp: any) => (
+                  <a
+                    href={`/components/${comp.category}/${comp.id}`}
+                    class:list={["sidebar-link", comp.id === activeId && "is-active"]}
+                  >
+                    {comp.name}
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })
+      }
+    </div>
+  </nav>
+</aside>
+
+<script>
+  document.querySelectorAll("[data-toggle-cat]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const cat = btn.closest("[data-sidebar-cat]");
+      cat?.classList.toggle("is-open");
+    });
+  });
+</script>

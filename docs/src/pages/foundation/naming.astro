@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "naming.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Naming" }];
+---
+
+<DocsLayout
+  title="Naming Conventions"
+  breadcrumbs={breadcrumbs}
+  pudgePose="notes"
+  pudgeMessage="BEM-lite naming. No __ or --. Simple class names that read like hardware labels."
+>
+  <h1>Naming Conventions</h1>
+  <p>CSS class naming patterns used across all components.</p>
+
+  <hr />
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

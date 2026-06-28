@@ -1,0 +1,47 @@
+name: Spec misinterpretation
+description: An agent/LLM consistently generates the wrong UI from a component or composition spec
+title: "[spec]: <component> — <what goes wrong>"
+labels: ["spec", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Per our [contributing guide](https://github.com/pudgestudio/pudge-ui/blob/main/CONTRIBUTING.md),
+        when an agent consistently misinterprets a spec, the **spec** needs tightening — not your prompt.
+        Help us reproduce it.
+  - type: input
+    id: component
+    attributes:
+      label: Component or composition
+      description: id or name, e.g. `push-button`, `audio-mixer-strip`
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Agent / model
+      description: e.g. Claude via @pudge-ui/mcp-server, Cursor, Cline
+  - type: textarea
+    id: prompt
+    attributes:
+      label: Prompt / request used
+    validations:
+      required: true
+  - type: textarea
+    id: generated
+    attributes:
+      label: What the agent generated (the wrong result)
+      description: Paste the CSS/HTML it produced, or attach a screenshot.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What the spec intends
+    validations:
+      required: true
+  - type: textarea
+    id: fix
+    attributes:
+      label: Suggested spec fix (optional)
+      description: Which constraint or CSS recipe should be tightened to remove the ambiguity?

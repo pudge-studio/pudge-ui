@@ -1,0 +1,56 @@
+---
+const materials = [
+  {
+    id: "brushed-metal",
+    name: "Brushed Metal",
+    analog: "iPod back plate, MacBook chassis",
+  },
+  {
+    id: "chrome",
+    name: "Chrome",
+    analog: "Nikon mode dial ring, car stereo trim",
+  },
+  {
+    id: "rubber",
+    name: "Rubber",
+    analog: "Game Boy buttons, camera grip",
+  },
+  {
+    id: "glossy",
+    name: "Glossy Polycarbonate",
+    analog: "iPod Nano, PSP face, phone buttons",
+  },
+  {
+    id: "glass",
+    name: "Glass",
+    analog: "iMac G3 shell, frosted diffuser",
+  },
+  {
+    id: "phosphor",
+    name: "Phosphor Screen",
+    analog: "Camera viewfinder, VU meter face",
+  },
+];
+---
+
+<section class="scene scene--materials" id="scene-materials" aria-label="Material gallery">
+  <div class="scene__inner">
+    <div class="scene__eyebrow">MATERIALS</div>
+    <h2 class="scene__heading">Six canonical textures</h2>
+    <div class="material-gallery">
+      {
+        materials.map((mat) => (
+          <div class={`material-swatch material-swatch--${mat.id} reveal-item`}>
+            <div class="material-swatch__surface">
+              {mat.id === "phosphor" && <span>SIGNAL OK</span>}
+            </div>
+            <div class="material-swatch__meta">
+              <span class="material-swatch__name">{mat.name}</span>
+              <span class="material-swatch__analog">{mat.analog}</span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>

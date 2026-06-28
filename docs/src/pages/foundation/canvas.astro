@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "canvas.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Canvas" }];
+---
+
+<DocsLayout
+  title="Canvas"
+  breadcrumbs={breadcrumbs}
+  pudgePose="whiteboard"
+  pudgeMessage="Canvas components use requestAnimationFrame for smooth procedural drawing."
+>
+  <h1>Canvas</h1>
+  <p>Canvas rendering patterns for animated and procedural components.</p>
+
+  <hr />
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "philosophy.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Philosophy" }];
+---
+
+<DocsLayout
+  title="Philosophy"
+  breadcrumbs={breadcrumbs}
+  pudgePose="cape"
+  pudgeMessage="Every CSS property justifies a real material. That's the core commitment."
+>
+  <h1>Philosophy</h1>
+  <p>The core design principles that underpin every component in the system.</p>
+
+  <hr />
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

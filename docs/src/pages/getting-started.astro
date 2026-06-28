@@ -1,0 +1,106 @@
+---
+import DocsLayout from "../layouts/DocsLayout.astro";
+
+const breadcrumbs = [{ label: "Getting Started" }];
+const headings = [
+  { text: "With MCP", id: "mcp", depth: 2 },
+  { text: "Manual (Copy & Paste)", id: "manual", depth: 2 },
+  { text: "Prompt Templates", id: "prompts", depth: 2 },
+  { text: "Foundation Overview", id: "foundation", depth: 2 },
+];
+---
+
+<DocsLayout
+  title="Getting Started"
+  breadcrumbs={breadcrumbs}
+  headings={headings}
+  pudgePose="happytalk"
+  pudgeMessage="Pick MCP for the fastest setup, or copy-paste if you prefer manual control."
+>
+  <h1>Getting Started</h1>
+  <p>pudge-ui works by feeding design specs to your coding agent. There are two ways to use it.</p>
+
+  <h2 id="mcp">With MCP (Recommended)</h2>
+  <p>If your tool supports MCP (Claude Code, Cursor, etc.), add pudge-ui as an MCP server:</p>
+  <pre><code>{`{
+  "mcpServers": {
+    "pudge-ui": {
+      "command": "npx",
+      "args": ["-y", "pudge-ui-mcp"]
+    }
+  }
+}`}</code></pre>
+  <p>Then ask your agent:</p>
+  <pre><code>"Build me a push button using pudge-ui specs"</code></pre>
+  <p>The MCP server serves foundation context + component specs automatically.</p>
+
+  <h2 id="manual">Manual (Copy & Paste)</h2>
+  <p>No MCP? No problem. Copy the specs directly into your LLM context:</p>
+  <ol>
+    <li>
+      <strong>Copy foundation files</strong> — Start with
+      <a href="/foundation/tokens">tokens</a>,
+      <a href="/foundation/materials">materials</a>, and
+      <a href="/foundation/depth">depth model</a>.
+    </li>
+    <li>
+      <strong>Copy component spec</strong> — Browse the <a href="/components">component gallery</a>,
+      find the component you need, and use the "Copy spec for LLM" button.
+    </li>
+    <li>
+      <strong>Paste into your LLM</strong> — Include both foundation + component spec in your prompt.
+    </li>
+  </ol>
+
+  <h2 id="prompts">Prompt Templates</h2>
+  <p>
+    For best results, use structured prompts. See the <a href="/for-llms">For LLMs guide</a> for templates
+    and tips.
+  </p>
+
+  <h2 id="foundation">Foundation Overview</h2>
+  <p>The foundation consists of 9 specification files that define the design system's rules:</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>File</th><th>Purpose</th></tr>
+      </thead>
+      <tbody>
+        <tr
+          ><td><a href="/foundation/tokens">tokens.md</a></td><td
+            >Color, spacing, typography, radius, motion, shadow values</td
+          ></tr
+        >
+        <tr
+          ><td><a href="/foundation/materials">materials.md</a></td><td
+            >6 material recipes with full CSS</td
+          ></tr
+        >
+        <tr
+          ><td><a href="/foundation/depth">depth-model.md</a></td><td
+            >Shadow stack rules, press interactions, glow effects</td
+          ></tr
+        >
+        <tr
+          ><td><a href="/foundation/philosophy">philosophy.md</a></td><td>Core design principles</td
+          ></tr
+        >
+        <tr><td><a href="/foundation/naming">naming.md</a></td><td>Class naming conventions</td></tr
+        >
+        <tr><td><a href="/foundation/layout">layout.md</a></td><td>Grid and spacing system</td></tr>
+        <tr><td><a href="/foundation/theme">theme.md</a></td><td>Dark/light mode token sets</td></tr
+        >
+        <tr
+          ><td><a href="/foundation/canvas">canvas.md</a></td><td
+            >Canvas rendering specs for animated components</td
+          ></tr
+        >
+        <tr
+          ><td><a href="/foundation/accessibility">accessibility.md</a></td><td
+            >ARIA patterns and keyboard navigation</td
+          ></tr
+        >
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

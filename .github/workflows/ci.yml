@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  mcp-server:
+    name: MCP Server — Typecheck & Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run version:check
+      - run: npm run lint
+      - run: cd packages/mcp-server && npm run typecheck
+      - run: cd packages/mcp-server && npm run build
+      - run: cd packages/mcp-server && npm test
+
+  docs:
+    name: Docs Site — Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: cd docs && npm run build

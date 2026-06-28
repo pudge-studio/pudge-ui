@@ -1,0 +1,39 @@
+name: Bug report
+description: A defect in the MCP server or the docs site
+title: "[bug]: "
+labels: ["bug", "needs-triage"]
+body:
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - MCP server (@pudge-ui/mcp-server)
+        - Docs site (ui.pudgestudio.com)
+        - Build / tooling
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What went wrong, and what did you expect instead?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: pudge-ui / @pudge-ui/mcp-server version (see the root VERSION file or `npm view @pudge-ui/mcp-server version`)
+  - type: input
+    id: env
+    attributes:
+      label: Environment
+      description: Node version, OS, and MCP client (if applicable)

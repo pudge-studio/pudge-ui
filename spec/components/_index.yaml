@@ -1,0 +1,822 @@
+categories:
+  - id: buttons
+    label: "Buttons & Pressable Controls"
+    prefix: A
+    count: 9
+    description: "Tactile switches, dome buttons, keypads — the things you press"
+
+  - id: toggles
+    label: "Toggle & Switch Controls"
+    prefix: B
+    count: 7
+    description: "Slide switches, rockers, DIP switches — binary state controls"
+
+  - id: dials
+    label: "Rotary & Dial Controls"
+    prefix: C
+    count: 7
+    description: "Rotary encoders, mode dials, click wheels — things that rotate"
+
+  - id: sliders
+    label: "Slider & Range Controls"
+    prefix: D
+    count: 7
+    description: "Faders, scrubbers, crossfaders — linear motion controls"
+
+  - id: readouts
+    label: "Display & Readout Components"
+    prefix: E
+    count: 7
+    description: "OLED displays, LCD readouts, 7-segment, dot matrix — data output"
+
+  - id: meters
+    label: "Meter & Visualization"
+    prefix: F
+    count: 14
+    description: "VU meters, spectrum analyzers, gauges, oscilloscopes — signal visualization"
+
+  - id: navigation
+    label: "Navigation & Menu"
+    prefix: G
+    count: 11
+    description: "Menu grids, lists, tab bars, D-pads — moving through content"
+
+  - id: forms
+    label: "Form Inputs"
+    prefix: H
+    count: 6
+    description: "Text inputs, search bars, dropdowns — data entry styled as hardware"
+
+  - id: overlays
+    label: "Overlays & Containers"
+    prefix: I
+    count: 11
+    description: "Panels, bezels, dialogs, tooltips — framing and containing content"
+
+  - id: indicators
+    label: "Status & Indicators"
+    prefix: J
+    count: 10
+    description: "LEDs, badges, spinners, transport controls — status communication"
+
+  - id: data
+    label: "Data Display"
+    prefix: K
+    count: 4
+    description: "Tables, media grids, film strips — structured data presentation"
+
+components:
+  # ── A. Buttons ──
+  - id: push-button
+    name: Push Button
+    class: .push-btn
+    category: buttons
+    file: buttons/push-button.md
+    tags: [button, tactile, camera, press, dome-switch, sony, nikon]
+    description: "Camera-style tactile dome switch button with 3-plane shadow depth"
+
+  - id: gel-button
+    name: Gel Button
+    class: .gel-btn
+    category: buttons
+    file: buttons/gel-button.md
+    tags: [button, glossy, ipod, polycarbonate, gel, translucent]
+    description: "Glossy polycarbonate button with Fresnel catch-light reflection"
+
+  - id: rubber-button
+    name: Rubber Button
+    class: .rubber-btn
+    category: buttons
+    file: buttons/rubber-button.md
+    tags: [button, rubber, matte, gameboy, soft-touch, pill]
+    description: "Soft-touch silicone rubber dome button with matte finish"
+
+  - id: clear-button
+    name: Clear/Glass Button
+    class: .clear-btn
+    category: buttons
+    file: buttons/clear-button.md
+    tags: [button, glass, translucent, frosted, imac, clear]
+    description: "Transparent/frosted acrylic button with backdrop blur"
+
+  - id: keypad-button
+    name: Keypad Button
+    class: .keypad-btn
+    category: buttons
+    file: buttons/keypad-button.md
+    tags: [button, keypad, nokia, phone, t9, number-pad]
+    description: "Nokia-style T9 number pad key with secondary letter labels"
+
+  - id: rec-button
+    name: REC Button
+    class: .rec-btn
+    category: buttons
+    file: buttons/rec-button.md
+    tags: [button, record, camera, video, red, concave]
+    description: "Camera record button — concave red with guard ring and stop-square animation"
+
+  - id: fn-grid
+    name: Function Grid
+    class: .fn-btn
+    category: buttons
+    file: buttons/fn-grid.md
+    tags: [button, grid, function, camera, matrix, icon]
+    description: "Camera Fn button matrix — 2x2 or 2x3 grid of labeled function buttons"
+
+  - id: icon-button
+    name: Icon Button
+    class: .icon-btn
+    category: buttons
+    file: buttons/icon-button.md
+    tags: [button, icon, toolbar, round, square]
+    description: "Small toolbar button with icon instead of text label"
+
+  - id: segmented-control
+    name: Segmented Control
+    class: .segmented
+    category: buttons
+    file: buttons/segmented-control.md
+    tags: [button, segmented, radio, dip-switch, selector, mode]
+    description: "DIP switch bank radio group — mutually exclusive button row"
+
+  # ── B. Toggles ──
+  - id: toggle-switch
+    name: Toggle Switch
+    class: .toggle-track
+    category: toggles
+    file: toggles/toggle-switch.md
+    tags: [toggle, switch, camera, af, slide, spdt]
+    description: "Camera-style SPDT slide switch with detent mechanism"
+
+  - id: slide-switch
+    name: Slide Switch
+    class: .slide-track
+    category: toggles
+    file: toggles/slide-switch.md
+    tags: [toggle, slide, ipod, hold, phone, silent]
+    description: "iPod hold switch / phone silent switch with larger thumb"
+
+  - id: rocker-switch
+    name: Rocker Switch
+    class: .rocker
+    category: toggles
+    file: toggles/rocker-switch.md
+    tags: [toggle, rocker, volume, phone, side, momentary]
+    description: "Phone side volume rocker — momentary see-saw pivot"
+
+  - id: power-toggle
+    name: Power Toggle
+    class: .power-toggle
+    category: toggles
+    file: toggles/power-toggle.md
+    tags: [toggle, power, industrial, switch, led]
+    description: "Industrial power switch with integrated status LED"
+
+  - id: dip-switch
+    name: DIP Switch Row
+    class: .dip-switch
+    category: toggles
+    file: toggles/dip-switch.md
+    tags: [toggle, dip, switch, pcb, binary, synthesizer, 8-bit]
+    description: "PCB DIP switch bank — 8-position binary configuration"
+
+  - id: led-checkbox
+    name: LED Checkbox
+    class: .led-checkbox
+    category: toggles
+    file: toggles/led-checkbox.md
+    tags: [checkbox, led, indicator, mixer, solo, mute]
+    description: "Mixing desk LED indicator that doubles as a toggle button"
+
+  - id: radio-button
+    name: Radio Button
+    class: .radio-wrap
+    category: toggles
+    file: toggles/radio-button.md
+    tags: [radio, selector, detent, dot, exclusive]
+    description: "Rotary selector dot adapted to linear layout — mutually exclusive"
+
+  # ── C. Dials ──
+  - id: rotary-encoder
+    name: Rotary Encoder
+    class: .rotary
+    category: dials
+    file: dials/rotary-encoder.md
+    tags: [dial, rotary, encoder, knurled, knob, infinite, detent]
+    description: "Infinite-rotation knurled knob with optical/mechanical encoder"
+
+  - id: mode-dial
+    name: Mode Dial
+    class: .mode-dial-body
+    category: dials
+    file: dials/mode-dial.md
+    tags: [dial, mode, camera, selector, detent, nikon, canon]
+    description: "Camera PASM mode selector with fixed positions and lock mechanism"
+
+  - id: radial-knob
+    name: Radial Knob
+    class: .radial-knob
+    category: dials
+    file: dials/radial-knob.md
+    tags: [dial, knob, potentiometer, volume, pan, eq, 3-materials]
+    description: "Rotary potentiometer knob with 270-degree range — rubber/metal/glossy variants"
+
+  - id: cylindrical-scroll
+    name: Cylindrical Scroll Dial
+    class: .dial-cylinder
+    category: dials
+    file: dials/cylindrical-scroll.md
+    tags: [dial, cylinder, scroll, barrel, camera, parameter, sony]
+    description: "Camera parameter barrel — values scroll past a selection line"
+
+  - id: cylindrical-horizontal
+    name: Cylindrical Dial (Horizontal)
+    class: .dial-h-body
+    category: dials
+    file: dials/cylindrical-horizontal.md
+    tags: [dial, cylinder, horizontal, command, nikon, dslr]
+    description: "DSLR front/rear command dial — horizontal barrel with diamond knurl"
+
+  - id: cylindrical-vertical
+    name: Cylindrical Dial (Vertical)
+    class: .dial-v-body
+    category: dials
+    file: dials/cylindrical-vertical.md
+    tags: [dial, cylinder, vertical, thumb, wheel]
+    description: "Vertical thumb wheel for single-hand operation"
+
+  - id: click-wheel
+    name: Click Wheel
+    class: .clickwheel
+    category: dials
+    file: dials/click-wheel.md
+    tags: [dial, clickwheel, ipod, capacitive, touch, scroll, apple]
+    description: "iPod Classic capacitive touch wheel with mechanical center button"
+
+  # ── D. Sliders ──
+  - id: volume-slider
+    name: Volume Slider
+    class: .slider-track
+    category: sliders
+    file: sliders/volume-slider.md
+    tags: [slider, volume, ipod, linear, track, thumb]
+    description: "iPod-style volume bar with gradient fill and draggable thumb"
+
+  - id: scrubber
+    name: Scrubber
+    class: .scrubber-track
+    category: sliders
+    file: sliders/scrubber.md
+    tags: [slider, scrubber, timeline, playback, media, position]
+    description: "Media player timeline scrubber with elapsed/total time labels"
+
+  - id: range-fader
+    name: Range Fader
+    class: .fader-h-track
+    category: sliders
+    file: sliders/range-fader.md
+    tags: [slider, fader, console, mixing, horizontal, rectangular-thumb]
+    description: "Mixing console horizontal fader with rectangular thumb grip"
+
+  - id: dual-range
+    name: Dual Range Slider
+    class: .dual-range-track
+    category: sliders
+    file: sliders/dual-range.md
+    tags: [slider, range, dual, parametric, eq, band]
+    description: "Two-thumb range selector for defining a value band"
+
+  - id: crossfader
+    name: Crossfader
+    class: .crossfader-track
+    category: sliders
+    file: sliders/crossfader.md
+    tags: [slider, crossfader, dj, console, blend, deck]
+    description: "DJ console crossfader — blends between two sources with center detent"
+
+  - id: stepper
+    name: Stepper
+    class: .stepper
+    category: sliders
+    file: sliders/stepper.md
+    tags: [stepper, increment, decrement, counter, channel, numeric]
+    description: "Numeric +/- increment control with value display"
+
+  - id: vertical-fader
+    name: Vertical Fader
+    class: .fader-v-track
+    category: sliders
+    file: sliders/vertical-fader.md
+    tags: [slider, fader, vertical, channel, mixing, console, ssl]
+    description: "Mixing console channel fader — tall vertical linear potentiometer"
+
+  # ── E. Readouts ──
+  - id: signal-display
+    name: Signal Display
+    class: .signal-display
+    category: readouts
+    file: readouts/signal-display.md
+    tags: [display, oled, signal, industrial, readout, large]
+    description: "Industrial OLED readout — deep recess with high-contrast phosphor display"
+
+  - id: camera-readout
+    name: Camera Readout
+    class: .readout
+    category: readouts
+    file: readouts/camera-readout.md
+    tags: [display, readout, camera, viewfinder, exposure, parameter]
+    description: "Camera viewfinder data overlay — shutter/aperture/ISO with 6 variants"
+
+  - id: lcd-readout
+    name: LCD Readout
+    class: .lcd-readout
+    category: readouts
+    file: readouts/lcd-readout.md
+    tags: [display, lcd, pixel, retro, ipod, gameboy, 4-colors]
+    description: "Retro LCD with VT323 pixel font — blue/green/amber/pink color variants"
+
+  - id: timecode-display
+    name: Timecode Display
+    class: .timecode-display
+    category: readouts
+    file: readouts/timecode-display.md
+    tags: [display, timecode, smpte, broadcast, video, hh-mm-ss-ff]
+    description: "SMPTE timecode readout (HH:MM:SS:FF) with blinking colon"
+
+  - id: resource-monitor
+    name: Resource Monitor
+    class: .resource
+    category: readouts
+    file: readouts/resource-monitor.md
+    tags: [display, resource, cpu, memory, gauge, system, monitor]
+    description: "System resource gauge with label, value, and fill bar"
+
+  - id: seven-segment
+    name: Seven-Segment Display
+    class: .seven-seg
+    category: readouts
+    file: readouts/seven-segment.md
+    tags: [display, seven-segment, led, alarm-clock, calculator, digits]
+    description: "LED seven-segment digit display — red/green/amber variants"
+
+  - id: dot-matrix
+    name: Dot Matrix Display
+    class: .dot-matrix
+    category: readouts
+    file: readouts/dot-matrix.md
+    tags: [display, dot-matrix, led, marquee, scroll, ticker, text]
+    description: "LED dot matrix with scrolling marquee text animation"
+
+  # ── F. Meters ──
+  - id: signal-meter
+    name: Signal Meter
+    class: .signal-meter
+    category: meters
+    file: meters/signal-meter.md
+    tags: [meter, spectrum, analyzer, bars, led, equalizer]
+    description: "LED bar graph spectrum analyzer with green gradient bars"
+
+  - id: ev-meter
+    name: EV Meter
+    class: .ev-meter
+    category: meters
+    file: meters/ev-meter.md
+    tags: [meter, exposure, ev, camera, vertical, viewfinder]
+    description: "Camera exposure compensation meter — vertical bar from center zero"
+
+  - id: vu-meter
+    name: VU Meter
+    class: .vu-meter
+    category: meters
+    file: meters/vu-meter.md
+    tags: [meter, vu, audio, level, green-amber-red, volume-unit]
+    description: "Audio volume unit meter — green/amber/red gradient bars"
+
+  - id: eq-bars
+    name: Equalizer Bars
+    class: .eq-bars
+    category: meters
+    file: meters/eq-bars.md
+    tags: [meter, equalizer, frequency, bands, warm, bright, graphic-eq]
+    description: "Graphic EQ frequency band display with warm/cool color coding"
+
+  - id: histogram
+    name: Histogram
+    class: .histogram-wrap
+    category: meters
+    file: meters/histogram.md
+    tags: [meter, histogram, camera, luminance, canvas, distribution]
+    description: "Camera luminance histogram rendered on canvas"
+
+  - id: waveform
+    name: Waveform
+    class: .waveform-wrap
+    category: meters
+    file: meters/waveform.md
+    tags: [meter, waveform, video, broadcast, canvas, parade]
+    description: "Video waveform monitor rendered on canvas"
+
+  - id: progress-bar
+    name: Progress Bar
+    class: .progress-track
+    category: meters
+    file: meters/progress-bar.md
+    tags: [meter, progress, loading, transfer, fill, percentage]
+    description: "Loading/transfer progress indicator with gradient fill"
+
+  - id: signal-bars
+    name: Signal Strength Bars
+    class: .signal-bars
+    category: meters
+    file: meters/signal-bars.md
+    tags: [meter, signal, strength, phone, rssi, nokia, bars]
+    description: "Phone signal strength indicator — 5-bar ascending staircase"
+
+  - id: battery-icon
+    name: Battery Icon
+    class: .battery-icon
+    category: meters
+    file: meters/battery-icon.md
+    tags: [meter, battery, charge, level, green-amber-red, icon]
+    description: "Battery charge indicator with 3-color fill states"
+
+  - id: level-indicator
+    name: Level Indicator
+    class: .level-bar
+    category: meters
+    file: meters/level-indicator.md
+    tags: [meter, level, horizon, camera, spirit-level, tilt]
+    description: "Camera horizon level — spirit level with center mark"
+
+  - id: exposure-scale
+    name: Exposure Scale
+    class: .exp-scale
+    category: meters
+    file: meters/exposure-scale.md
+    tags: [meter, exposure, scale, ruler, tick, ev, viewfinder]
+    description: "Viewfinder EV ruler with tick marks and floating indicator dot"
+
+  - id: gauge-semi
+    name: Analog Gauge (Semicircle)
+    class: .gauge-semi
+    category: meters
+    file: meters/gauge-semi.md
+    tags: [meter, gauge, analog, needle, vu, semicircle, galvanometer]
+    description: "D'Arsonval moving-coil VU needle meter with spring return"
+
+  - id: gauge-full
+    name: Analog Gauge (Full Circle)
+    class: .gauge-full
+    category: meters
+    file: meters/gauge-full.md
+    tags: [meter, gauge, analog, compass, rpm, full-circle, needle]
+    description: "Full 360-degree rotating needle indicator — compass/tachometer"
+
+  - id: oscilloscope
+    name: Oscilloscope
+    class: .oscilloscope
+    category: meters
+    file: meters/oscilloscope.md
+    tags: [meter, oscilloscope, trace, crt, phosphor, waveform, animated, canvas]
+    description: "Animated CRT oscilloscope trace with phosphor persistence effect"
+
+  # ── G. Navigation ──
+  - id: menu-grid
+    name: Menu Grid
+    class: .menu-grid
+    category: navigation
+    file: navigation/menu-grid.md
+    tags: [navigation, menu, grid, phone, nokia, 3x3, icon]
+    description: "Nokia-style 3x3 phone app menu with icons and labels"
+
+  - id: menu-list
+    name: Menu List
+    class: .menu-list-wrap
+    category: navigation
+    file: navigation/menu-list.md
+    tags: [navigation, menu, list, ipod, scroll, arrow, hierarchical]
+    description: "iPod-style scrolling menu list with right arrows"
+
+  - id: tab-bar
+    name: Tab Bar
+    class: .tab-bar
+    category: navigation
+    file: navigation/tab-bar.md
+    tags: [navigation, tabs, bar, mode, section, segmented]
+    description: "Device mode tab bar with active underline indicator"
+
+  - id: d-pad
+    name: D-Pad
+    class: .dpad
+    category: navigation
+    file: navigation/d-pad.md
+    tags: [navigation, dpad, directional, gameboy, cross, rocker]
+    description: "Gameboy-style cross-shaped directional pad with center select"
+
+  - id: status-bar
+    name: Status Bar
+    class: .status-bar
+    category: navigation
+    file: navigation/status-bar.md
+    tags: [navigation, status, bar, hud, phone, viewfinder, top]
+    description: "Phone/viewfinder top status strip with time, signal, battery"
+
+  - id: rack-panel
+    name: Rack Panel
+    class: .rack-panel
+    category: navigation
+    file: navigation/rack-panel.md
+    tags: [navigation, sidebar, rack, panel, 19-inch, channel, module]
+    description: "19-inch rack equipment sidebar with channel slots and LED indicators"
+
+  - id: breadcrumbs
+    name: Breadcrumbs
+    class: .breadcrumbs
+    category: navigation
+    file: navigation/breadcrumbs.md
+    tags: [navigation, breadcrumbs, path, chain, channel, routing]
+    description: "Channel strip label chain showing navigation path"
+
+  - id: pagination
+    name: Pagination
+    class: .pagination
+    category: navigation
+    file: navigation/pagination.md
+    tags: [navigation, pagination, page, track, number, selector]
+    description: "Track/channel numbered buttons for page navigation"
+
+  - id: context-menu
+    name: Context Menu (Radial)
+    class: .radial-menu
+    category: navigation
+    file: navigation/context-menu.md
+    tags: [navigation, context, radial, pie, quick-access, wheel]
+    description: "Radial/pie menu for quick-access actions — 4-8 items in a circle"
+
+  - id: scrollbar
+    name: Custom Scrollbar
+    class: .custom-scrollbar-demo
+    category: navigation
+    file: navigation/scrollbar.md
+    tags: [navigation, scrollbar, scroll, groove, thumb, custom]
+    description: "Mechanical groove scrollbar with styled thumb"
+
+  - id: drawer
+    name: Drawer
+    class: .drawer-demo
+    category: navigation
+    file: navigation/drawer.md
+    tags: [navigation, drawer, slide, panel, tray, cd-player, rack]
+    description: "Sliding tray panel — CD player tray mechanism with damped slide"
+
+  # ── H. Forms ──
+  - id: text-input
+    name: Text Input
+    class: .text-input
+    category: forms
+    file: forms/text-input.md
+    tags: [form, input, text, field, lcd, phosphor, recessed]
+    description: "Recessed phosphor display field for text entry"
+
+  - id: textarea
+    name: Textarea
+    class: .text-area
+    category: forms
+    file: forms/textarea.md
+    tags: [form, textarea, multiline, lcd, entry]
+    description: "Multi-line LCD text entry field"
+
+  - id: search-bar
+    name: Search Bar
+    class: .search-bar
+    category: forms
+    file: forms/search-bar.md
+    tags: [form, search, bar, pill, magnifier, ipod]
+    description: "Pill-shaped search input with magnifying glass icon"
+
+  - id: select
+    name: Select / Dropdown
+    class: .select-wrap
+    category: forms
+    file: forms/select.md
+    tags: [form, select, dropdown, menu, selector, option]
+    description: "Mechanical selector switch — trigger button with dropdown list"
+
+  - id: color-picker
+    name: Color Picker (TV Bars)
+    class: .color-bar-picker
+    category: forms
+    file: forms/color-picker.md
+    tags: [form, color, picker, smpte, tv, bars, broadcast]
+    description: "SMPTE color bar test pattern as a selectable color picker"
+
+  - id: file-input
+    name: File Input (Card Slot)
+    class: .file-input
+    category: forms
+    file: forms/file-input.md
+    tags: [form, file, input, card, slot, cf, sd, eject, memory]
+    description: "CompactFlash/SD card slot with dashed border and eject button"
+
+  # ── I. Overlays ──
+  - id: panel
+    name: Panel
+    class: .panel
+    category: overlays
+    file: overlays/panel.md
+    tags: [container, panel, rack, machined, corner, screws, module]
+    description: "CNC-milled rack-mount module panel with corner registration marks"
+
+  - id: chassis-panel
+    name: Chassis Panel
+    class: .chassis-panel
+    category: overlays
+    file: overlays/chassis-panel.md
+    tags: [container, chassis, panel, section, header, device]
+    description: "Removable device chassis section with header and LED cluster"
+
+  - id: plastic-card
+    name: Plastic Card
+    class: .plastic-card
+    category: overlays
+    file: overlays/plastic-card.md
+    tags: [container, card, plastic, memory, cf, id, polycarbonate]
+    description: "Credit-card-sized polycarbonate component with glossy catch-light"
+
+  - id: device-bezel
+    name: Device Bezel
+    class: .device-bezel
+    category: overlays
+    file: overlays/device-bezel.md
+    tags: [container, bezel, frame, device, display, ipod, gameboy]
+    description: "Display surround frame with stepped profile and double border"
+
+  - id: dialog
+    name: Dialog
+    class: .phone-dialog
+    category: overlays
+    file: overlays/dialog.md
+    tags: [overlay, dialog, modal, phone, confirmation, prompt]
+    description: "Phone OS confirmation dialog with title, body, and action buttons"
+
+  - id: toast
+    name: Toast
+    class: .toast
+    category: overlays
+    file: overlays/toast.md
+    tags: [overlay, toast, notification, banner, sms, transient]
+    description: "Transient notification banner with slide-down animation"
+
+  - id: focus-brackets
+    name: Focus Brackets
+    class: .focus-box
+    category: overlays
+    file: overlays/focus-brackets.md
+    tags: [overlay, focus, brackets, af, camera, face, eye, autofocus]
+    description: "Camera AF overlay brackets — acquiring/locked states with face/eye labels"
+
+  - id: grid-overlay
+    name: Grid Overlay
+    class: .grid-overlay-demo
+    category: overlays
+    file: overlays/grid-overlay.md
+    tags: [overlay, grid, rule-of-thirds, crosshair, viewfinder, composition]
+    description: "Camera viewfinder rule-of-thirds grid with center crosshair dot"
+
+  - id: tooltip
+    name: Tooltip
+    class: .tooltip
+    category: overlays
+    file: overlays/tooltip.md
+    tags: [overlay, tooltip, hud, callout, info, popup]
+    description: "HUD callout tooltip with triangular tail pointer"
+
+  - id: modal
+    name: Modal
+    class: .modal-overlay
+    category: overlays
+    file: overlays/modal.md
+    tags: [overlay, modal, fullscreen, backdrop, blur, device-screen]
+    description: "Full device screen overlay with frosted backdrop and content panel"
+
+  - id: popover
+    name: Popover
+    class: .popover
+    category: overlays
+    file: overlays/popover.md
+    tags: [overlay, popover, info, panel, small, contextual]
+    description: "Small contextual information panel"
+
+  # ── J. Indicators ──
+  - id: status-chips
+    name: Status Chips
+    class: .status-chip
+    category: indicators
+    file: indicators/status-chips.md
+    tags: [indicator, chip, status, label, panel, connected, rec]
+    description: "Labeled panel indicator lights — read-only system state"
+
+  - id: chips
+    name: Selectable Chips
+    class: .chip
+    category: indicators
+    file: indicators/chips.md
+    tags: [indicator, chip, selectable, tag, filter, pill, dot]
+    description: "Interactive selectable tags with colored dot indicators"
+
+  - id: badges
+    name: Badges
+    class: .badge
+    category: indicators
+    file: indicators/badges.md
+    tags: [indicator, badge, pill, label, blue, green, red, amber]
+    description: "Colored status pills — broadcast button cap aesthetic"
+
+  - id: led-dots
+    name: LED Dots
+    class: .led-dot
+    category: indicators
+    file: indicators/led-dots.md
+    tags: [indicator, led, dot, light, green, red, blue, amber, off]
+    description: "Panel-mounted LED indicator lights — 5 color states"
+
+  - id: mode-badge
+    name: Mode Badge
+    class: .mode-badge
+    category: indicators
+    file: indicators/mode-badge.md
+    tags: [indicator, mode, badge, camera, letter, m-a-s-p]
+    description: "Camera mode indicator — large letter with detail label"
+
+  - id: profile-badge
+    name: Profile Badge
+    class: .pp-badge
+    category: indicators
+    file: indicators/profile-badge.md
+    tags: [indicator, profile, badge, picture, sony, pp, s-log]
+    description: "Sony picture profile compact key-value indicator"
+
+  - id: spinners
+    name: Spinners
+    class: .spinner
+    category: indicators
+    file: indicators/spinners.md
+    tags: [indicator, spinner, loading, cd, ring, rotating]
+    description: "Loading spinners — ring spinner and CD disc spinner"
+
+  - id: skeleton
+    name: Skeleton Loading
+    class: .skeleton-wrap
+    category: indicators
+    file: indicators/skeleton.md
+    tags: [indicator, skeleton, loading, boot, placeholder, pulse]
+    description: "Boot sequence loading bars with pulsing animation"
+
+  - id: accordion
+    name: Accordion
+    class: .accordion
+    category: indicators
+    file: indicators/accordion.md
+    tags: [indicator, accordion, expand, collapse, fold, settings, menu]
+    description: "Vertically stacking fold mechanism for nested content"
+
+  - id: transport-controls
+    name: Transport Controls
+    class: .transport
+    category: indicators
+    file: indicators/transport-controls.md
+    tags: [indicator, transport, play, pause, rewind, forward, skip, media]
+    description: "Media player transport bar — play/pause/skip/rewind buttons"
+
+  # ── K. Data ──
+  - id: data-table
+    name: Data Table
+    class: .data-table
+    category: data
+    file: data/data-table.md
+    tags: [data, table, diagnostic, readout, grid, monospace]
+    description: "Diagnostic readout grid with monospace data and hover highlighting"
+
+  - id: media-grid
+    name: Media Grid
+    class: .media-grid
+    category: data
+    file: data/media-grid.md
+    tags: [data, grid, media, thumbnail, proof-sheet, photo, contact]
+    description: "Photographic contact sheet — selectable thumbnail grid"
+
+  - id: film-strip
+    name: Film Strip
+    class: .film-strip
+    category: data
+    file: data/film-strip.md
+    tags: [data, film, strip, horizontal, sprocket, 35mm, frame]
+    description: "Horizontal film strip with sprocket hole borders"
+
+  - id: assembled-panel
+    name: Assembled Panel
+    class: .panel
+    category: data
+    file: data/assembled-panel.md
+    tags: [data, composition, assembled, panel, multi-component, demo]
+    description: "Multi-component composition panel — components working together"

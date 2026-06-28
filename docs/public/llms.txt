@@ -1,0 +1,35 @@
+# pudge-ui
+
+> pudge-ui is an LLM-agnostic, framework-agnostic design system inspired by 2000s
+> consumer electronics. It is not a component library — it is a design *specification*
+> that any coding agent can consume to generate pixel-perfect, skeuomorphic UI in any
+> stack. 93 components across 11 categories, built on 6 material recipes and a shared
+> token/depth/material foundation.
+
+The fastest way for an agent to use pudge-ui is the MCP server `@pudge-ui/mcp-server`,
+which exposes the specs as tools (`list_components`, `search_components`, `get_foundation`,
+`get_component`, `get_components`, `get_composition`). Otherwise, read the foundation
+first, then the specific component spec.
+
+## Start here
+- [Getting started](https://ui.pudgestudio.com/getting-started): install the MCP server or copy specs manually.
+- [For LLMs](https://ui.pudgestudio.com/for-llms): the agent-oriented overview and prompt guidance.
+
+## Foundation (read this first)
+- [Philosophy](https://ui.pudgestudio.com/foundation/philosophy)
+- [Design tokens](https://ui.pudgestudio.com/foundation/tokens)
+- [Materials](https://ui.pudgestudio.com/foundation/materials)
+- [Depth model](https://ui.pudgestudio.com/foundation/depth)
+- [Naming](https://ui.pudgestudio.com/foundation/naming)
+
+## Components & compositions
+- [All components](https://ui.pudgestudio.com/components): browse the 93 component specs by category.
+- [Compositions](https://ui.pudgestudio.com/compositions): assembled multi-component layouts (e.g. audio mixer strip).
+
+## Integration
+- [Framework integration](https://ui.pudgestudio.com/guides/framework-integration)
+- [Native integration](https://ui.pudgestudio.com/guides/native-integration)
+
+## Optional
+- [Source & specs on GitHub](https://github.com/pudgestudio/pudge-ui)
+- [MCP server on npm](https://www.npmjs.com/package/@pudge-ui/mcp-server)

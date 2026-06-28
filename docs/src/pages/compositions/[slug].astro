@@ -1,0 +1,33 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+export function getStaticPaths() {
+  const specRoot = path.resolve(process.cwd(), "..", "spec");
+  const compositionsDir = path.join(specRoot, "compositions");
+  const files = fs.readdirSync(compositionsDir).filter((f) => f.endsWith(".md"));
+
+  return files.map((file) => {
+    const slug = file.replace(".md", "");
+    const raw = fs.readFileSync(path.join(compositionsDir, file), "utf-8");
+    return {
+      params: { slug },
+      props: { raw, slug },
+    };
+  });
+}
+
+const { raw, slug } = Astro.props;
+const html = await renderSpec(raw);
+
+const titleMatch = raw.match(/^#\s+(.+)$/m) || raw.match(/name:\s*(.+)/m);
+const title = titleMatch ? titleMatch[1] : slug;
+
+const breadcrumbs = [{ label: "Compositions", href: "/compositions" }, { label: title }];
+---
+
+<DocsLayout title={title} breadcrumbs={breadcrumbs}>
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

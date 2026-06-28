@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "theme.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Theme" }];
+---
+
+<DocsLayout
+  title="Theme"
+  breadcrumbs={breadcrumbs}
+  pudgePose="side"
+  pudgeMessage="Dark mode is the native habitat. Light mode inverts the depth cues."
+>
+  <h1>Theme</h1>
+  <p>Dark and light mode token sets and switching mechanism.</p>
+
+  <hr />
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

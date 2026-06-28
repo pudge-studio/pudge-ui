@@ -1,0 +1,196 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+const catalog = yaml.parse(indexYaml);
+
+const categoryCounts: Record<string, number> = {};
+for (const comp of catalog.components) {
+  categoryCounts[comp.category] = (categoryCounts[comp.category] || 0) + 1;
+}
+
+const breadcrumbs = [{ label: "Components" }];
+---
+
+<DocsLayout
+  title="Components"
+  breadcrumbs={breadcrumbs}
+  pudgePose="thumbsup"
+  pudgeMessage="93 components to explore. Use the search or press / to find what you need."
+>
+  <div class="comp-header">
+    <div class="eyebrow">COMPONENT DIRECTORY</div>
+    <h1 class="comp-header__name">Component Gallery</h1>
+    <p class="comp-header__desc">
+      {catalog.components.length} components across {catalog.categories.length} categories, inspired by
+      2000s consumer electronics.
+    </p>
+  </div>
+
+  <div class="gallery-search">
+    <input
+      class="gallery-search__input"
+      id="gallery-search"
+      type="search"
+      placeholder="Search by name, class, or tag..."
+      autocomplete="off"
+    />
+    <div class="view-toggle">
+      <button
+        class="view-toggle__btn is-active"
+        type="button"
+        data-view="grid"
+        aria-label="Grid view"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"
+          ><rect x="0" y="0" width="6" height="6" rx="1"></rect><rect
+            x="8"
+            y="0"
+            width="6"
+            height="6"
+            rx="1"></rect><rect x="0" y="8" width="6" height="6" rx="1"></rect><rect
+            x="8"
+            y="8"
+            width="6"
+            height="6"
+            rx="1"></rect></svg
+        >
+      </button>
+      <button class="view-toggle__btn" type="button" data-view="list" aria-label="List view">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"
+          ><rect x="0" y="1" width="14" height="2.5" rx="1"></rect><rect
+            x="0"
+            y="5.75"
+            width="14"
+            height="2.5"
+            rx="1"></rect><rect x="0" y="10.5" width="14" height="2.5" rx="1"></rect></svg
+        >
+      </button>
+    </div>
+  </div>
+
+  <div class="filter-bar">
+    <button class="filter-btn is-active" data-filter="all" type="button">
+      All ({catalog.components.length})
+    </button>
+    {
+      catalog.categories.map((cat: any) => (
+        <button class="filter-btn" data-filter={cat.id} type="button">
+          {cat.label} ({categoryCounts[cat.id] || 0})
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="comp-grid" id="comp-grid">
+    {
+      catalog.components.map((comp: any) => {
+        const searchText =
+          `${comp.name} ${comp.description} ${comp.category} ${comp.class} ${(comp.tags || []).join(" ")}`.toLowerCase();
+        return (
+          <a
+            href={`/components/${comp.category}/${comp.id}`}
+            class="comp-card"
+            data-category={comp.category}
+            data-search={searchText}
+          >
+            <div class="comp-card__body">
+              <div class="comp-card__name">{comp.name}</div>
+              <div class="comp-card__class">{comp.class}</div>
+              <p class="comp-card__desc">{comp.description}</p>
+              <div class="comp-card__footer">
+                <span class="category-badge">
+                  <span class="category-badge__dot" />
+                  {comp.category}
+                </span>
+              </div>
+            </div>
+          </a>
+        );
+      })
+    }
+  </div>
+
+  <div class="comp-list is-hidden" id="comp-list">
+    {
+      catalog.components.map((comp: any) => {
+        const searchText =
+          `${comp.name} ${comp.description} ${comp.category} ${comp.class} ${(comp.tags || []).join(" ")}`.toLowerCase();
+        return (
+          <a
+            href={`/components/${comp.category}/${comp.id}`}
+            class="comp-list-item"
+            data-category={comp.category}
+            data-search={searchText}
+          >
+            <span class="comp-list-item__name">{comp.name}</span>
+            <span class="comp-list-item__class">{comp.class}</span>
+            <span class="comp-list-item__desc">{comp.description}</span>
+          </a>
+        );
+      })
+    }
+  </div>
+
+  <p class="gallery-empty is-hidden" id="gallery-empty">No components match that search.</p>
+</DocsLayout>
+
+<script>
+  const filterBtns = document.querySelectorAll<HTMLButtonElement>(".filter-btn");
+  const searchInput = document.querySelector<HTMLInputElement>("#gallery-search");
+  const gridEl = document.getElementById("comp-grid");
+  const listEl = document.getElementById("comp-list");
+  const emptyEl = document.getElementById("gallery-empty");
+  const viewBtns = document.querySelectorAll<HTMLButtonElement>("[data-view]");
+
+  let activeFilter = "all";
+  let currentView = "grid";
+
+  function getCards() {
+    const container = currentView === "grid" ? gridEl : listEl;
+    return container?.querySelectorAll<HTMLElement>("[data-category]") || [];
+  }
+
+  function applyFilters() {
+    const query = (searchInput?.value || "").trim().toLowerCase();
+    let visible = 0;
+
+    [gridEl, listEl].forEach((container) => {
+      container?.querySelectorAll<HTMLElement>("[data-category]").forEach((card) => {
+        const catMatch = activeFilter === "all" || card.dataset.category === activeFilter;
+        const textMatch = !query || (card.dataset.search || "").includes(query);
+        const show = catMatch && textMatch;
+        card.classList.toggle("is-hidden", !show);
+        if (show && container === (currentView === "grid" ? gridEl : listEl)) visible++;
+      });
+    });
+
+    emptyEl?.classList.toggle("is-hidden", visible > 0);
+  }
+
+  filterBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      filterBtns.forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      activeFilter = btn.dataset.filter || "all";
+      applyFilters();
+    });
+  });
+
+  searchInput?.addEventListener("input", applyFilters);
+
+  viewBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      viewBtns.forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      currentView = btn.dataset.view || "grid";
+      gridEl?.classList.toggle("is-hidden", currentView !== "grid");
+      listEl?.classList.toggle("is-hidden", currentView !== "list");
+      applyFilters();
+    });
+  });
+</script>

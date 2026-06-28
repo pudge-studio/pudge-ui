@@ -1,0 +1,21 @@
+---
+import DocsLayout from "../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "guides", "for-llms.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "For LLMs" }];
+---
+
+<DocsLayout
+  title="For LLMs"
+  breadcrumbs={breadcrumbs}
+  pudgePose="whiteboard"
+  pudgeMessage="Feed foundation + component spec to your agent. It handles the rest."
+>
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

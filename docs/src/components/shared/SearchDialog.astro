@@ -1,0 +1,98 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+let searchItems: Array<{ title: string; href: string; type: string; text: string }> = [
+  {
+    title: "Getting Started",
+    href: "/getting-started",
+    type: "Guide",
+    text: "Install and use pudge-ui with MCP or prompt templates",
+  },
+  {
+    title: "Components",
+    href: "/components",
+    type: "Directory",
+    text: "Browse tactile controls, readouts, meters, overlays, and data components",
+  },
+  {
+    title: "Design Tokens",
+    href: "/foundation/tokens",
+    type: "Foundation",
+    text: "Color, depth, spacing, radius, typography, and motion tokens",
+  },
+  {
+    title: "Materials",
+    href: "/foundation/materials",
+    type: "Foundation",
+    text: "Rubber, glass, acrylic, LCD, metal, and panel material recipes",
+  },
+  {
+    title: "Depth Model",
+    href: "/foundation/depth",
+    type: "Foundation",
+    text: "Physical layering and interaction depth rules",
+  },
+  {
+    title: "Framework Integration",
+    href: "/guides/framework-integration",
+    type: "Guide",
+    text: "React Vue Svelte Web Components patterns",
+  },
+  {
+    title: "For LLMs",
+    href: "/for-llms",
+    type: "Guide",
+    text: "Agent-oriented usage and copy workflow",
+  },
+];
+
+try {
+  const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+  const catalog = yaml.parse(indexYaml);
+  searchItems = searchItems.concat(
+    catalog.components.map((comp: any) => ({
+      title: comp.name,
+      href: `/components/${comp.category}/${comp.id}`,
+      type: comp.category,
+      text: `${comp.description} ${comp.class} ${(comp.tags || []).join(" ")}`,
+    })),
+  );
+} catch {}
+---
+
+<div class="search-backdrop" id="search-backdrop">
+  <div class="search-dialog" role="dialog" aria-modal="true" aria-label="Search documentation">
+    <div class="search-input-wrap">
+      <svg
+        width="16"
+        height="16"
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.5"
+        class="search-input-wrap__icon"
+      >
+        <circle cx="7" cy="7" r="5"></circle><path d="M11 11L15 15"></path>
+      </svg>
+      <input
+        class="search-input"
+        id="search-input"
+        type="search"
+        placeholder="Search components, tokens, guides..."
+        autocomplete="off"
+        spellcheck="false"
+      />
+    </div>
+    <div class="search-results" id="search-results"></div>
+    <div class="search-footer">
+      <span class="search-footer__hint"><kbd>↑↓</kbd> navigate</span>
+      <span class="search-footer__hint"><kbd>↵</kbd> select</span>
+      <span class="search-footer__hint"><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<script type="application/json" id="site-search-data" set:html={JSON.stringify(searchItems)} />

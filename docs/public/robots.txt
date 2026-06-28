@@ -1,0 +1,41 @@
+# pudge-ui is a design system built to be consumed by AI coding agents.
+# Crawlers — including AI/LLM crawlers — are explicitly welcome.
+
+User-agent: *
+Allow: /
+
+# AI / LLM crawlers (explicitly allowed)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+Sitemap: https://ui.pudgestudio.com/sitemap-index.xml
+
+# LLM-friendly site summary (https://llmstxt.org)
+# https://ui.pudgestudio.com/llms.txt

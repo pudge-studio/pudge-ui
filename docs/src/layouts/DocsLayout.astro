@@ -1,0 +1,75 @@
+---
+import BaseLayout from "./BaseLayout.astro";
+import SiteSidebar from "../components/layout/SiteSidebar.astro";
+import Breadcrumbs from "../components/layout/Breadcrumbs.astro";
+import TableOfContents from "../components/layout/TableOfContents.astro";
+import PudgeSidekick from "../components/shared/PudgeSidekick.astro";
+
+interface Props {
+  title: string;
+  description?: string;
+  activeId?: string;
+  breadcrumbs?: Array<{ label: string; href?: string }>;
+  headings?: Array<{ text: string; id: string; depth: number }>;
+  showToc?: boolean;
+  pudgePose?: string;
+  pudgeMessage?: string;
+  pudgeLink?: { text: string; href: string };
+}
+
+const {
+  title,
+  description,
+  activeId = "",
+  breadcrumbs = [],
+  headings = [],
+  showToc = true,
+  pudgePose,
+  pudgeMessage,
+  pudgeLink,
+} = Astro.props;
+
+const currentPath = Astro.url.pathname;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="site-main">
+    <SiteSidebar activeId={activeId} currentPath={currentPath} />
+
+    <div class:list={["site-content", showToc && headings.length > 0 && "site-content--with-toc"]}>
+      <div class="site-content__body">
+        {breadcrumbs.length > 0 && <Breadcrumbs items={breadcrumbs} />}
+        <slot />
+      </div>
+
+      {showToc && headings.length > 0 && <TableOfContents headings={headings} />}
+    </div>
+  </div>
+
+  {pudgePose && <PudgeSidekick pose={pudgePose} message={pudgeMessage} link={pudgeLink} />}
+
+  <div class="mobile-overlay" id="mobile-overlay" data-close-mobile></div>
+</BaseLayout>
+
+<script>
+  const hamburger = document.querySelector("[data-toggle-mobile]");
+  const sidebar = document.getElementById("site-sidebar");
+  const overlay = document.getElementById("mobile-overlay");
+
+  const toggleMobile = () => {
+    sidebar?.classList.toggle("is-open");
+    overlay?.classList.toggle("is-visible");
+  };
+
+  const closeMobile = () => {
+    sidebar?.classList.remove("is-open");
+    overlay?.classList.remove("is-visible");
+  };
+
+  hamburger?.addEventListener("click", toggleMobile);
+  overlay?.addEventListener("click", closeMobile);
+
+  sidebar?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMobile);
+  });
+</script>

@@ -1,0 +1,450 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+import { renderSpec } from "@lib/spec";
+
+export function getStaticPaths() {
+  const specRoot = path.resolve(process.cwd(), "..", "spec");
+  const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+  const catalog = yaml.parse(indexYaml);
+
+  return catalog.components.map((comp: any) => ({
+    params: { category: comp.category, slug: comp.id },
+    props: { comp, catalog },
+  }));
+}
+
+const { comp, catalog } = Astro.props;
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+
+const specPath = path.join(specRoot, "components", comp.file);
+const specRaw = fs.readFileSync(specPath, "utf-8");
+
+const fmMatch = specRaw.match(/^---\s*\n([\s\S]*?)\n---/);
+const frontmatter = fmMatch ? yaml.parse(fmMatch[1]) : {};
+const specBody = fmMatch ? specRaw.slice(fmMatch[0].length).trim() : specRaw;
+
+const cssBlocks = [...specBody.matchAll(/```css\s*([\s\S]*?)```/g)].map((m) => m[1].trim());
+const htmlBlock = specBody.match(/```html\s*([\s\S]*?)```/);
+const primaryClass = comp.class.replace(/^\./, "").split(/\s+/)[0];
+const demoHtml = htmlBlock?.[1]?.trim() || `<button class="${primaryClass}">DEMO</button>`;
+const demoCss = cssBlocks.join("\n\n");
+
+// Strip the first H1 heading from spec body (already shown in page header)
+const specBodyNoH1 = specBody.replace(/^#\s+.+$/m, "").trim();
+const specHtml = await renderSpec(specBodyNoH1);
+
+// Frontmatter data for variant switcher
+const sizes = frontmatter.sizes || [];
+const materials = frontmatter.materials || [];
+const isInteractive = frontmatter.interactive !== false;
+const requiresJs = frontmatter.requires_js === true;
+
+// Extract state classes from CSS (look for common patterns)
+const stateClasses: string[] = ["default"];
+const statePatterns = ["active", "disabled", "error", "pressed", "recording", "on", "checked"];
+for (const state of statePatterns) {
+  if (demoCss.includes(`.${primaryClass}.${state}`) || demoCss.includes(`.${state}`)) {
+    stateClasses.push(state);
+  }
+}
+
+// Read foundation files for CopyForLLM
+const foundationFiles = [
+  "philosophy.md",
+  "tokens.md",
+  "materials.md",
+  "depth-model.md",
+  "naming.md",
+];
+const foundationContent = foundationFiles
+  .map((f) => {
+    try {
+      return fs.readFileSync(path.join(specRoot, "foundation", f), "utf-8");
+    } catch {
+      return "";
+    }
+  })
+  .join("\n\n---\n\n");
+
+const relatedComps = catalog.components
+  .filter((c: any) => c.category === comp.category && c.id !== comp.id)
+  .slice(0, 4);
+
+const categoryInfo = catalog.categories.find((c: any) => c.id === comp.category);
+
+const breadcrumbs = [
+  { label: "Components", href: "/components" },
+  { label: categoryInfo?.label || comp.category, href: `/components/${comp.category}` },
+  { label: comp.name },
+];
+
+// Pudge pose pools + message pools per category (randomized at build time)
+const pudgeData: Record<string, { poses: string[]; messages: string[] }> = {
+  buttons: {
+    poses: ["thumbsup", "hello", "happytalk"],
+    messages: [
+      "Buttons use the three-plane depth model. Press states should feel mechanical!",
+      "The key to a good button: translateY on press. That 1-2px drop is the whole illusion.",
+      "Check the size variants — xs to xl. The spec scales padding, font-size, and shadow depth.",
+    ],
+  },
+  toggles: {
+    poses: ["1step", "2step", "planner"],
+    messages: [
+      "Toggle switches need both visual and state feedback. Don't forget aria-checked!",
+      "The toggle thumb slides with --snap-fast easing. It should feel like a mechanical detent.",
+      "DIP switches are fun — each one is independent. Great for settings panels.",
+    ],
+  },
+  dials: {
+    poses: ["think", "notes", "whiteboard"],
+    messages: [
+      "Dials are the trickiest components. Pay attention to the knurl texture patterns.",
+      "Rotary encoders have infinite rotation. Mode dials have fixed stops. Different physics.",
+      "The click wheel is the crown jewel — capacitive touch meets mechanical center button.",
+    ],
+  },
+  sliders: {
+    poses: ["planner", "notes", "side"],
+    messages: [
+      "Sliders need smooth motion. Use the --ease-out easing for fill animations.",
+      "Faders are vertical, scrubbers are horizontal. Same physics, different orientation.",
+      "The crossfader has a center detent. That haptic snap at 50% is essential.",
+    ],
+  },
+  readouts: {
+    poses: ["whiteboard", "think", "notes"],
+    messages: [
+      "Readouts use the phosphor screen material. That green glow is text-shadow magic.",
+      "Seven-segment displays use the VT323 font. It's the authentic LCD look.",
+      "The dot matrix has a scrolling marquee. Pure CSS animation, no JS needed.",
+    ],
+  },
+  meters: {
+    poses: ["notes", "planner", "think"],
+    messages: [
+      "Meters visualize signal. The amber-to-red gradient communicates urgency.",
+      "VU meters use the three-tier color system: green (safe), amber (warning), red (clip).",
+      "The oscilloscope is the only animated component — requestAnimationFrame with phosphor persistence.",
+    ],
+  },
+  navigation: {
+    poses: ["walk", "hello", "1step"],
+    messages: [
+      "Navigation should feel like wayfinding. Every click should be a mindless choice.",
+      "The menu grid is Nokia-inspired. 3x3 icons with labels — simple and effective.",
+      "Tab bars need an active indicator. The amber underline is the universal 'you are here' signal.",
+    ],
+  },
+  forms: {
+    poses: ["happytalk", "notes", "planner"],
+    messages: [
+      "Form inputs use the recessed depth model. They should feel like display cavities.",
+      "The search bar is pill-shaped for a reason — it signals 'type here' without a label.",
+      "The color picker uses SMPTE test bars. Functional and nostalgic.",
+    ],
+  },
+  overlays: {
+    poses: ["cape", "whiteboard", "front-sit"],
+    messages: [
+      "Overlays frame content. The panel material gives them physical presence.",
+      "Focus brackets are camera viewfinder overlays. They animate between 'acquiring' and 'locked'.",
+      "Device bezels add a stepped profile border. It's the frame that makes the screen feel inset.",
+    ],
+  },
+  indicators: {
+    poses: ["side", "thumbsup", "hello"],
+    messages: [
+      "Status indicators are read-only. Keep them small but legible.",
+      "LED dots come in 5 colors. Each maps to a semantic meaning in the accent palette.",
+      "Transport controls are media player buttons — play, pause, skip. The universal language.",
+    ],
+  },
+  data: {
+    poses: ["front-sit", "notes", "whiteboard"],
+    messages: [
+      "Data components display information. Prioritize readability over decoration.",
+      "The film strip has sprocket holes. CSS border-image makes them authentic.",
+      "Data tables use monospace for alignment. tabular-nums keeps columns straight.",
+    ],
+  },
+};
+const categoryData = pudgeData[comp.category] || {
+  poses: ["hello"],
+  messages: ["Check out this component!"],
+};
+const randIdx = Math.floor(Math.random() * categoryData.poses.length);
+const pudge = { pose: categoryData.poses[randIdx], message: categoryData.messages[randIdx] };
+
+const tocHeadings = [
+  { text: "Preview", id: "preview", depth: 2 },
+  { text: "Code", id: "code", depth: 2 },
+  { text: "API", id: "api", depth: 2 },
+  { text: "Design Notes", id: "design-notes", depth: 2 },
+  { text: "Accessibility", id: "accessibility", depth: 2 },
+  { text: "Related", id: "related", depth: 2 },
+];
+---
+
+<DocsLayout
+  title={comp.name}
+  description={comp.description}
+  activeId={comp.id}
+  breadcrumbs={breadcrumbs}
+  headings={tocHeadings}
+  pudgePose={pudge.pose}
+  pudgeMessage={pudge.message}
+  pudgeLink={{ text: "Depth model", href: "/foundation/depth" }}
+>
+  <div class="comp-header">
+    <div class="comp-header__meta">
+      <span class="category-badge">
+        <span class="category-badge__dot"></span>
+        {comp.category}
+      </span>
+      <code class="comp-header__class">{comp.class}</code>
+    </div>
+    <h1 class="comp-header__name">{comp.name}</h1>
+    <p class="comp-header__desc">{comp.description}</p>
+  </div>
+
+  <section class="playground" id="preview" aria-label="Interactive preview">
+    {
+      (sizes.length > 0 || materials.length > 0 || stateClasses.length > 1) && (
+        <div class="playground__controls">
+          {sizes.length > 0 && (
+            <div class="playground__control-group" data-variant-group="size">
+              <span class="playground__control-label">Size</span>
+              {sizes.map((s: string, i: number) => (
+                <button
+                  class:list={[
+                    "variant-btn",
+                    s === "md" && "is-active",
+                    sizes.indexOf("md") === -1 && i === 0 && "is-active",
+                  ]}
+                  data-variant-value={s}
+                  type="button"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+          {materials.length > 0 && (
+            <div class="playground__control-group" data-variant-group="material">
+              <span class="playground__control-label">Material</span>
+              {materials.map((m: string, i: number) => (
+                <button
+                  class:list={["variant-btn", i === 0 && "is-active"]}
+                  data-variant-value={i === 0 ? "default" : m}
+                  type="button"
+                >
+                  {m}
+                </button>
+              ))}
+            </div>
+          )}
+          {stateClasses.length > 1 && (
+            <div class="playground__control-group" data-variant-group="state">
+              <span class="playground__control-label">State</span>
+              {stateClasses.map((s: string) => (
+                <button
+                  class:list={["variant-btn", s === "default" && "is-active"]}
+                  data-variant-value={s}
+                  type="button"
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )
+    }
+
+    <div class="playground__stage" id="playground-stage">
+      <style set:html={demoCss}></style>
+      <div class="playground__surface" data-demo-element set:html={demoHtml} />
+    </div>
+
+    <div class="playground__actions">
+      <button class="playground__action-btn" type="button" data-copy-html>Copy HTML</button>
+    </div>
+  </section>
+
+  <section class="code-block" id="code">
+    <div class="code-block__tabs">
+      <button class="code-block__tab is-active" type="button" data-tab="html">HTML</button>
+      <button class="code-block__tab" type="button" data-tab="css">CSS</button>
+      <button class="code-block__copy" type="button">Copy</button>
+    </div>
+    <div class="code-block__panel is-active" data-panel="html">
+      <pre><code>{demoHtml}</code></pre>
+    </div>
+    <div class="code-block__panel" data-panel="css">
+      <pre><code>{demoCss}</code></pre>
+    </div>
+  </section>
+
+  <section class="props-table" id="api">
+    <h2 class="props-table__title">API</h2>
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Type</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>{comp.class}</code></td>
+            <td><span class="props-table__type">Base</span></td>
+            <td>Primary component class</td>
+          </tr>
+          {
+            sizes.map((s: string) => (
+              <tr>
+                <td>
+                  <code>.{s}</code>
+                </td>
+                <td>
+                  <span class="props-table__type">Size</span>
+                </td>
+                <td>
+                  {s === "xs"
+                    ? "Extra small"
+                    : s === "sm"
+                      ? "Small"
+                      : s === "md"
+                        ? "Medium (default)"
+                        : s === "lg"
+                          ? "Large"
+                          : "Extra large"}{" "}
+                  variant
+                </td>
+              </tr>
+            ))
+          }
+          {
+            materials
+              .filter((m: string, i: number) => i > 0)
+              .map((m: string) => (
+                <tr>
+                  <td>
+                    <code>.{m}</code>
+                  </td>
+                  <td>
+                    <span class="props-table__type">Material</span>
+                  </td>
+                  <td>{m.charAt(0).toUpperCase() + m.slice(1)} surface variant</td>
+                </tr>
+              ))
+          }
+          {
+            stateClasses
+              .filter((s) => s !== "default")
+              .map((s) => (
+                <tr>
+                  <td>
+                    <code>.{s}</code>
+                  </td>
+                  <td>
+                    <span class="props-table__type">State</span>
+                  </td>
+                  <td>{s.charAt(0).toUpperCase() + s.slice(1)} state</td>
+                </tr>
+              ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="comp-section" id="design-notes">
+    <h2 class="comp-section__title">Design Notes</h2>
+    <div class="spec-content" set:html={specHtml} />
+  </section>
+
+  <section class="a11y-notes" id="accessibility">
+    <div class="a11y-notes__title">
+      <span class="a11y-notes__icon">♿</span>
+      Accessibility
+    </div>
+    <dl>
+      <dt>Element</dt>
+      <dd>
+        {
+          comp.category === "buttons"
+            ? "Use native <button> element"
+            : comp.category === "toggles"
+              ? 'Use <button> with role="switch"'
+              : comp.category === "forms"
+                ? "Use appropriate <input> or <select> element"
+                : comp.category === "navigation"
+                  ? "Use <nav> with aria-label"
+                  : "Use semantic HTML with appropriate ARIA roles"
+        }
+      </dd>
+      <dt>Keyboard</dt>
+      <dd>
+        {
+          comp.category === "buttons"
+            ? "Enter or Space to activate"
+            : comp.category === "toggles"
+              ? "Space to toggle"
+              : comp.category === "dials"
+                ? "Arrow keys to adjust value"
+                : comp.category === "sliders"
+                  ? "Arrow keys to adjust, Home/End for min/max"
+                  : comp.category === "navigation"
+                    ? "Arrow keys to navigate, Enter to select"
+                    : "Follow WAI-ARIA patterns for this control type"
+        }
+      </dd>
+      <dt>Focus</dt>
+      <dd>
+        Visible focus indicator required. Use native browser focus ring or custom <code
+          >:focus-visible</code
+        > styles.
+      </dd>
+    </dl>
+  </section>
+
+  {
+    relatedComps.length > 0 && (
+      <section class="related-components" id="related">
+        <h2 class="related-components__title">Related Components</h2>
+        <div class="related-components__grid">
+          {relatedComps.map((rc: any) => (
+            <a href={`/components/${rc.category}/${rc.id}`} class="related-card">
+              <div class="related-card__name">{rc.name}</div>
+              <div class="related-card__class">{rc.class}</div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <div class="copy-llm">
+    <button class="copy-llm__btn" type="button" data-copy-llm> Copy spec for LLM </button>
+  </div>
+
+  <script type="application/json" id="demo-html-data" set:html={JSON.stringify(demoHtml)} />
+  <script
+    type="application/json"
+    id="foundation-data"
+    set:html={JSON.stringify({ content: foundationContent })}
+  />
+  <script
+    type="application/json"
+    id="spec-data"
+    set:html={JSON.stringify({ spec: specRaw, name: comp.name })}
+  />
+  <script src="../../../scripts/playground.js"></script>
+</DocsLayout>

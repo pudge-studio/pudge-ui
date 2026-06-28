@@ -1,0 +1,101 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import HeroPanel from "../components/landing/HeroPanel.astro";
+import ComponentShowcase from "../components/landing/ComponentShowcase.astro";
+import HowItWorks from "../components/landing/HowItWorks.astro";
+import MaterialGallery from "../components/landing/MaterialGallery.astro";
+import FrameworkMosaic from "../components/landing/FrameworkMosaic.astro";
+import QuickStartCTA from "../components/landing/QuickStartCTA.astro";
+import PudgeGreeting from "../components/landing/PudgeGreeting.astro";
+import "../styles/cinematic.css";
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+const catalog = yaml.parse(indexYaml);
+
+const componentCount = catalog.components.length;
+
+// Helper: extract demo HTML/CSS from a spec markdown file
+function extractDemo(comp: any) {
+  try {
+    const specPath = path.join(specRoot, "components", comp.file);
+    const specRaw = fs.readFileSync(specPath, "utf-8");
+    const body = specRaw.replace(/^---[\s\S]*?---/, "").trim();
+    const cssBlocks = [...body.matchAll(/```css\s*([\s\S]*?)```/g)].map((m) => m[1].trim());
+    const htmlBlock = body.match(/```html\s*([\s\S]*?)```/);
+    const primaryClass = comp.class.replace(/^\./, "").split(/\s+/)[0];
+    return {
+      name: comp.name,
+      id: comp.id,
+      category: comp.category,
+      html: htmlBlock?.[1]?.trim() || `<button class="${primaryClass}">DEMO</button>`,
+      css: cssBlocks.join("\n\n"),
+    };
+  } catch {
+    return null;
+  }
+}
+
+// Hero panel: 6 curated components for the device chassis
+const heroIds = [
+  "rotary-encoder",
+  "push-button",
+  "lcd-readout",
+  "toggle-switch",
+  "vu-meter",
+  "segmented-control",
+];
+const heroComponents = heroIds
+  .map((id: string) => catalog.components.find((c: any) => c.id === id))
+  .filter(Boolean)
+  .map(extractDemo)
+  .filter(Boolean);
+
+// Showcase grid: 12 components for the immersive tile grid
+const showcaseIds = [
+  "push-button",
+  "toggle-switch",
+  "rotary-encoder",
+  "lcd-readout",
+  "vu-meter",
+  "segmented-control",
+  "rec-button",
+  "stepper",
+  "slide-switch",
+  "led-checkbox",
+  "radio-button",
+  "mode-dial",
+];
+const showcaseComponents = showcaseIds
+  .map((id: string) => catalog.components.find((c: any) => c.id === id))
+  .filter(Boolean)
+  .map(extractDemo)
+  .filter(Boolean);
+---
+
+<BaseLayout
+  title="Home"
+  description="pudge-ui — the agentic design system for 2000s-inspired interfaces. 93 components, spec-first, framework-agnostic."
+>
+  <HeroPanel components={heroComponents} />
+
+  <ComponentShowcase components={showcaseComponents} />
+
+  <HowItWorks componentCount={componentCount} />
+
+  <MaterialGallery />
+
+  <FrameworkMosaic />
+
+  <QuickStartCTA componentCount={componentCount} />
+
+  <PudgeGreeting />
+</BaseLayout>
+
+<script>
+  // Scroll director handles IntersectionObserver fallback + component interactivity
+  import("../scripts/scroll-director.js");
+</script>

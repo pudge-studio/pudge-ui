@@ -1,0 +1,30 @@
+---
+interface Props {
+  pose?: string;
+  message?: string;
+  link?: { text: string; href: string };
+  size?: number;
+}
+
+const { pose = "hello", message, link, size = 90 } = Astro.props;
+---
+
+<div class="pudge-sidekick" id="pudge-sidekick">
+  {
+    message && (
+      <div class="pudge-sidekick__thought">
+        <p class="pudge-sidekick__text">{message}</p>
+        {link && (
+          <a class="pudge-sidekick__link" href={link.href}>
+            {link.text} &rarr;
+          </a>
+        )}
+        <span class="pudge-sidekick__tail" />
+        <span class="pudge-sidekick__tail-sm" />
+      </div>
+    )
+  }
+  <div class="pudge-avatar-wrap pudge-sidekick__avatar" style={`--pudge-avatar-size:${size}px;`}>
+    <img src={`/pudge/${pose}.svg`} alt="Pudge" width={size} height={size} loading="lazy" />
+  </div>
+</div>

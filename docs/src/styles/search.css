@@ -1,0 +1,179 @@
+/* SEARCH DIALOG — pudge-ui recessed panel aesthetic */
+
+/* Backdrop */
+
+.search-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  display: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.search-backdrop.is-open {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: min(20vh, 160px);
+  opacity: 1;
+}
+
+/* Dialog */
+
+.search-dialog {
+  width: 100%;
+  max-width: 580px;
+  background: var(--bg-raised);
+  border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.5),
+    var(--shadow-inset);
+  overflow: hidden;
+}
+
+/* Input area */
+
+.search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.search-input-wrap__icon {
+  color: var(--text-muted);
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--text-primary);
+  caret-color: var(--amber);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Results */
+
+.search-results {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--space-sm) 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-mid) transparent;
+}
+
+.search-results:empty::after {
+  content: "No results found";
+  display: block;
+  padding: var(--space-xl) var(--space-lg);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.867rem;
+}
+
+.search-group__label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--space-sm) var(--space-lg) var(--space-xs);
+}
+
+.search-result {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  text-decoration: none;
+  color: var(--text-secondary);
+  transition: background 0.1s;
+  cursor: pointer;
+  border-left: 2px solid transparent;
+}
+
+.search-result:hover,
+.search-result.is-focused {
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  border-left-color: var(--amber);
+}
+
+.search-result__badge {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: var(--bg-inset);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  min-width: 60px;
+  text-align: center;
+}
+
+.search-result__title {
+  font-size: 0.933rem;
+  font-weight: 500;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.search-result__desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Footer hints */
+
+.search-footer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  border-top: 1px solid var(--border-subtle);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.search-footer__hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Recent searches */
+
+.search-recent__title {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: var(--space-sm) var(--space-lg) var(--space-xs);
+}

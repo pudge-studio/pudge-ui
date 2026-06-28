@@ -1,0 +1,21 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+import yaml from "yaml";
+
+export function getStaticPaths() {
+  const specRoot = path.resolve(process.cwd(), "..", "spec");
+  const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+  const catalog = yaml.parse(indexYaml);
+
+  return catalog.components.map((comp: any) => ({
+    params: { slug: comp.id },
+    props: { comp },
+  }));
+}
+
+const { comp } = Astro.props;
+
+// 301 redirect from old flat URL to new nested URL
+return Astro.redirect(`/components/${comp.category}/${comp.id}`, 301);
+---

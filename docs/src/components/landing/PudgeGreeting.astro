@@ -1,0 +1,403 @@
+---
+/**
+ * PudgeGreeting — Dismissible mascot sidekick for the landing page.
+ * Pudge introduces himself in a hardware-styled speech panel.
+ * Dismissed state persists in localStorage.
+ */
+---
+
+<div class="pudge-greeting" id="pudge-greeting" aria-label="Pudge says hello">
+  <div class="pudge-greeting__panel" id="pudge-thought">
+    <div class="pudge-greeting__header">
+      <span class="pudge-greeting__led"></span>
+      <span class="pudge-greeting__title">PUDGE SAYS</span>
+      <button class="pudge-greeting__close" id="pudge-close" aria-label="Dismiss" title="Dismiss">
+        <svg
+          width="10"
+          height="10"
+          viewBox="0 0 10 10"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          ><line x1="1.5" y1="1.5" x2="8.5" y2="8.5"></line><line
+            x1="8.5"
+            y1="1.5"
+            x2="1.5"
+            y2="8.5"></line></svg
+        >
+      </button>
+    </div>
+
+    <div class="pudge-greeting__body">
+      <p>Hey! I'm Pudge — the capybara who runs the pudgestudio.</p>
+      <p>
+        My team and I built this whole UI system so you and your coding agent can have some fun and
+        take a break from the monotone, AI slop that our LLMs create.
+      </p>
+      <p class="pudge-greeting__cta-line">
+        You can learn more about us at &rarr; <a
+          href="https://pudgestudio.com"
+          target="_blank"
+          rel="noopener">pudgestudio.com</a
+        >, and if you end up resonating with us, you can always say hi to us on hour socials.
+      </p>
+    </div>
+
+    <div class="pudge-greeting__socials">
+      <a
+        href="https://github.com/pudgestudio"
+        target="_blank"
+        rel="noopener"
+        title="GitHub"
+        class="pudge-greeting__social-link"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"
+          ><path
+            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"
+          ></path></svg
+        >
+        <span>GitHub</span>
+      </a>
+      <a
+        href="https://x.com/pudgestudio"
+        target="_blank"
+        rel="noopener"
+        title="X / Twitter"
+        class="pudge-greeting__social-link"
+      >
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"
+          ><path
+            d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+          ></path></svg
+        >
+        <span>X</span>
+      </a>
+      <a href="mailto:hello@pudgestudio.com" title="Email" class="pudge-greeting__social-link">
+        <svg
+          width="15"
+          height="15"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          ><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="M22 7l-10 7L2 7"
+          ></path></svg
+        >
+        <span>Email</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="pudge-greeting__connector">
+    <span class="pudge-greeting__dot pudge-greeting__dot--lg"></span>
+    <span class="pudge-greeting__dot pudge-greeting__dot--sm"></span>
+  </div>
+
+  <div class="pudge-avatar-wrap pudge-greeting__avatar" id="pudge-avatar">
+    <img
+      src="/pudge/happytalk.svg"
+      alt="Pudge the capybara"
+      width="12"
+      height="12"
+      loading="lazy"
+    />
+  </div>
+</div>
+
+<style>
+  .pudge-greeting {
+    position: fixed;
+    bottom: var(--space-xl);
+    right: var(--space-xl);
+    z-index: 50;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    max-width: 340px;
+    pointer-events: none;
+  }
+
+  /* ── Dismiss animation ── */
+  .pudge-greeting.is-dismissed .pudge-greeting__panel,
+  .pudge-greeting.is-dismissed .pudge-greeting__connector {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+    pointer-events: none;
+  }
+
+  /* ═══ HARDWARE PANEL ═══ */
+  .pudge-greeting__panel {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-hi);
+    border-radius: var(--radius-lg);
+    box-shadow:
+      0 12px 40px rgba(0, 0, 0, 0.35),
+      0 2px 0 var(--border-deep),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    position: relative;
+    pointer-events: auto;
+    overflow: hidden;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--snap-soft),
+      box-shadow 0.25s;
+  }
+
+  .pudge-greeting__panel:hover {
+    box-shadow:
+      0 12px 44px rgba(0, 0, 0, 0.4),
+      0 2px 0 var(--border-deep),
+      inset 0 1px 0 rgba(255, 255, 255, 0.06),
+      0 0 0 1px var(--amber-dim);
+  }
+
+  /* ═══ HEADER BAR ═══ */
+  .pudge-greeting__header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: 10px var(--space-md);
+    border-bottom: 1px solid var(--border-mid);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .pudge-greeting__led {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--green-on);
+    box-shadow: 0 0 6px var(--green-glow);
+    flex-shrink: 0;
+  }
+
+  .pudge-greeting__title {
+    font-family: var(--font-display);
+    font-size: 0.625rem;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    flex: 1;
+  }
+
+  .pudge-greeting__close {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-mid);
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    transition:
+      color 0.15s,
+      background 0.15s,
+      border-color 0.15s;
+    pointer-events: auto;
+  }
+
+  .pudge-greeting__close:hover {
+    color: var(--text-primary);
+    background: var(--bg-panel);
+    border-color: var(--border-hi);
+  }
+
+  /* ═══ MESSAGE BODY ═══ */
+  .pudge-greeting__body {
+    padding: var(--space-md) var(--space-lg);
+  }
+
+  .pudge-greeting__body p {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+    margin: 0 0 var(--space-sm);
+  }
+
+  .pudge-greeting__body p:last-child {
+    margin-bottom: 0;
+  }
+
+  .pudge-greeting__cta-line {
+    font-family: var(--font-mono);
+    font-size: 0.8125rem !important;
+    color: var(--text-primary) !important;
+    padding-top: var(--space-xs);
+  }
+
+  .pudge-greeting__body a {
+    color: var(--amber);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .pudge-greeting__body a:hover {
+    color: var(--gold-warm);
+    text-decoration: underline;
+  }
+
+  /* ═══ SOCIAL STRIP ═══ */
+  .pudge-greeting__socials {
+    display: flex;
+    border-top: 1px solid var(--border-mid);
+    background: var(--bg-surface);
+  }
+
+  .pudge-greeting__social-link {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px var(--space-sm);
+    color: var(--text-secondary);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      background 0.15s;
+    pointer-events: auto;
+    min-height: 40px;
+  }
+
+  .pudge-greeting__social-link + .pudge-greeting__social-link {
+    border-left: 1px solid var(--border-mid);
+  }
+
+  .pudge-greeting__social-link:hover {
+    color: var(--amber);
+    background: rgba(245, 166, 35, 0.08);
+  }
+
+  .pudge-greeting__social-link svg {
+    flex-shrink: 0;
+  }
+
+  /* ═══ CONNECTOR DOTS ═══ */
+  .pudge-greeting__connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 0 4px;
+    margin-right: 32px;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition:
+      opacity 0.25s var(--ease-out),
+      transform 0.25s var(--ease-out);
+  }
+
+  .pudge-greeting__dot {
+    border-radius: 50%;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-hi);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .pudge-greeting__dot--lg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .pudge-greeting__dot--sm {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* ═══ AVATAR ═══ */
+  .pudge-greeting__avatar {
+    animation: pudge-float 4s ease-in-out infinite;
+    pointer-events: auto;
+    cursor: pointer;
+    width: 6rem;
+    transition: transform 0.2s var(--snap-fast);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+    border: 2px solid var(--border-hi);
+  }
+
+  .pudge-greeting__avatar:hover {
+    animation-play-state: paused;
+    transform: translateY(-4px) scale(1.08);
+  }
+
+  /* ═══ RESPONSIVE ═══ */
+  @media (max-width: 1024px) {
+    .pudge-greeting {
+      bottom: var(--space-lg);
+      right: var(--space-md);
+      max-width: 280px;
+    }
+
+    .pudge-greeting__avatar {
+      width: 12px !important;
+      height: 12px !important;
+    }
+
+    .pudge-greeting__body {
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .pudge-greeting__body p {
+      font-size: 0.8125rem;
+    }
+
+    .pudge-greeting__social-link span {
+      display: none;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .pudge-greeting__panel,
+    .pudge-greeting__connector {
+      display: none;
+    }
+
+    .pudge-greeting {
+      bottom: var(--space-md);
+      right: var(--space-md);
+    }
+
+    .pudge-greeting__avatar {
+      width: 12px !important;
+      height: 12px !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .pudge-greeting {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const STORAGE_KEY = "pudge-greeting-dismissed";
+  const container = document.getElementById("pudge-greeting");
+  const closeBtn = document.getElementById("pudge-close");
+  const avatar = document.getElementById("pudge-avatar");
+
+  if (container && closeBtn && avatar) {
+    if (localStorage.getItem(STORAGE_KEY) === "1") {
+      container.classList.add("is-dismissed");
+    }
+
+    closeBtn.addEventListener("click", () => {
+      container.classList.add("is-dismissed");
+      localStorage.setItem(STORAGE_KEY, "1");
+    });
+
+    avatar.addEventListener("click", () => {
+      if (container.classList.contains("is-dismissed")) {
+        container.classList.remove("is-dismissed");
+        localStorage.removeItem(STORAGE_KEY);
+      }
+    });
+  }
+</script>

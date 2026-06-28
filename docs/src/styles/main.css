@@ -1,0 +1,72 @@
+/* Main CSS entry point */
+
+@layer theme, base, utilities;
+
+/* All @import statements must precede other at-rules */
+@import "./tokens.css";
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "./reset.css" layer(base);
+@import "./typography.css";
+@import "./utilities.css";
+@import "./layout.css";
+@import "./nav.css";
+@import "./search.css";
+@import "./cards.css";
+@import "./component-page.css";
+@import "./foundation.css";
+@import "./pudge.css";
+
+/* Map the existing design tokens (tokens.css) onto Tailwind's theme so utilities
+   resolve to the same variables and stay reactive to the [data-theme] switch. */
+@theme inline {
+  --spacing-xs: var(--space-xs);
+  --spacing-sm: var(--space-sm);
+  --spacing-md: var(--space-md);
+  --spacing-lg: var(--space-lg);
+  --spacing-xl: var(--space-xl);
+  --spacing-2xl: var(--space-2xl);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-pill: var(--radius-pill);
+  --radius-round: var(--radius-round);
+
+  --color-base: var(--bg-base);
+  --color-raised: var(--bg-raised);
+  --color-surface: var(--bg-surface);
+  --color-inset: var(--bg-inset);
+  --color-panel: var(--bg-panel);
+
+  --color-primary: var(--text-primary);
+  --color-secondary: var(--text-secondary);
+  --color-muted: var(--text-muted);
+
+  --color-border-deep: var(--border-deep);
+  --color-border-mid: var(--border-mid);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-hi: var(--border-hi);
+
+  --color-amber: var(--amber);
+  --color-amber-dim: var(--amber-dim);
+  --color-gold-warm: var(--gold-warm);
+  --color-green-on: var(--green-on);
+  --color-green-hi: var(--green-hi);
+  --color-red-alert: var(--red-alert);
+  --color-blue-info: var(--blue-info);
+  --color-pink-action: var(--pink-action);
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+  --font-ui: var(--font-ui);
+  --font-lcd: var(--font-lcd);
+
+  --ease-snap-fast: var(--snap-fast);
+  --ease-snap-soft: var(--snap-soft);
+  --ease-spring: var(--spring);
+}
+
+@custom-variant dark (&:where([data-theme="dark"] *));

@@ -1,0 +1,81 @@
+---
+interface Props {
+  currentPath: string;
+}
+
+const { currentPath } = Astro.props;
+
+const navLinks = [
+  { href: "/getting-started", label: "Docs", match: "/getting-started" },
+  { href: "/components", label: "Components", match: "/components" },
+  { href: "/foundation", label: "Foundation", match: "/foundation" },
+  { href: "/guides/framework-integration", label: "Guides", match: "/guides" },
+  { href: "/for-llms", label: "For LLMs", match: "/for-llms" },
+  { href: "https://github.com/nickhokhar/pudge-ui", label: "GitHub", external: true },
+];
+---
+
+<header class="site-header">
+  <a href="/" class="site-logo">
+    <img src="/pudge-avatar.png" alt="Pudge" width="28" height="28" class="site-logo__mark" />
+    pudge<span class="site-logo__slash">/</span>ui
+  </a>
+
+  <button class="hamburger" type="button" data-toggle-mobile aria-label="Toggle menu">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+    >
+      <path d="M3 5h12M3 9h12M3 13h12"></path>
+    </svg>
+  </button>
+
+  <nav class="header-nav" aria-label="Main">
+    {
+      navLinks.map((link) =>
+        link.external ? (
+          <a href={link.href} class="header-nav__link" target="_blank" rel="noopener">
+            {link.label}
+          </a>
+        ) : (
+          <a
+            href={link.href}
+            class:list={["header-nav__link", currentPath.startsWith(link.match) && "is-active"]}
+          >
+            {link.label}
+          </a>
+        ),
+      )
+    }
+  </nav>
+
+  <button
+    class="search-trigger"
+    type="button"
+    data-open-search
+    aria-label="Search documentation"
+    aria-keyshortcuts="/"
+  >
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.5"
+      class="search-trigger__icon"
+    >
+      <circle cx="6" cy="6" r="4.5"></circle><path d="M9.5 9.5L13 13"></path>
+    </svg>
+    <span class="search-trigger__text">Search docs...</span>
+    <span class="search-trigger__kbd"><kbd>/</kbd></span>
+  </button>
+
+  <button class="theme-toggle" type="button" data-theme-toggle aria-label="Toggle theme">
+    <span data-theme-icon>◐</span>
+  </button>
+</header>

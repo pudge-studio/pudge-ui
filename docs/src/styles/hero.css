@@ -1,0 +1,59 @@
+/* Shared button styles — used on landing page, 404, and other pages */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 0.933rem;
+  font-weight: 600;
+  color: var(--text-on-accent);
+  background: var(--amber);
+  padding: var(--space-sm) var(--space-lg);
+  min-height: var(--touch-target);
+  justify-content: center;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition:
+    background 0.15s,
+    transform 0.1s;
+  box-shadow:
+    0 2px 0 var(--amber-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.btn-primary:hover {
+  background: var(--gold-warm);
+  color: var(--text-on-accent);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--amber-dim);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-family: var(--font-body);
+  font-size: 0.933rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  background: transparent;
+  border: 1px solid var(--border-mid);
+  padding: var(--space-sm) var(--space-lg);
+  min-height: var(--touch-target);
+  justify-content: center;
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  transition:
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.btn-secondary:hover {
+  border-color: var(--amber);
+  color: var(--amber);
+}

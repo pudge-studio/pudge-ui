@@ -1,0 +1,13 @@
+node_modules
+**/node_modules
+**/dist
+**/.astro
+package-lock.json
+
+# Component specs are hand-tuned for LLM parsing — do not reformat
+spec
+packages/*/spec
+
+# Static assets / reference material
+*.svg
+docs/public/reference

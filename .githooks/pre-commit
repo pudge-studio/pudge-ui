@@ -1,0 +1,4 @@
+#!/bin/sh
+# Fast mirror of CI (.github/workflows/ci.yml): version consistency + MCP typecheck + tests.
+# Enabled via the root "prepare" script (git config core.hooksPath .githooks).
+exec npm run verify:precommit

@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "accessibility.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Accessibility" }];
+---
+
+<DocsLayout
+  title="Accessibility"
+  breadcrumbs={breadcrumbs}
+  pudgePose="hello"
+  pudgeMessage="WCAG AA minimum. Physical-looking doesn't mean inaccessible."
+>
+  <h1>Accessibility</h1>
+  <p>WCAG compliance, ARIA patterns, keyboard navigation, and screen reader support.</p>
+
+  <hr />
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

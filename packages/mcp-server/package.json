@@ -1,0 +1,55 @@
+{
+  "name": "@pudge-ui/mcp-server",
+  "version": "0.1.0",
+  "description": "MCP server for pudge-ui design system — query component specs for LLM context",
+  "type": "module",
+  "bin": {
+    "pudge-ui-mcp": "./dist/index.js"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist",
+    "spec"
+  ],
+  "scripts": {
+    "build": "tsc && npm run copy-spec",
+    "copy-spec": "cp -r ../../spec ./spec",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "yaml": "^2.7.0",
+    "fuse.js": "^7.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsx": "^4.19.0",
+    "@types/node": "^22.0.0",
+    "vitest": "^3.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pudgestudio/pudge-ui",
+    "directory": "packages/mcp-server"
+  },
+  "homepage": "https://ui.pudgestudio.com",
+  "bugs": "https://github.com/pudgestudio/pudge-ui/issues",
+  "keywords": [
+    "mcp",
+    "design-system",
+    "ui",
+    "skeuomorphic",
+    "2000s",
+    "llm",
+    "agent",
+    "pudge-ui"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "author": "Pudge Studio",
+  "license": "MIT"
+}

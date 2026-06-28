@@ -1,0 +1,36 @@
+---
+import "../../styles/hero.css";
+
+interface Props {
+  componentCount: number;
+}
+
+const { componentCount } = Astro.props;
+---
+
+<section class="scene scene--finale" id="scene-finale" aria-label="Get started">
+  <div class="scene__inner">
+    <div class="scene__eyebrow">QUICK START</div>
+    <h2 class="scene__heading">Add to your MCP config</h2>
+    <div class="finale__code">
+      <pre><code>{`{
+  "mcpServers": {
+    "pudge-ui": {
+      "command": "npx",
+      "args": ["-y", "pudge-ui-mcp"]
+    }
+  }
+}`}</code></pre>
+    </div>
+    <p class="finale__stat">
+      <strong>{componentCount}</strong> components across 11 categories, 6 materials, 9 foundation specs
+    </p>
+    <div class="finale__ctas">
+      <a href="/getting-started" class="btn-primary">Get Started</a>
+      <a href="/components" class="btn-secondary">Browse All Components</a>
+    </div>
+    <div class="finale__pudge">
+      <img src="/pudge/cape.svg" alt="Pudge wearing a cape" width="90" height="90" loading="lazy" />
+    </div>
+  </div>
+</section>

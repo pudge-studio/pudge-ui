@@ -1,0 +1,86 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import fs from "node:fs";
+import path from "node:path";
+import { renderSpec } from "@lib/spec";
+
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const raw = fs.readFileSync(path.join(specRoot, "foundation", "materials.md"), "utf-8");
+const html = await renderSpec(raw);
+
+const breadcrumbs = [{ label: "Foundation", href: "/foundation" }, { label: "Materials" }];
+
+const materials = [
+  {
+    name: "Brushed Metal",
+    analog: "iPod back plate, MacBook chassis",
+    style:
+      "background: linear-gradient(145deg, #d8d6d0, #b8b6b0); box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.5);",
+  },
+  {
+    name: "Chrome",
+    analog: "Nikon mode dial ring, car stereo trim",
+    style:
+      "background: linear-gradient(180deg, #888, #ddd 40%, #999 60%, #666); box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 rgba(0,0,0,0.3);",
+  },
+  {
+    name: "Rubber",
+    analog: "Gameboy buttons, camera grip",
+    style:
+      "background: linear-gradient(180deg, var(--rubber-hi), var(--rubber-bg)); box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.06); border-radius: 100px;",
+  },
+  {
+    name: "Glossy Polycarbonate",
+    analog: "iPod Nano case, PSP face buttons",
+    style:
+      "background: linear-gradient(180deg, rgba(255,255,255,0.14), transparent 50%), linear-gradient(180deg, var(--bg-surface), var(--bg-panel)); box-shadow: 0 3px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.14);",
+  },
+  {
+    name: "Glass",
+    analog: "iMac G3 clear shell, frosted diffuser",
+    style:
+      "background: rgba(255,255,255,0.08); backdrop-filter: blur(4px); border: 1px solid var(--border-subtle);",
+  },
+  {
+    name: "Phosphor Screen",
+    analog: "Camera viewfinder, VU meter face",
+    style:
+      "background: linear-gradient(180deg, #080808, #111); box-shadow: inset 0 1px 8px rgba(0,0,0,0.9), inset 0 0 0 1px #181818; color: var(--amber); text-shadow: 0 0 8px var(--amber-glow);",
+  },
+];
+---
+
+<DocsLayout
+  title="Materials"
+  breadcrumbs={breadcrumbs}
+  pudgePose="whiteboard"
+  pudgeMessage="Six materials, each from a real 2000s device. The CSS recipes simulate physics."
+>
+  <h1>Materials</h1>
+  <p>
+    Six canonical material surface recipes, each mapped to real-world manufacturing processes and
+    physical objects.
+  </p>
+
+  <div class="material-grid">
+    {
+      materials.map((m) => (
+        <div class="material-sample">
+          <div class="material-sample__surface" style={m.style}>
+            <span style="font-family: var(--font-mono); font-size: 0.733rem; letter-spacing: 1px;">
+              {m.name === "Phosphor Screen" ? "READOUT" : ""}
+            </span>
+          </div>
+          <div class="material-sample__info">
+            <div class="material-sample__name">{m.name}</div>
+            <div class="material-sample__analog">{m.analog}</div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+
+  <hr />
+
+  <div class="spec-content" set:html={html} />
+</DocsLayout>

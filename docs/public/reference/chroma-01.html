@@ -1,0 +1,4528 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chroma-01 — Definitive 2000s-Inspired UI Component Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Michroma&family=VT323&family=Rajdhani:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  CHROMA-01 — DEFINITIVE 2000s UI COMPONENT LIBRARY         ║
+   ║  REV 1.0                                                    ║
+   ║                                                              ║
+   ║  TABLE OF CONTENTS                                           ║
+   ║  0. Design Tokens & Reset                                    ║
+   ║  1. Layout & Navigation                                      ║
+   ║  A. Buttons & Pressable Controls                             ║
+   ║  B. Toggle & Switch Controls                                 ║
+   ║  C. Rotary & Dial Controls                                   ║
+   ║  D. Slider & Range Controls                                  ║
+   ║  E. Display & Readout Components                             ║
+   ║  F. Meter & Visualization                                    ║
+   ║  G. Navigation & Menu                                        ║
+   ║  H. Form Inputs                                              ║
+   ║  I. Overlays & Containers                                    ║
+   ║  J. Status & Indicators                                      ║
+   ║  K. Data Display & Compositions                              ║
+   ║  L. Optical & Mechanical Components                          ║
+   ║  Z. Interactive JS                                           ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+
+/* ══════════════════════════════════════════════════════════════
+   0. DESIGN TOKENS
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Accent Palette ── */
+  --amber:        #f5a623;
+  --amber-dim:    #a06010;
+  --amber-glow:   rgba(245,166,35,0.35);
+  --green-on:     #33cc66;
+  --green-hi:     #66ff66;
+  --green-glow:   rgba(51,204,102,0.3);
+  --red-alert:    #cc2200;
+  --red-glow:     rgba(204,34,0,0.3);
+  --blue-info:    #4477cc;
+  --blue-glow:    rgba(68,119,204,0.3);
+  --pink-action:  #ee6688;
+  --gold-warm:    #ddaa33;
+
+  /* ── Typography ── */
+  --font-display: 'Michroma', sans-serif;
+  --font-mono:    'IBM Plex Mono', monospace;
+  --font-ui:      'Rajdhani', sans-serif;
+  --font-lcd:     'VT323', monospace;
+
+  /* ── Spacing Scale ── */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  14px;
+  --space-lg:  22px;
+  --space-xl:  36px;
+  --space-2xl: 56px;
+
+  /* ── Border Radius ── */
+  --radius-sm:    4px;
+  --radius-md:    8px;
+  --radius-lg:    14px;
+  --radius-pill:  100px;
+  --radius-round: 50%;
+
+  /* ── Motion / Easing ── */
+  --snap-fast:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  --snap-soft:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out:   cubic-bezier(0, 0, 0.2, 1);
+  --spring:     cubic-bezier(0.34, 1.3, 0.64, 1);
+
+  /* ── Material Constants ── */
+  --glossy-hi:  rgba(255,255,255,0.14);
+  --glossy-md:  rgba(255,255,255,0.06);
+  --glossy-lo:  rgba(255,255,255,0.03);
+  --rubber-bg:  #2a2826;
+  --rubber-hi:  #3a3835;
+  --rubber-lo:  #1a1816;
+}
+
+/* ── Dark Theme (default) ── */
+[data-theme="dark"] {
+  --bg-base:       #141210;
+  --bg-raised:     #1c1a18;
+  --bg-surface:    #2a2826;
+  --bg-inset:      #0e0c0a;
+  --bg-panel:      #22201e;
+
+  --text-primary:  #d8d4cc;
+  --text-secondary:#9a9690;
+  --text-muted:    #6a6662;
+
+  --border-deep:   #0a0908;
+  --border-mid:    #3a3835;
+  --border-subtle: #2a2826;
+  --border-hi:     #4a4845;
+
+  --glow-color:    rgba(255,255,255,0.06);
+  --clear-glass:   rgba(255,255,255,0.08);
+
+  --shadow-deep:   0 4px 0 #0a0908, 0 8px 24px rgba(0,0,0,0.5);
+  --shadow-inset:  inset 0 1px 4px rgba(0,0,0,0.6);
+}
+
+/* ── Light Theme ── */
+[data-theme="light"] {
+  --bg-base:       #f5f0e8;
+  --bg-raised:     #ffffff;
+  --bg-surface:    #f0ece4;
+  --bg-inset:      #e8e4dc;
+  --bg-panel:      #faf6ee;
+
+  --text-primary:  #2a2826;
+  --text-secondary:#6a6662;
+  --text-muted:    #9a9690;
+
+  --border-deep:   #b8b4ac;
+  --border-mid:    #c8c4bc;
+  --border-subtle: #d8d4cc;
+  --border-hi:     #e8e4dc;
+
+  --glow-color:    rgba(0,0,0,0.04);
+  --clear-glass:   rgba(255,255,255,0.5);
+
+  --shadow-deep:   0 4px 0 #b8b4ac, 0 8px 24px rgba(0,0,0,0.08);
+  --shadow-inset:  inset 0 1px 4px rgba(0,0,0,0.08);
+
+  --rubber-bg:  #c8c4bc;
+  --rubber-hi:  #d8d4cc;
+  --rubber-lo:  #b8b4ac;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   0b. RESET & BASE
+   ══════════════════════════════════════════════════════════════ */
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:14px; }
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-ui);
+  font-weight: 400;
+  line-height: 1.6;
+  padding: 0 0 80px;
+  transition: background 0.3s, color 0.3s;
+}
+::selection { background: var(--blue-info); color: #fff; }
+.sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   1. LAYOUT & NAVIGATION
+   ══════════════════════════════════════════════════════════════ */
+
+.dir-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--bg-raised);
+  border-bottom: 1px solid var(--border-subtle);
+  display: flex; gap: 0; overflow-x: auto;
+  scrollbar-width: none;
+  box-shadow: 0 1px 0 var(--glow-color);
+}
+.dir-nav::-webkit-scrollbar { display: none; }
+.dir-nav a {
+  display: inline-block; padding: 10px 14px;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-muted); text-decoration: none;
+  white-space: nowrap; border-right: 1px solid var(--border-subtle);
+  transition: color 0.15s, background 0.15s;
+}
+.dir-nav a:hover { color: var(--amber); background: var(--glow-color); }
+
+.theme-toggle-wrap {
+  margin-left: auto; display: flex; align-items: center; gap: 6px; padding: 0 14px;
+  flex-shrink: 0;
+}
+.theme-toggle-wrap span {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-muted);
+}
+.theme-toggle {
+  width: 40px; height: 20px; border-radius: 10px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  cursor: pointer; position: relative; flex-shrink: 0;
+  box-shadow: var(--shadow-inset);
+}
+.theme-toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--blue-info);
+  transition: left 0.2s var(--snap-fast);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+[data-theme="light"] .theme-toggle-thumb { left: 22px; background: var(--amber); }
+
+.page-header {
+  padding: 48px 40px 32px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.page-header .eyebrow {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  letter-spacing: 3px; color: var(--amber); margin-bottom: 12px;
+}
+.page-header h1 {
+  font-family: var(--font-display); font-size: 28px; font-weight: 400;
+  color: var(--text-primary); letter-spacing: 2px; margin-bottom: 8px;
+}
+.page-header .subtitle {
+  font-family: var(--font-ui); font-size: 12px; font-weight: 400;
+  color: var(--text-secondary); max-width: 760px;
+}
+
+.section { padding: 48px 40px 0; }
+.section + .section { margin-top: 8px; }
+.section-header {
+  display: flex; align-items: baseline; gap: 14px;
+  margin-bottom: 28px; padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.section-header .num {
+  font-family: var(--font-display); font-size: 11px;
+  color: var(--amber); opacity: 0.6;
+}
+.section-header h2 {
+  font-family: var(--font-display); font-size: 12px; font-weight: 400;
+  letter-spacing: 2px; color: var(--text-primary);
+}
+.section-header .desc {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  color: var(--text-muted); letter-spacing: 1px; margin-left: auto;
+}
+
+.component-row { display: flex; gap: 36px; flex-wrap: wrap; margin-bottom: 36px; }
+.component-block { display: flex; flex-direction: column; gap: 10px; }
+.component-label {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 600;
+  letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;
+}
+.component-spec {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 400;
+  color: var(--text-muted); letter-spacing: 1px; margin-top: 4px;
+  max-width: 200px; line-height: 1.8;
+}
+.spec-table {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 400;
+  color: var(--text-muted); letter-spacing: 1px;
+  border-collapse: collapse; margin-top: 4px;
+}
+.spec-table td { padding: 2px 8px 2px 0; vertical-align: top; }
+.spec-table td:first-child { color: var(--amber); white-space: nowrap; }
+.divider { height: 1px; background: var(--border-subtle); margin: 40px 0 0; }
+.flex-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+.flex-col { display: flex; flex-direction: column; gap: 8px; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   A. BUTTONS & PRESSABLE CONTROLS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── A1: Push Button (mechanical tactile switch) ── */
+.push-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2px;
+  font-family: var(--font-mono); font-size: 10px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-primary);
+  background: linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  border: none; border-radius: var(--radius-md); cursor: pointer;
+  position: relative; outline: none; user-select: none;
+  height: 36px; min-width: 64px; padding: 0 16px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--border-hi), inset 0 -1px 0 #111;
+  transition: transform 0.07s ease, box-shadow 0.07s ease, color 0.12s ease;
+}
+.push-btn:hover { color: #fff; }
+.push-btn:active, .push-btn.pressed {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--border-deep), inset 0 1px 0 #1a1a1a, inset 0 -1px 0 #111;
+}
+.push-btn.active { color: var(--amber); }
+.push-btn.active::after {
+  content: ''; position: absolute; bottom: 5px;
+  left: 50%; transform: translateX(-50%);
+  width: 20px; height: 2px; background: var(--amber);
+  border-radius: 1px; box-shadow: 0 0 6px var(--amber-glow);
+}
+.push-btn.state-amber { color: var(--amber); border-top: 1px solid rgba(245,166,35,0.2); }
+.push-btn.disabled, .push-btn[disabled] { opacity: 0.35; pointer-events: none; }
+.push-btn.error { color: var(--red-alert); border-top: 1px solid rgba(204,34,0,0.2); }
+.push-btn.round { border-radius: 50%; width: 44px; height: 44px; min-width: auto; padding: 0; }
+/* Sizes */
+.push-btn.xs { height: 26px; min-width: 36px; font-size: 9px; padding: 0 10px; }
+.push-btn.sm { height: 32px; min-width: 48px; padding: 0 12px; }
+.push-btn.lg { height: 40px; min-width: 80px; font-size: 11px; padding: 0 20px; }
+.push-btn.xl { height: 44px; min-width: 96px; font-size: 12px; padding: 0 24px; }
+[data-theme="light"] .push-btn {
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.6), inset 0 -1px 0 var(--border-mid);
+}
+
+/* ── A2: Gel Button (glossy polycarbonate) ── */
+.gel-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 2px;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-primary);
+  background: linear-gradient(180deg, var(--clear-glass), transparent 50%),
+              linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  border: none; border-radius: var(--radius-md); cursor: pointer;
+  position: relative; outline: none; user-select: none;
+  height: 38px; min-width: 64px; padding: 0 16px;
+  box-shadow: 0 3px 0 var(--border-deep), inset 0 1px 0 var(--glossy-hi);
+  transition: transform 0.07s var(--snap-fast), box-shadow 0.07s var(--snap-fast);
+}
+.gel-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--border-deep), inset 0 1px 0 transparent;
+}
+.gel-btn.active { color: var(--blue-info); }
+.gel-btn.active::after {
+  content: ''; position: absolute; bottom: 5px;
+  left: 50%; transform: translateX(-50%);
+  width: 18px; height: 2px; background: var(--blue-info); border-radius: 1px;
+}
+.gel-btn.blue { color: var(--blue-info); }
+.gel-btn.green { color: var(--green-on); }
+.gel-btn.pink { color: var(--pink-action); }
+.gel-btn.xs { height: 28px; min-width: 44px; font-size: 9px; padding: 0 10px; }
+.gel-btn.sm { height: 32px; min-width: 52px; font-size: 10px; padding: 0 12px; }
+.gel-btn.lg { height: 44px; min-width: 80px; font-size: 13px; padding: 0 20px; }
+.gel-btn[disabled] { opacity: 0.4; pointer-events: none; }
+
+/* ── A3: Rubber Button (soft-touch matte) ── */
+.rubber-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 600;
+  letter-spacing: 1px; color: var(--text-secondary);
+  background: linear-gradient(180deg, var(--rubber-hi), var(--rubber-bg));
+  border: none; border-radius: var(--radius-pill); cursor: pointer;
+  height: 34px; min-width: 56px; padding: 0 14px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.08);
+  transition: transform 0.07s var(--snap-fast), box-shadow 0.07s var(--snap-fast);
+}
+.rubber-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--border-deep);
+}
+.rubber-btn.active { color: var(--green-on); background: linear-gradient(180deg,#2a3a2a,#1a2a1a); }
+[data-theme="light"] .rubber-btn.active { background: linear-gradient(180deg,#c0dcc0,#a0cca0); }
+.rubber-btn.xs { height: 24px; min-width: 40px; font-size: 8px; padding: 0 8px; }
+.rubber-btn.sm { height: 28px; min-width: 48px; font-size: 9px; padding: 0 10px; }
+
+/* ── A4: Clear/Glass Button (translucent) ── */
+.clear-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-secondary);
+  background: var(--clear-glass);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  cursor: pointer; backdrop-filter: blur(4px);
+  height: 36px; min-width: 60px; padding: 0 12px;
+  transition: background 0.15s, border-color 0.15s;
+}
+.clear-btn:hover { background: var(--glossy-md); border-color: var(--border-mid); }
+.clear-btn:active { transform: translateY(1px); }
+.clear-btn.active { border-color: var(--blue-info); color: var(--blue-info); }
+
+/* ── A5: Keypad Button (Nokia number key) ── */
+.keypad-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-size: 16px; font-weight: 400;
+  color: var(--text-primary);
+  background: linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  border: none; border-radius: var(--radius-sm); cursor: pointer;
+  width: 48px; height: 44px; position: relative;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--glossy-hi);
+  transition: transform 0.05s var(--snap-fast), box-shadow 0.05s var(--snap-fast);
+}
+.keypad-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--border-deep);
+}
+.keypad-btn .kbd-letters {
+  font-family: var(--font-ui); font-size: 7px; color: var(--text-muted);
+  letter-spacing: 1px; position: absolute; bottom: 3px;
+}
+.keypad-btn.special { background: var(--rubber-bg); font-size: 12px; }
+.keypad-btn.call {
+  background: linear-gradient(180deg, #228833, #116622);
+  color: #fff; font-size: 10px; font-family: var(--font-ui); font-weight: 600;
+}
+
+/* ── A6: REC Button (concave red) ── */
+.rec-btn {
+  width: 52px; height: 52px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #e83300, #7a0000 75%);
+  border: none; outline: none; cursor: pointer; position: relative;
+  box-shadow: 0 0 0 3px var(--bg-raised), 0 0 0 5px #333,
+              0 3px 0 var(--border-deep), inset 0 1px 0 #ff4422;
+  transition: transform 0.07s, box-shadow 0.07s;
+}
+.rec-btn:active {
+  transform: scale(0.94);
+  box-shadow: 0 0 0 3px var(--bg-raised), 0 0 0 5px #333,
+              0 1px 0 var(--border-deep), inset 0 1px 0 #881100;
+}
+.rec-btn.recording {
+  box-shadow: 0 0 0 3px var(--bg-raised), 0 0 0 5px rgba(204,34,0,0.4),
+              0 3px 0 var(--border-deep), inset 0 1px 0 #ff4422, 0 0 18px rgba(204,34,0,0.4);
+}
+.rec-btn .rec-inner {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%) scale(0);
+  width: 18px; height: 18px; background: #fff;
+  border-radius: 3px; transition: transform 0.15s ease; opacity: 0.9;
+}
+.rec-btn.recording .rec-inner {
+  transform: translate(-50%,-50%) scale(1);
+  border-radius: 4px; background: #ffdddd;
+}
+
+/* ── A7: Function Grid Button ── */
+.fn-grid { display: grid; gap: 8px; }
+.fn-grid.cols-2 { grid-template-columns: repeat(2, 1fr); }
+.fn-grid.cols-3 { grid-template-columns: repeat(3, 1fr); }
+.fn-btn {
+  height: 52px; background: var(--bg-surface);
+  border: 1px solid var(--border-deep); border-radius: var(--radius-md);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  flex-direction: column; gap: 4px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--border-hi);
+  transition: transform 0.07s, box-shadow 0.07s, background 0.1s;
+  color: var(--text-secondary); outline: none;
+}
+.fn-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--border-deep); background: var(--bg-panel);
+}
+.fn-btn.fn-active { background: #1c1a14; border-color: #3a3000; color: var(--amber); }
+.fn-btn svg { width: 20px; height: 20px; flex-shrink: 0; }
+.fn-btn span { font-size: 8px; letter-spacing: 1.5px; color: inherit; text-transform: uppercase; }
+
+/* ── A8: Icon Button ── */
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: var(--radius-md);
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  cursor: pointer; color: var(--text-secondary); font-size: 14px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--glossy-hi);
+  transition: transform 0.07s var(--snap-fast), box-shadow 0.07s, color 0.12s;
+}
+.icon-btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 0 var(--border-deep);
+}
+.icon-btn:hover { color: var(--text-primary); }
+.icon-btn.active { color: var(--amber); border-color: rgba(245,166,35,0.3); }
+.icon-btn.round { border-radius: 50%; }
+.icon-btn.sm { width: 28px; height: 28px; font-size: 12px; }
+.icon-btn.lg { width: 44px; height: 44px; font-size: 18px; }
+
+/* ── A9: Segmented Control (DIP switch bank) ── */
+.segmented {
+  display: inline-flex; background: var(--bg-inset);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  padding: 3px; box-shadow: var(--shadow-inset);
+}
+.segmented-item {
+  padding: 6px 14px; border: none; background: transparent;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-muted); cursor: pointer;
+  border-radius: calc(var(--radius-md) - 2px);
+  transition: all 0.15s var(--snap-fast);
+}
+.segmented-item:hover { color: var(--text-primary); }
+.segmented-item.active {
+  background: var(--bg-surface); color: var(--amber);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2), inset 0 1px 0 var(--glossy-hi);
+}
+
+/* ── Keypad Grid container ── */
+.keypad {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+  padding: 12px; background: var(--bg-raised);
+  border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-deep); max-width: 168px;
+}
+.keypad .keypad-btn { width: 100%; height: 40px; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   B. TOGGLE & SWITCH CONTROLS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── B1: Toggle Switch (camera-style) ── */
+.toggle-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 6px; cursor: pointer;
+}
+.toggle-track {
+  width: 46px; height: 22px; border-radius: 11px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; transition: background 0.2s, border-color 0.2s;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.4);
+}
+.toggle-track.on { background: #0d1a0d; border-color: #1a4a1a; }
+[data-theme="light"] .toggle-track.on { background: #d0f0d0; border-color: #88cc88; }
+.toggle-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 16px; height: 16px; border-radius: 50%;
+  background: linear-gradient(155deg, #585858, #2a2a2a);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 #686868;
+  transition: left 0.15s var(--snap-fast), background 0.2s, box-shadow 0.2s;
+}
+[data-theme="light"] .toggle-thumb {
+  background: linear-gradient(155deg, #eee, #ccc);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 #fff;
+}
+.toggle-track.on .toggle-thumb {
+  left: 26px;
+  background: linear-gradient(155deg, var(--green-hi), var(--green-on));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.5), inset 0 1px 0 #aaff99, 0 0 8px var(--green-glow);
+}
+.toggle-label {
+  font-size: 8px; letter-spacing: 2px; color: var(--text-muted);
+  transition: color 0.2s; text-transform: uppercase;
+  font-family: var(--font-ui); font-weight: 500;
+}
+.toggle-track.on ~ .toggle-label { color: var(--green-on); }
+
+/* ── B2: Slide Switch (iPod/phone style) ── */
+.slide-switch { display: flex; flex-direction: column; align-items: center; gap: 4px; cursor: pointer; user-select: none; }
+.slide-track {
+  width: 52px; height: 26px; border-radius: 13px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; transition: background 0.2s, border-color 0.2s;
+  box-shadow: var(--shadow-inset);
+}
+.slide-track.on { background: linear-gradient(180deg, #1a2a1a, #0d1a0d); border-color: var(--green-on); }
+[data-theme="light"] .slide-track.on { background: linear-gradient(180deg, #c0e8c0, #a0d8a0); border-color: #66bb66; }
+.slide-thumb {
+  position: absolute; top: 2px; left: 2px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 var(--glossy-hi);
+  transition: left 0.18s var(--snap-fast), background 0.2s;
+}
+.slide-track.on .slide-thumb {
+  left: 28px;
+  background: linear-gradient(155deg, #66ff66, #228833);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), 0 0 8px var(--green-glow);
+}
+.slide-label {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 500;
+  letter-spacing: 1px; color: var(--text-muted);
+}
+.slide-track.on ~ .slide-label { color: var(--green-on); }
+
+/* ── B3: Rocker Switch ── */
+.rocker {
+  display: flex; flex-direction: column;
+  width: 36px; height: 52px; border-radius: var(--radius-sm);
+  overflow: hidden; border: 1px solid var(--border-deep);
+  box-shadow: 0 1px 0 var(--glossy-hi);
+}
+.rocker-btn {
+  flex: 1; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  border: none; cursor: pointer; color: var(--text-muted); font-size: 10px;
+  transition: background 0.1s;
+}
+.rocker-btn:active { background: var(--bg-inset); color: var(--text-primary); }
+.rocker-btn.plus { border-bottom: 1px solid var(--border-deep); }
+
+/* ── B4: Power Toggle (industrial) ── */
+.power-toggle {
+  width: 72px; height: 34px; border-radius: 20px;
+  position: relative; background: #0b0b0b;
+  border: 1px solid #303030; box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+}
+.power-toggle-thumb {
+  position: absolute; top: 4px; left: 4px;
+  width: 24px; height: 24px; border-radius: 50%;
+  background: linear-gradient(180deg, #666, #2a2a2a);
+  box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.35);
+  transition: left 180ms var(--snap-fast), background 180ms;
+}
+.power-toggle.on { background: #0d1a0d; }
+.power-toggle.on .power-toggle-thumb {
+  left: 42px;
+  background: linear-gradient(180deg, #88ff88, #287128);
+  box-shadow: 0 0 12px var(--green-glow);
+}
+
+/* ── B5: DIP Switch Row ── */
+.dip-row { display: flex; gap: 4px; padding: 6px 8px; background: var(--bg-inset); border-radius: var(--radius-sm); border: 1px solid var(--border-subtle); }
+.dip-switch {
+  width: 18px; height: 30px; border-radius: 3px;
+  background: var(--bg-surface); border: 1px solid var(--border-mid);
+  position: relative; cursor: pointer;
+  box-shadow: inset 0 1px 0 var(--glossy-hi);
+}
+.dip-lever {
+  position: absolute; left: 3px; right: 3px; height: 12px;
+  border-radius: 2px; background: linear-gradient(180deg, #888, #555);
+  transition: top 0.12s var(--snap-fast); top: 14px;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+}
+.dip-switch.on .dip-lever { top: 3px; background: linear-gradient(180deg, var(--green-hi), var(--green-on)); }
+
+/* ── B6: Checkbox (LED-style) ── */
+.led-checkbox {
+  display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none;
+}
+.led-check-box {
+  width: 18px; height: 18px; border-radius: 3px;
+  background: var(--bg-inset); border: 1px solid var(--border-mid);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  transition: background 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.led-check-box.checked {
+  background: rgba(245,166,35,0.15); border-color: var(--amber);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.2), 0 0 8px var(--amber-glow);
+}
+.led-check-mark {
+  width: 8px; height: 8px; border-radius: 2px;
+  background: transparent; transition: background 0.15s;
+}
+.led-check-box.checked .led-check-mark { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+.led-check-label { font-family: var(--font-ui); font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.5px; }
+
+/* ── B7: Radio Button (selector dot) ── */
+.radio-wrap { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+.radio-dot-outer {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--bg-inset); border: 2px solid var(--border-mid);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.radio-dot-inner {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: transparent; transition: background 0.15s, box-shadow 0.15s;
+}
+.radio-dot-outer.selected { border-color: var(--amber); box-shadow: inset 0 1px 2px rgba(0,0,0,0.2), 0 0 6px var(--amber-glow); }
+.radio-dot-outer.selected .radio-dot-inner { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+.radio-label { font-family: var(--font-ui); font-size: 11px; font-weight: 500; color: var(--text-secondary); letter-spacing: 0.5px; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   C. ROTARY & DIAL CONTROLS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── C1: Rotary Encoder (industrial knurled knob) ── */
+.rotary-wrap { display: flex; align-items: center; gap: 24px; }
+.rotary {
+  width: 100px; height: 100px; border-radius: 50%;
+  position: relative; cursor: pointer;
+  background: radial-gradient(circle at 35% 30%, #4b4b4b, #1b1b1b 70%);
+  border: 2px solid #0c0c0c;
+  box-shadow: 0 4px 0 #090909, inset 0 1px 0 #666, 0 8px 20px rgba(0,0,0,0.4);
+  transition: transform 220ms var(--snap-fast);
+}
+.rotary:hover { transform: rotate(8deg); }
+.rotary::before {
+  content: ''; position: absolute; inset: -8px; border-radius: 50%;
+  background: repeating-conic-gradient(#202020 0deg 4deg, #0d0d0d 4deg 8deg);
+  z-index: -1;
+}
+.rotary-notch {
+  position: absolute; top: 10px; left: 50%;
+  width: 4px; height: 20px; transform: translateX(-50%);
+  border-radius: 10px;
+  background: linear-gradient(180deg, #ffc14d, #b56b00);
+  box-shadow: 0 0 14px var(--amber-glow);
+}
+.rotary-center {
+  position: absolute; inset: 22px; border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #2c2c2c, #141414);
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid #2c2c2c;
+}
+.rotary-text { font-family: var(--font-display); color: var(--amber); font-size: 14px; }
+
+/* ── C2: Mode Dial (camera top) ── */
+.mode-dial-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.mode-dial-outer {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: #111; border: 2px solid #0a0a0a;
+  box-shadow: 0 4px 0 #080808, 0 6px 12px rgba(0,0,0,0.6);
+  position: relative; display: flex; align-items: center; justify-content: center;
+}
+.mode-dial-body {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #363636, #1a1a1a 70%);
+  border: 2px solid #0a0a0a; position: relative; cursor: pointer;
+  box-shadow: 0 2px 0 #0a0a0a, inset 0 1px 0 #444;
+}
+.mode-dial-notch {
+  position: absolute; top: 6px; left: 50%;
+  width: 4px; height: 18px;
+  background: linear-gradient(to bottom, var(--amber), var(--amber-dim));
+  border-radius: 2px; transform: translateX(-50%);
+  box-shadow: 0 0 8px var(--amber-glow);
+  transition: transform 0.35s var(--spring);
+  z-index: 2;
+}
+.mode-dial-center {
+  position: absolute; inset: 20px; border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #2e2e2e, #161616);
+  border: 2px solid #111;
+  box-shadow: inset 0 1px 0 #3a3a3a, 0 1px 3px #000;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+}
+.mode-dial-label { font-family: var(--font-display); font-size: 13px; color: var(--amber); letter-spacing: 1px; line-height: 1; }
+.mode-dial-sub { font-size: 7px; letter-spacing: 1px; color: var(--text-muted); margin-top: 2px; font-family: var(--font-ui); }
+
+/* ── C3: Radial Dial (volume/tuning knob — 3 materials) ── */
+.radial-dial { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.radial-knob {
+  width: 80px; height: 80px; border-radius: 50%;
+  position: relative; cursor: grab; user-select: none;
+  background: linear-gradient(145deg, #3a3835, #1a1816);
+  border: 2px solid var(--border-mid);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+}
+.radial-knob:active { cursor: grabbing; }
+.radial-indicator {
+  position: absolute; width: 3px; height: 12px; border-radius: 2px;
+  top: 6px; left: 50%; margin-left: -1.5px;
+  background: var(--amber); transform-origin: 50% 34px;
+  box-shadow: 0 0 6px var(--amber-glow);
+}
+.radial-knob .knob-center {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3);
+}
+.radial-knob.variant-metal {
+  background: linear-gradient(145deg, #d8d6d0, #b8b6b0);
+  border-color: #a8a6a0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+.radial-knob.variant-glossy {
+  background: linear-gradient(145deg, var(--bg-surface), var(--bg-panel));
+  border-color: var(--border-mid);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 var(--glossy-hi);
+}
+.radial-value {
+  font-family: var(--font-display); font-size: 12px;
+  color: var(--text-primary); letter-spacing: 1px;
+}
+
+/* ── C4: Cylindrical Scroll Dial (camera parameter barrel) ── */
+.dial-cyl-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.dial-cyl-title { font-size: 8px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-ui); font-weight: 600; }
+.dial-cylinder {
+  width: 92px; height: 110px; background: #1e1e1e;
+  border-radius: var(--radius-sm); border: 1px solid #111;
+  overflow: hidden; position: relative; cursor: ns-resize; user-select: none;
+  box-shadow: inset 10px 0 16px rgba(0,0,0,0.5), inset -10px 0 16px rgba(0,0,0,0.5),
+              0 2px 0 var(--border-deep), inset 0 1px 0 #2a2a2a;
+}
+[data-theme="light"] .dial-cylinder { background: #e0dcd4; box-shadow: inset 10px 0 16px rgba(0,0,0,0.08), inset -10px 0 16px rgba(0,0,0,0.08), 0 2px 0 var(--border-deep); }
+.dial-knurl {
+  position: absolute; top: 0; bottom: 0; width: 13px; z-index: 3; pointer-events: none;
+  background: repeating-linear-gradient(to bottom, #252525 0px, #252525 2px, #0d0d0d 2px, #0d0d0d 5px);
+  border: 1px solid #0a0a0a;
+}
+[data-theme="light"] .dial-knurl { background: repeating-linear-gradient(to bottom, #ccc 0px, #ccc 2px, #aaa 2px, #aaa 5px); border-color: #999; }
+.dial-knurl.left { left: 0; border-radius: var(--radius-sm) 0 0 var(--radius-sm); box-shadow: inset -1px 0 4px rgba(0,0,0,0.4); }
+.dial-knurl.right { right: 0; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; box-shadow: inset 1px 0 4px rgba(0,0,0,0.4); }
+.dial-inner {
+  position: absolute; width: 100%; display: flex; flex-direction: column;
+  align-items: center; will-change: top;
+}
+.dial-tick {
+  height: 28px; width: 100%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 13px; font-weight: 400;
+  letter-spacing: 1px; color: var(--text-muted); flex-shrink: 0;
+  transition: color 0.1s, font-size 0.1s; padding: 0 16px;
+}
+.dial-tick.near { color: var(--text-secondary); }
+.dial-tick.active { color: var(--amber); font-size: 15px; font-weight: 500; }
+.dial-center-bar {
+  position: absolute; top: calc(50% - 1px); left: 14px; right: 14px;
+  height: 1px; background: var(--amber); opacity: 0.7; z-index: 4;
+  pointer-events: none; box-shadow: 0 0 8px var(--amber-glow);
+}
+.dial-vignette {
+  position: absolute; inset: 0; z-index: 5; pointer-events: none;
+  background: linear-gradient(to bottom, #1e1e1ef0 0%, transparent 35%, transparent 65%, #1e1e1ef0 100%);
+}
+[data-theme="light"] .dial-vignette { background: linear-gradient(to bottom, #e0dcd4f0 0%, transparent 35%, transparent 65%, #e0dcd4f0 100%); }
+
+/* ── C5: Cylindrical Dial Horizontal ── */
+.dial-h { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 100%; max-width: 190px; }
+.dial-h-body {
+  width: 168px; height: 44px; border-radius: 6px;
+  position: relative; cursor: ew-resize; user-select: none;
+  background: linear-gradient(180deg, #4a4845, #2a2826);
+  border: 1px solid var(--border-mid);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); overflow: hidden;
+}
+[data-theme="light"] .dial-h-body { background: linear-gradient(180deg, #d0cec8, #b0aea8); border-color: #aaa; }
+.dial-h-body .knurl-cross {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(75deg, transparent 0px, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px),
+    repeating-linear-gradient(-75deg, transparent 0px, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px);
+}
+.dial-h-body .dial-cap {
+  position: absolute; top: 0; left: 0; right: 0; height: 13px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12) 0%, transparent 100%);
+  border-bottom: 1px solid rgba(0,0,0,0.12); pointer-events: none;
+  border-radius: 6px 6px 0 0;
+}
+.dial-h-body .dial-badge {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  font-family: var(--font-display); font-size: 11px; letter-spacing: 1px;
+  color: var(--text-primary); z-index: 3; pointer-events: none;
+  background: var(--bg-surface); padding: 2px 8px; border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+}
+.dial-h-body.variant-silver {
+  background: linear-gradient(180deg, #d8d6d0, #b8b6b0);
+  border-color: #a8a6a0;
+}
+.dial-h-body.variant-chrome {
+  background: linear-gradient(180deg, #5a5855, #3a3835);
+  border-color: #666;
+}
+.dial-h-label { font-family: var(--font-ui); font-size: 7px; font-weight: 700; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
+
+/* ── C6: Cylindrical Dial Vertical (thumb wheel) ── */
+.dial-v-wrap { display: flex; flex-direction: column; align-items: center; position: relative; padding-bottom: 22px; }
+.dial-v-body {
+  width: 44px; height: 120px; border-radius: 6px;
+  position: relative; cursor: ns-resize; user-select: none;
+  background: linear-gradient(90deg, #4a4845, #2a2826);
+  border: 1px solid var(--border-mid);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3); overflow: hidden;
+}
+[data-theme="light"] .dial-v-body { background: linear-gradient(90deg, #d0cec8, #b0aea8); }
+.dial-v-body .knurl-cross {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(20deg, transparent 0px, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px),
+    repeating-linear-gradient(-20deg, transparent 0px, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 3px, transparent 3px, transparent 6px);
+}
+.dial-v-body .dial-badge {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  font-family: var(--font-display); font-size: 10px; color: var(--text-primary);
+  z-index: 3; pointer-events: none;
+  background: var(--bg-surface); padding: 2px 6px; border-radius: 3px;
+  border: 1px solid var(--border-subtle);
+}
+.dial-v-label { font-family: var(--font-ui); font-size: 7px; font-weight: 700; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; position: absolute; bottom: 0; }
+
+/* ── C7: Click Wheel (iPod) ── */
+.clickwheel-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.clickwheel {
+  width: 150px; height: 150px; border-radius: 50%;
+  background: linear-gradient(145deg, #3a3835, #1c1a18);
+  box-shadow: 0 4px 0 var(--border-deep), 0 8px 24px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+  position: relative; cursor: pointer;
+}
+[data-theme="light"] .clickwheel { background: linear-gradient(145deg, #e0ded8, #c8c6c0); }
+.clickwheel-center {
+  position: absolute; inset: 36px; border-radius: 50%;
+  background: linear-gradient(145deg, var(--bg-surface), var(--bg-panel));
+  border: 1px solid var(--border-deep);
+  box-shadow: inset 0 1px 0 var(--glossy-hi), 0 2px 4px rgba(0,0,0,0.3);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: transform 0.1s var(--snap-fast); z-index: 3;
+}
+.clickwheel-center:active { transform: scale(0.94); }
+.clickwheel-center span { font-family: var(--font-display); font-size: 8px; color: var(--blue-info); letter-spacing: 1px; }
+.clickwheel-btn {
+  position: absolute; border: none; background: transparent;
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-ui); font-size: 8px; font-weight: 600;
+  letter-spacing: 1px; color: var(--text-muted); transition: color 0.1s; z-index: 3;
+}
+.clickwheel-btn:hover { color: var(--text-primary); }
+.clickwheel-btn.menu { top: 16px; left: 50%; transform: translateX(-50%); }
+.clickwheel-btn.prev { left: 16px; top: 50%; transform: translateY(-50%); }
+.clickwheel-btn.next { right: 16px; top: 50%; transform: translateY(-50%); }
+.clickwheel-btn.playpause { bottom: 16px; left: 50%; transform: translateX(-50%); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   D. SLIDER & RANGE CONTROLS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── D1: Volume Slider ── */
+.slider-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 160px; }
+.slider-track {
+  width: 100%; height: 6px; border-radius: 3px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; cursor: pointer; box-shadow: var(--shadow-inset);
+}
+.slider-fill {
+  position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue-info), var(--green-on));
+  transition: width 0.1s var(--ease-out);
+}
+.slider-thumb {
+  position: absolute; top: 50%; width: 16px; height: 16px;
+  border-radius: 50%; transform: translate(-50%,-50%);
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 var(--glossy-hi);
+  cursor: grab; z-index: 2;
+}
+.slider-label { font-family: var(--font-ui); font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 1px; }
+.slider-value { font-family: var(--font-display); font-size: 11px; color: var(--blue-info); letter-spacing: 1px; }
+
+/* ── D2: Scrubber (playback position) ── */
+.scrubber-wrap { display: flex; flex-direction: column; gap: 4px; width: 200px; }
+.scrubber-track {
+  width: 100%; height: 6px; border-radius: 3px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; cursor: pointer; box-shadow: var(--shadow-inset);
+}
+.scrubber-fill {
+  position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px;
+  background: linear-gradient(90deg, var(--blue-info), var(--pink-action));
+}
+.scrubber-thumb {
+  position: absolute; top: 50%; width: 14px; height: 14px;
+  border-radius: 50%; transform: translate(-50%,-50%);
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 var(--glossy-hi);
+  z-index: 2; cursor: pointer;
+}
+.scrubber-time {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-muted);
+}
+
+/* ── D3: Range Slider (console fader, single) ── */
+.fader-h-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 180px; }
+.fader-h-track {
+  width: 100%; height: 8px; border-radius: 4px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; box-shadow: var(--shadow-inset);
+}
+.fader-h-fill {
+  position: absolute; top: 0; left: 0; height: 100%; border-radius: 3px;
+  background: var(--amber); transition: width 0.1s;
+}
+.fader-h-thumb {
+  position: absolute; top: 50%; width: 22px; height: 14px;
+  border-radius: 3px; transform: translate(-50%,-50%);
+  background: linear-gradient(180deg, #666, #333);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 #888;
+  cursor: grab; z-index: 2;
+}
+.fader-h-thumb::after {
+  content: ''; position: absolute; top: 50%; left: 4px; right: 4px;
+  height: 1px; background: #999; transform: translateY(-50%);
+}
+
+/* ── D4: Dual Range Slider ── */
+.dual-range-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 180px; }
+.dual-range-track {
+  width: 100%; height: 6px; border-radius: 3px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; box-shadow: var(--shadow-inset);
+}
+.dual-range-fill {
+  position: absolute; top: 0; height: 100%; border-radius: 2px;
+  background: var(--blue-info);
+}
+.dual-range-thumb {
+  position: absolute; top: 50%; width: 14px; height: 14px;
+  border-radius: 50%; transform: translate(-50%,-50%);
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 var(--glossy-hi);
+  cursor: grab; z-index: 2;
+}
+
+/* ── D5: Crossfader (DJ console) ── */
+.crossfader-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; width: 200px; }
+.crossfader-labels { display: flex; justify-content: space-between; width: 100%; font-family: var(--font-ui); font-size: 8px; font-weight: 600; color: var(--text-muted); letter-spacing: 1px; }
+.crossfader-track {
+  width: 100%; height: 10px; border-radius: 5px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; box-shadow: var(--shadow-inset);
+}
+.crossfader-center { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: var(--border-mid); }
+.crossfader-thumb {
+  position: absolute; top: 50%; width: 28px; height: 16px;
+  border-radius: 4px; transform: translate(-50%,-50%);
+  background: linear-gradient(180deg, #777, #444);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 #999;
+  cursor: grab; z-index: 2;
+}
+.crossfader-thumb::before, .crossfader-thumb::after {
+  content: ''; position: absolute; top: 4px; bottom: 4px; width: 1px; background: #999;
+}
+.crossfader-thumb::before { left: 8px; }
+.crossfader-thumb::after { right: 8px; }
+
+/* ── D6: Stepper (+/- with value) ── */
+.stepper-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.stepper {
+  display: flex; align-items: center; gap: 4px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); padding: 4px;
+  box-shadow: var(--shadow-inset);
+}
+.stepper-btn {
+  width: 24px; height: 24px; border-radius: 50%;
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  color: var(--text-primary); font-size: 12px; font-family: var(--font-ui); font-weight: 700;
+  transition: transform 0.07s;
+}
+.stepper-btn:active { transform: scale(0.9); }
+.stepper-value {
+  font-family: var(--font-mono); font-size: 18px;
+  color: var(--blue-info); letter-spacing: 1px;
+  min-width: 40px; text-align: center;
+}
+.stepper-label { font-family: var(--font-ui); font-size: 9px; font-weight: 500; color: var(--text-muted); letter-spacing: 1px; }
+
+/* ── D7: Vertical Fader (mixing console channel) ── */
+.fader-v-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.fader-v-track {
+  width: 10px; height: 140px; border-radius: 5px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  position: relative; box-shadow: var(--shadow-inset);
+}
+.fader-v-fill {
+  position: absolute; bottom: 0; left: 0; width: 100%; border-radius: 4px;
+  background: linear-gradient(0deg, var(--green-on), var(--amber));
+}
+.fader-v-thumb {
+  position: absolute; left: 50%; width: 20px; height: 10px;
+  border-radius: 2px; transform: translate(-50%,-50%);
+  background: linear-gradient(90deg, #555, #888, #555);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 1px 0 #aaa;
+  cursor: grab; z-index: 2;
+}
+.fader-v-thumb::after {
+  content: ''; position: absolute; left: 50%; top: 3px; bottom: 3px;
+  width: 1px; background: #ccc; transform: translateX(-50%);
+}
+.fader-v-label { font-family: var(--font-ui); font-size: 8px; font-weight: 600; letter-spacing: 1px; color: var(--text-muted); }
+.fader-v-value { font-family: var(--font-display); font-size: 10px; color: var(--amber); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   E. DISPLAY & READOUT COMPONENTS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── E1: Signal Display (large OLED value) ── */
+.signal-display {
+  background: linear-gradient(180deg, #080808, #111);
+  border: 1px solid #1f1f1f; border-radius: var(--radius-md);
+  padding: 16px;
+  box-shadow: inset 0 1px 8px rgba(0,0,0,0.9), inset 0 0 0 1px #181818;
+}
+[data-theme="light"] .signal-display {
+  background: linear-gradient(180deg, var(--bg-inset), #ddd);
+  border-color: var(--border-mid);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.1);
+}
+.signal-display-label { font-size: 9px; color: var(--text-muted); letter-spacing: 3px; font-family: var(--font-ui); font-weight: 500; margin-bottom: 8px; }
+.signal-display-value {
+  font-family: var(--font-display); font-size: 34px; color: var(--amber);
+  text-shadow: 0 0 14px var(--amber-glow);
+}
+
+/* ── E2: Camera Readout (multiple variants) ── */
+.readout {
+  background: var(--bg-inset); border: 1px solid #1e1e1e;
+  border-radius: var(--radius-md); padding: 8px 14px 10px;
+  display: inline-flex; flex-direction: column; gap: 3px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.6), inset 0 0 0 1px #181818;
+}
+[data-theme="light"] .readout { border-color: var(--border-mid); box-shadow: var(--shadow-inset); }
+.readout-label { font-family: var(--font-mono); font-size: 8px; letter-spacing: 3px; color: var(--text-muted); text-transform: uppercase; }
+.readout-value {
+  font-family: var(--font-display); font-size: 24px; font-weight: 400;
+  color: var(--amber); line-height: 1; letter-spacing: 1px;
+  text-shadow: 0 0 16px var(--amber-glow);
+}
+.readout-unit { font-family: var(--font-display); font-size: 12px; color: var(--amber-dim); margin-left: 3px; }
+.readout.sm .readout-value { font-size: 16px; }
+.readout.lg .readout-value { font-size: 32px; }
+.readout.wide { min-width: 200px; }
+.readout.timecode .readout-value { font-size: 20px; letter-spacing: 2px; }
+.readout.inline { flex-direction: row; align-items: baseline; gap: 8px; padding: 5px 10px; }
+.readout.inline .readout-label { font-size: 8px; }
+.readout.inline .readout-value { font-size: 14px; }
+
+/* ── E3: LCD Readout (VT323 pixel-font variant) ── */
+.lcd-readout {
+  display: inline-flex; flex-direction: column; gap: 3px;
+  padding: 8px 14px 10px; background: var(--bg-inset);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-inset);
+}
+.lcd-label { font-family: var(--font-ui); font-size: 8px; font-weight: 500; letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; }
+.lcd-value { font-family: var(--font-lcd); font-size: 28px; color: var(--blue-info); line-height: 1; letter-spacing: 1px; }
+.lcd-unit { font-family: var(--font-ui); font-size: 10px; font-weight: 500; color: var(--text-muted); margin-left: 2px; }
+.lcd-readout.green .lcd-value { color: var(--green-on); }
+.lcd-readout.amber .lcd-value { color: var(--amber); }
+.lcd-readout.pink .lcd-value { color: var(--pink-action); }
+.lcd-readout.red .lcd-value { color: var(--red-alert); }
+
+/* ── E4: Timecode Display (SMPTE) ── */
+.timecode-display {
+  background: var(--bg-inset); border: 1px solid #1e1e1e;
+  border-radius: var(--radius-md); padding: 6px 16px;
+  display: inline-flex; align-items: baseline;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.6);
+}
+.tc-segment {
+  font-family: var(--font-display); font-size: 22px;
+  color: var(--amber); letter-spacing: 2px;
+  text-shadow: 0 0 12px var(--amber-glow);
+  font-variant-numeric: tabular-nums;
+}
+.tc-colon { font-family: var(--font-display); font-size: 18px; color: var(--amber-dim); padding: 0 1px; position: relative; top: -1px; }
+@keyframes tcBlink { 0%,49%{opacity:1} 50%,100%{opacity:0.15} }
+.tc-blink { animation: tcBlink 1s step-end infinite; }
+
+/* ── E5: Resource Monitor ── */
+.resource-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.resource {
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-inset));
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 14px;
+}
+.resource-name { font-size: 9px; color: var(--text-muted); letter-spacing: 2px; font-family: var(--font-ui); font-weight: 500; }
+.resource-value { margin-top: 8px; color: var(--amber); font-family: var(--font-display); font-size: 24px; }
+.resource-bar { margin-top: 10px; height: 6px; border-radius: 99px; overflow: hidden; background: var(--bg-inset); }
+.resource-fill { height: 100%; background: linear-gradient(90deg, var(--green-hi), var(--green-on)); border-radius: 99px; }
+
+/* ── E6: 7-Segment Display ── */
+.seven-seg {
+  display: inline-flex; gap: 4px; padding: 10px 16px;
+  background: var(--bg-inset); border: 1px solid #1e1e1e;
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.7);
+}
+.seven-seg-digit {
+  font-family: var(--font-lcd); font-size: 42px; line-height: 1;
+  color: var(--red-alert); text-shadow: 0 0 12px var(--red-glow);
+  min-width: 24px; text-align: center;
+}
+.seven-seg-colon { font-family: var(--font-lcd); font-size: 42px; color: var(--red-alert); opacity: 0.7; line-height: 1; }
+.seven-seg.green .seven-seg-digit { color: var(--green-hi); text-shadow: 0 0 12px var(--green-glow); }
+.seven-seg.green .seven-seg-colon { color: var(--green-hi); }
+.seven-seg.amber .seven-seg-digit { color: var(--amber); text-shadow: 0 0 12px var(--amber-glow); }
+.seven-seg.amber .seven-seg-colon { color: var(--amber); }
+
+/* ── E7: Dot Matrix Display ── */
+.dot-matrix {
+  padding: 8px 16px; background: var(--bg-inset);
+  border: 1px solid #1e1e1e; border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.7); overflow: hidden;
+}
+.dot-matrix-text {
+  font-family: var(--font-lcd); font-size: 20px; letter-spacing: 3px;
+  color: var(--green-hi); text-shadow: 0 0 8px var(--green-glow);
+  white-space: nowrap;
+  animation: marquee 8s linear infinite;
+}
+@keyframes marquee {
+  0% { transform: translateX(100%); }
+  100% { transform: translateX(-100%); }
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   F. METER & VISUALIZATION
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── F1: Signal Meter (spectrum bars) ── */
+.signal-meter { display: flex; align-items: flex-end; gap: 6px; height: 100px; }
+.signal-bar {
+  width: 16px; border-radius: 3px 3px 0 0;
+  background: linear-gradient(180deg, var(--green-hi), var(--green-on));
+  box-shadow: 0 0 8px rgba(102,255,102,0.15);
+  animation: fluctuate 2s infinite ease-in-out;
+}
+@keyframes fluctuate { 0%,100%{filter:brightness(1)} 50%{filter:brightness(1.25)} }
+
+/* ── F2: EV Meter (vertical) ── */
+.ev-meter { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.ev-sign { font-size: 10px; color: var(--text-muted); letter-spacing: 1px; font-family: var(--font-ui); }
+.ev-track {
+  width: 18px; height: 120px; background: var(--bg-inset);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+  position: relative; overflow: hidden; box-shadow: inset 1px 0 3px rgba(0,0,0,0.4);
+}
+.ev-zero-line { position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #555; z-index: 2; }
+.ev-fill-bar {
+  position: absolute; left: 3px; right: 3px;
+  background: var(--amber); border-radius: 1px; z-index: 1;
+}
+.ev-readout { font-family: var(--font-display); font-size: 10px; color: var(--amber); letter-spacing: 1px; }
+
+/* ── F3: VU Meter (bars) ── */
+.vu-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.vu-meter { display: flex; align-items: flex-end; gap: 4px; height: 80px; }
+.vu-bar {
+  width: 12px; border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg, #ff4444, #ffaa00 50%, #44cc66);
+  min-height: 4px;
+}
+.vu-label { font-family: var(--font-ui); font-size: 8px; font-weight: 500; letter-spacing: 2px; color: var(--text-muted); }
+
+/* ── F4: Equalizer Bars ── */
+.eq-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.eq-bars { display: flex; align-items: flex-end; gap: 3px; height: 90px; }
+.eq-band {
+  width: 14px; border-radius: 2px 2px 0 0;
+  background: linear-gradient(180deg, var(--blue-info), #2255aa);
+  min-height: 4px;
+}
+.eq-band.warm { background: linear-gradient(180deg, var(--pink-action), #994466); }
+.eq-band.bright { background: linear-gradient(180deg, var(--gold-warm), #997722); }
+
+/* ── F5: Histogram (canvas frame) ── */
+.histogram-wrap {
+  background: #0a0a0a; border: 1px solid #1e1e1e;
+  border-radius: var(--radius-sm); padding: 2px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.6);
+}
+.histogram-canvas { display: block; border-radius: 2px; }
+
+/* ── F6: Waveform (canvas frame) ── */
+.waveform-wrap {
+  background: #0a0a0a; border: 1px solid #1e1e1e;
+  border-radius: var(--radius-sm); padding: 2px;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.6);
+}
+.waveform-canvas { display: block; border-radius: 2px; }
+
+/* ── F7: Progress Bar ── */
+.progress-wrap { display: flex; flex-direction: column; gap: 4px; width: 180px; }
+.progress-track {
+  width: 100%; height: 8px; border-radius: 4px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  overflow: hidden; box-shadow: var(--shadow-inset);
+}
+.progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--blue-info), var(--green-on)); transition: width 0.3s var(--ease-out); }
+.progress-label {
+  display: flex; justify-content: space-between;
+  font-family: var(--font-ui); font-size: 9px; font-weight: 500;
+  color: var(--text-muted); letter-spacing: 1px;
+}
+
+/* ── F8: Signal Strength Bars ── */
+.signal-bars { display: flex; align-items: flex-end; gap: 3px; height: 24px; }
+.signal-strength-bar { width: 4px; border-radius: 1px; background: var(--green-on); transition: opacity 0.2s; }
+.signal-strength-bar:nth-child(1) { height: 6px; }
+.signal-strength-bar:nth-child(2) { height: 10px; }
+.signal-strength-bar:nth-child(3) { height: 14px; }
+.signal-strength-bar:nth-child(4) { height: 18px; }
+.signal-strength-bar:nth-child(5) { height: 22px; }
+.signal-strength-bar.off { opacity: 0.15; background: var(--text-muted); }
+
+/* ── F9: Battery Icon ── */
+.battery-icon { display: inline-flex; align-items: center; gap: 2px; }
+.battery-body {
+  width: 28px; height: 14px; border: 2px solid var(--border-mid);
+  border-radius: 3px; padding: 2px; position: relative;
+}
+.battery-body::after {
+  content: ''; position: absolute; right: -5px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 6px; background: var(--border-mid); border-radius: 0 1px 1px 0;
+}
+.battery-fill { height: 100%; border-radius: 1px; background: var(--green-on); transition: width 0.3s, background 0.3s; }
+.battery-fill.medium { background: var(--amber); }
+.battery-fill.low { background: var(--red-alert); }
+
+/* ── F10: Level Indicator ── */
+.level-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.level-bar {
+  width: 160px; height: 8px; background: var(--bg-inset);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-pill);
+  position: relative; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.4);
+}
+.level-fill {
+  position: absolute; top: 1px; bottom: 1px;
+  background: var(--amber); border-radius: var(--radius-pill);
+  transition: left 0.1s, width 0.1s;
+}
+.level-center-mark { position: absolute; top: 0; bottom: 0; left: 50%; width: 1px; background: #444; z-index: 2; }
+.level-text { font-size: 8px; color: var(--text-muted); letter-spacing: 2px; font-family: var(--font-ui); }
+
+/* ── F11: Exposure Scale ── */
+.exp-scale { display: flex; flex-direction: column; align-items: center; gap: 2px; width: 200px; }
+.exp-track { width: 100%; height: 12px; position: relative; display: flex; align-items: center; }
+.exp-ruler { width: 100%; height: 1px; background: #333; position: absolute; }
+.exp-ticks { position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: space-between; padding: 0 2px; }
+.exp-tick { width: 1px; background: #333; }
+.exp-tick.major { height: 8px; background: #555; }
+.exp-tick.minor { height: 5px; }
+.exp-indicator {
+  position: absolute; bottom: 0; width: 6px; height: 6px;
+  background: var(--amber); border-radius: 50%; transform: translateX(-50%);
+  box-shadow: 0 0 6px var(--amber-glow);
+}
+.exp-labels { width: 100%; display: flex; justify-content: space-between; padding: 0 2px; }
+.exp-labels span { font-size: 7px; color: var(--text-muted); letter-spacing: 1px; font-family: var(--font-ui); }
+
+/* ── F12: Analog Gauge (semicircle VU needle) ── */
+.gauge-semi {
+  width: 160px; height: 90px; position: relative;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  border-radius: 80px 80px 0 0; overflow: hidden;
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.5);
+}
+.gauge-semi-scale {
+  position: absolute; inset: 8px; inset-block-end: 0; border-radius: 72px 72px 0 0;
+  border: 1px solid var(--border-mid); border-bottom: none;
+}
+.gauge-semi-needle {
+  position: absolute; bottom: 0; left: 50%; width: 2px; height: 70px;
+  background: linear-gradient(0deg, var(--red-alert), transparent 20%, var(--text-primary) 20%);
+  transform-origin: bottom center; transform: rotate(-60deg);
+  transition: transform 0.5s var(--spring);
+  z-index: 2;
+}
+.gauge-semi-pivot {
+  position: absolute; bottom: -4px; left: 50%; transform: translateX(-50%);
+  width: 10px; height: 10px; border-radius: 50%;
+  background: radial-gradient(circle, #666, #222);
+  z-index: 3;
+}
+.gauge-semi-labels {
+  position: absolute; bottom: 6px; left: 10px; right: 10px;
+  display: flex; justify-content: space-between;
+  font-family: var(--font-ui); font-size: 7px; color: var(--text-muted);
+}
+
+/* ── F13: Analog Gauge (full circle compass) ── */
+.gauge-full {
+  width: 120px; height: 120px; border-radius: 50%;
+  background: var(--bg-inset); border: 2px solid var(--border-mid);
+  position: relative;
+  box-shadow: inset 0 1px 6px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+}
+.gauge-full-needle {
+  position: absolute; top: 12px; left: 50%; width: 2px; height: 48px;
+  background: linear-gradient(180deg, var(--red-alert), transparent);
+  transform-origin: bottom center;
+  margin-left: -1px; z-index: 2;
+}
+.gauge-full-pivot {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 8px; height: 8px; border-radius: 50%;
+  background: radial-gradient(circle, #888, #333);
+  z-index: 3;
+}
+.gauge-full-label {
+  position: absolute; font-family: var(--font-ui); font-size: 7px; font-weight: 600;
+  color: var(--text-muted); letter-spacing: 1px;
+}
+
+/* ── F14: Audio Waveform (oscilloscope trace) ── */
+.oscilloscope {
+  width: 200px; height: 80px; background: var(--bg-inset);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.5); position: relative; overflow: hidden;
+}
+.oscilloscope-line {
+  position: absolute; top: 50%; left: 0; right: 0; height: 1px;
+  background: rgba(102,255,102,0.15);
+}
+.oscilloscope canvas { display: block; width: 100%; height: 100%; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   G. NAVIGATION & MENU
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── G1: Menu Grid ── */
+.menu-grid-wrap {
+  display: flex; flex-direction: column;
+  background: var(--bg-raised); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg); padding: 12px;
+  box-shadow: var(--shadow-deep); max-width: 200px;
+}
+.menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.menu-grid-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; padding: 10px 6px; border-radius: var(--radius-md);
+  cursor: pointer; transition: background 0.12s;
+  font-family: var(--font-ui); font-size: 8px; font-weight: 500;
+  color: var(--text-muted); letter-spacing: 1px;
+}
+.menu-grid-item:hover { background: var(--glow-color); }
+.menu-grid-item.active { background: var(--glow-color); color: var(--blue-info); }
+.menu-grid-item .mgi-icon {
+  width: 24px; height: 24px; border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center; font-size: 14px;
+}
+
+/* ── G2: Menu List (iPod-style) ── */
+.menu-list-wrap {
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  overflow: hidden; box-shadow: var(--shadow-deep); min-width: 200px;
+}
+[data-theme="light"] .menu-list-wrap { background: var(--bg-raised); }
+.menu-list-title {
+  padding: 8px 14px;
+  background: linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  border-bottom: 1px solid var(--border-subtle);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 600;
+  letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;
+}
+.menu-list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 14px; cursor: pointer;
+  border-bottom: 1px solid rgba(128,128,128,0.06); transition: background 0.1s;
+}
+.menu-list-item:last-child { border-bottom: none; }
+.menu-list-item:hover { background: var(--glow-color); }
+.menu-list-item.active {
+  background: linear-gradient(90deg, rgba(68,119,204,0.12), transparent);
+  color: var(--blue-info);
+}
+.mli-label { font-family: var(--font-ui); font-size: 11px; font-weight: 500; color: var(--text-primary); letter-spacing: 0.5px; }
+.mli-arrow { color: var(--text-muted); font-size: 10px; }
+
+/* ── G3: Tab Bar ── */
+.tab-bar {
+  display: flex; background: var(--bg-raised);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  overflow: hidden; box-shadow: 0 2px 0 var(--border-deep);
+}
+.tab-item {
+  flex: 1; padding: 8px 14px; text-align: center;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  color: var(--text-muted); letter-spacing: 1px; cursor: pointer;
+  transition: all 0.15s; position: relative; user-select: none;
+  border-right: 1px solid var(--border-subtle); background: transparent; border-top: none; border-bottom: none;
+}
+.tab-item:last-child { border-right: none; }
+.tab-item:hover { color: var(--text-primary); }
+.tab-item.active { color: var(--blue-info); background: linear-gradient(180deg, var(--glow-color), transparent); }
+.tab-item.active::after {
+  content: ''; position: absolute; bottom: 0; left: 4px; right: 4px;
+  height: 2px; background: var(--blue-info); border-radius: 1px;
+}
+
+/* ── G4: D-Pad ── */
+.dpad-section { display: flex; align-items: center; gap: 24px; }
+.dpad { width: 110px; height: 110px; position: relative; }
+.dpad-arm {
+  position: absolute; border: none; cursor: pointer;
+  background: linear-gradient(180deg, var(--rubber-hi), var(--rubber-bg));
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.08);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-muted); font-size: 12px;
+  transition: transform 0.05s, box-shadow 0.05s, color 0.1s;
+}
+.dpad-arm:active { box-shadow: 0 1px 0 var(--border-deep); color: var(--blue-info); }
+.dpad-arm.up { top: 0; left: 50%; transform: translateX(-50%); width: 26px; height: 22px; border-radius: 4px 4px 0 0; }
+.dpad-arm.down { bottom: 0; left: 50%; transform: translateX(-50%); width: 26px; height: 22px; border-radius: 0 0 4px 4px; }
+.dpad-arm.left { left: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 26px; border-radius: 4px 0 0 4px; }
+.dpad-arm.right { right: 0; top: 50%; transform: translateY(-50%); width: 22px; height: 26px; border-radius: 0 4px 4px 0; }
+.dpad-arm.up:active { transform: translateX(-50%) translateY(1px); }
+.dpad-arm.down:active { transform: translateX(-50%) translateY(-1px); }
+.dpad-arm.left:active { transform: translateY(-50%) translateX(1px); }
+.dpad-arm.right:active { transform: translateY(-50%) translateX(-1px); }
+.dpad-center {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 24px; height: 24px; border-radius: 50%;
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 3px rgba(0,0,0,0.3), inset 0 1px 0 var(--glossy-hi);
+  border: none; cursor: pointer; z-index: 2;
+  transition: transform 0.07s var(--snap-fast);
+}
+.dpad-center:active { transform: translate(-50%,-50%) scale(0.9); }
+
+/* ── G5: Status Bar (HUD) ── */
+.status-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 4px 10px; background: var(--bg-raised);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  min-width: 200px;
+}
+.sb-time { font-family: var(--font-mono); font-size: 13px; color: var(--text-primary); letter-spacing: 1px; }
+.sb-icons { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+.sb-text { font-family: var(--font-ui); font-size: 9px; font-weight: 500; color: var(--text-muted); }
+
+/* ── G6: (Sticky Nav) — defined in Layout section above ── */
+
+/* ── G7: Sidebar / Rack Panel ── */
+.rack-panel {
+  width: 200px; background: var(--bg-raised);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-deep); overflow: hidden;
+}
+.rack-slot {
+  padding: 10px 14px; border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer; transition: background 0.12s;
+  display: flex; align-items: center; gap: 8px;
+}
+.rack-slot:last-child { border-bottom: none; }
+.rack-slot:hover { background: var(--glow-color); }
+.rack-slot.active { background: var(--glow-color); }
+.rack-slot-indicator { width: 4px; height: 20px; border-radius: 2px; background: var(--border-mid); flex-shrink: 0; }
+.rack-slot.active .rack-slot-indicator { background: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+.rack-slot-label { font-family: var(--font-ui); font-size: 10px; font-weight: 500; color: var(--text-secondary); letter-spacing: 1px; }
+.rack-slot.active .rack-slot-label { color: var(--amber); }
+
+/* ── G8: Breadcrumbs ── */
+.breadcrumbs {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  color: var(--text-muted); letter-spacing: 1px;
+}
+.breadcrumb-item { cursor: pointer; transition: color 0.12s; }
+.breadcrumb-item:hover { color: var(--text-primary); }
+.breadcrumb-item.active { color: var(--amber); }
+.breadcrumb-sep { color: var(--text-muted); opacity: 0.5; font-size: 8px; }
+
+/* ── G9: Pagination ── */
+.pagination { display: flex; gap: 4px; }
+.page-btn {
+  width: 28px; height: 28px; border-radius: var(--radius-sm);
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 11px; color: var(--text-secondary);
+  cursor: pointer; transition: all 0.12s;
+  box-shadow: 0 1px 0 var(--border-deep);
+}
+.page-btn:hover { color: var(--text-primary); border-color: var(--border-mid); }
+.page-btn:active { transform: translateY(1px); box-shadow: none; }
+.page-btn.active { color: var(--amber); border-color: var(--amber-dim); background: rgba(245,166,35,0.08); }
+
+/* ── G10: Context Menu (radial) ── */
+.radial-menu {
+  width: 140px; height: 140px; border-radius: 50%;
+  background: var(--bg-raised); border: 2px solid var(--border-mid);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4); position: relative;
+}
+.radial-menu-item {
+  position: absolute; width: 36px; height: 36px; border-radius: 50%;
+  background: var(--bg-surface); border: 1px solid var(--border-subtle);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: var(--text-secondary); cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+.radial-menu-item:hover { background: var(--bg-panel); color: var(--amber); }
+
+/* ── G11: Custom Scrollbar ── */
+.custom-scrollbar-demo {
+  width: 180px; height: 120px; overflow-y: auto;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); padding: 10px;
+  font-family: var(--font-ui); font-size: 10px; color: var(--text-secondary);
+  line-height: 1.8;
+}
+.custom-scrollbar-demo::-webkit-scrollbar { width: 8px; }
+.custom-scrollbar-demo::-webkit-scrollbar-track { background: var(--bg-inset); border-radius: 4px; }
+.custom-scrollbar-demo::-webkit-scrollbar-thumb {
+  background: var(--border-mid); border-radius: 4px;
+  border: 1px solid var(--bg-inset);
+}
+.custom-scrollbar-demo::-webkit-scrollbar-thumb:hover { background: var(--border-hi); }
+
+/* ── G12: Drawer / Slide Panel ── */
+.drawer-demo {
+  position: relative; width: 280px; height: 160px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.drawer-panel {
+  position: absolute; top: 0; right: -180px; width: 180px; height: 100%;
+  background: var(--bg-raised); border-left: 1px solid var(--border-mid);
+  box-shadow: -4px 0 12px rgba(0,0,0,0.3);
+  transition: right 0.3s var(--snap-soft); padding: 12px; z-index: 2;
+}
+.drawer-demo.open .drawer-panel { right: 0; }
+.drawer-panel-title { font-family: var(--font-ui); font-size: 9px; font-weight: 600; letter-spacing: 2px; color: var(--text-muted); margin-bottom: 10px; }
+
+
+/* ══════════════════════════════════════════════════════════════
+   H. FORM INPUTS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── H1: Text Input ── */
+.text-input {
+  width: 200px; height: 36px; padding: 0 12px;
+  background: var(--bg-inset); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md); color: var(--text-primary);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px;
+  box-shadow: var(--shadow-inset); outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.text-input::placeholder { color: var(--text-muted); }
+.text-input:focus { border-color: var(--amber); box-shadow: var(--shadow-inset), 0 0 0 1px var(--amber-dim); }
+.text-input.error { border-color: var(--red-alert); }
+.text-input.sm { height: 28px; font-size: 10px; width: 140px; }
+.text-input.lg { height: 42px; font-size: 14px; width: 260px; }
+
+/* ── H2: Textarea ── */
+.text-area {
+  width: 240px; height: 80px; padding: 10px 12px;
+  background: var(--bg-inset); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md); color: var(--text-primary);
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.5px;
+  box-shadow: var(--shadow-inset); outline: none; resize: vertical;
+  transition: border-color 0.15s;
+}
+.text-area::placeholder { color: var(--text-muted); }
+.text-area:focus { border-color: var(--amber); }
+
+/* ── H3: Search Bar ── */
+.search-bar {
+  display: flex; align-items: center; gap: 8px;
+  width: 220px; height: 36px; padding: 0 12px;
+  background: var(--bg-inset); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-pill); box-shadow: var(--shadow-inset);
+}
+.search-bar-icon { color: var(--text-muted); font-size: 14px; flex-shrink: 0; }
+.search-bar input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: var(--text-primary); font-family: var(--font-ui); font-size: 11px;
+  font-weight: 500; letter-spacing: 0.5px;
+}
+.search-bar input::placeholder { color: var(--text-muted); }
+.search-bar:focus-within { border-color: var(--amber); }
+
+/* ── H4: Select / Dropdown ── */
+.select-wrap { position: relative; width: 180px; }
+.select-trigger {
+  width: 100%; height: 36px; padding: 0 12px; display: flex;
+  align-items: center; justify-content: space-between;
+  background: var(--bg-surface); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md); cursor: pointer;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 500;
+  color: var(--text-primary); letter-spacing: 0.5px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--glossy-hi);
+  transition: border-color 0.15s;
+}
+.select-trigger:hover { border-color: var(--border-hi); }
+.select-arrow { font-size: 8px; color: var(--text-muted); transition: transform 0.2s; }
+.select-dropdown {
+  position: absolute; top: 100%; left: 0; right: 0; margin-top: 4px;
+  background: var(--bg-raised); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md); overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3); z-index: 10;
+  display: none;
+}
+.select-wrap.open .select-dropdown { display: block; }
+.select-wrap.open .select-arrow { transform: rotate(180deg); }
+.select-option {
+  padding: 8px 12px; cursor: pointer;
+  font-family: var(--font-ui); font-size: 11px; font-weight: 500;
+  color: var(--text-secondary); transition: background 0.1s;
+}
+.select-option:hover { background: var(--glow-color); color: var(--text-primary); }
+.select-option.selected { color: var(--amber); background: rgba(245,166,35,0.06); }
+
+/* ── H7: Color Picker (TV color bars) ── */
+.color-bar-picker {
+  display: flex; height: 40px; border-radius: var(--radius-sm);
+  overflow: hidden; border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-inset); cursor: pointer;
+}
+.color-bar-swatch {
+  flex: 1; transition: opacity 0.15s; position: relative;
+}
+.color-bar-swatch:hover { opacity: 0.8; }
+.color-bar-swatch.selected::after {
+  content: ''; position: absolute; bottom: 2px; left: 50%; transform: translateX(-50%);
+  width: 6px; height: 6px; background: #fff; border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255,255,255,0.5);
+}
+
+/* ── H9: File Input (storage card slot) ── */
+.file-input {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; background: var(--bg-surface);
+  border: 2px dashed var(--border-mid); border-radius: var(--radius-md);
+  cursor: pointer; transition: border-color 0.15s;
+  width: 220px;
+}
+.file-input:hover { border-color: var(--amber); }
+.file-input-icon { font-size: 18px; color: var(--text-muted); }
+.file-input-text { font-family: var(--font-ui); font-size: 10px; font-weight: 500; color: var(--text-muted); letter-spacing: 1px; }
+.file-input-eject {
+  margin-left: auto; width: 24px; height: 24px; border-radius: var(--radius-sm);
+  background: var(--bg-panel); border: 1px solid var(--border-subtle);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text-muted); cursor: pointer;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   I. OVERLAYS & CONTAINERS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── I1: Panel (machined frame with corner screws) ── */
+.panel {
+  position: relative;
+  background: linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  border: 1px solid var(--border-mid); border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: 0 2px 0 var(--border-deep), 0 10px 28px rgba(0,0,0,0.3), inset 0 1px 0 var(--border-hi);
+  overflow: hidden;
+}
+.panel::before, .panel::after {
+  content: ''; position: absolute; width: 14px; height: 14px;
+  border: 1px solid var(--border-hi); opacity: 0.35;
+}
+.panel::before { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.panel::after { right: 10px; bottom: 10px; border-left: none; border-top: none; }
+.panel-title {
+  font-family: var(--font-display); letter-spacing: 2px;
+  font-size: 11px; margin-bottom: 14px; color: var(--text-primary);
+}
+.panel-label {
+  color: var(--text-muted); letter-spacing: 2px;
+  font-size: 9px; margin-bottom: 10px; font-family: var(--font-ui); font-weight: 500;
+}
+
+/* ── I2: Chassis Panel ── */
+.chassis-panel {
+  background: linear-gradient(180deg, var(--bg-raised), var(--bg-surface));
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-lg);
+  padding: 16px; box-shadow: var(--shadow-deep);
+}
+.chassis-panel .cpanel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.chassis-panel .cpanel-title {
+  font-family: var(--font-ui); font-size: 10px; font-weight: 600;
+  letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;
+}
+
+/* ── I3: Plastic Card ── */
+.plastic-card {
+  background: linear-gradient(180deg, var(--bg-raised), var(--bg-surface));
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-md);
+  padding: 14px;
+  box-shadow: 0 2px 0 var(--border-deep), 0 2px 8px rgba(0,0,0,0.1), inset 0 1px 0 var(--glossy-hi);
+}
+.plastic-card .card-label {
+  font-family: var(--font-ui); font-size: 8px; font-weight: 500;
+  letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;
+}
+.plastic-card .card-value { font-family: var(--font-mono); font-size: 20px; color: var(--text-primary); letter-spacing: 1px; }
+.plastic-card .card-sub { font-family: var(--font-ui); font-size: 9px; color: var(--text-secondary); margin-top: 2px; }
+
+/* ── I4: Device Bezel ── */
+.device-bezel {
+  padding: 16px; border-radius: var(--radius-lg);
+  background: linear-gradient(180deg, var(--bg-raised), var(--bg-surface));
+  border: 2px solid var(--border-mid);
+  box-shadow: var(--shadow-deep), inset 0 0 0 1px var(--glossy-hi);
+}
+.device-bezel.translucent {
+  background: rgba(255,255,255,0.04); backdrop-filter: blur(8px);
+  border: 1px solid var(--border-subtle);
+}
+
+/* ── I5: Dialog (modal) ── */
+.phone-dialog {
+  background: var(--bg-raised); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg); padding: 16px;
+  box-shadow: var(--shadow-deep); max-width: 220px;
+  display: flex; flex-direction: column; gap: 12px;
+}
+.dialog-title { font-family: var(--font-ui); font-size: 11px; font-weight: 600; color: var(--text-primary); letter-spacing: 1px; text-align: center; }
+.dialog-body { font-family: var(--font-ui); font-size: 10px; color: var(--text-secondary); text-align: center; line-height: 1.6; }
+.dialog-actions { display: flex; gap: 8px; margin-top: 4px; }
+.dialog-actions .gel-btn { flex: 1; height: 32px; min-width: 0; font-size: 9px; }
+
+/* ── I6: Toast (notification) ── */
+.toast {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg-raised); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); padding: 8px 12px; min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  animation: toastIn 0.3s var(--snap-soft);
+}
+@keyframes toastIn { from{opacity:0;transform:translateY(-8px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+.toast-text { font-family: var(--font-ui); font-size: 10px; font-weight: 500; color: var(--text-primary); letter-spacing: 0.5px; }
+.toast-time { font-family: var(--font-mono); font-size: 9px; color: var(--text-muted); margin-left: auto; flex-shrink: 0; }
+
+/* ── I7: Focus Brackets ── */
+.focus-demo {
+  width: 200px; height: 140px; background: #222;
+  border-radius: var(--radius-sm); position: relative; overflow: hidden;
+  border: 1px solid #1e1e1e;
+}
+.focus-box { position: absolute; border: none; }
+.focus-corner {
+  position: absolute; width: 12px; height: 12px;
+  border-color: var(--amber); border-style: solid; opacity: 0.9;
+}
+.focus-corner.tl { top: 0; left: 0; border-width: 2px 0 0 2px; }
+.focus-corner.tr { top: 0; right: 0; border-width: 2px 2px 0 0; }
+.focus-corner.bl { bottom: 0; left: 0; border-width: 0 0 2px 2px; }
+.focus-corner.br { bottom: 0; right: 0; border-width: 0 2px 2px 0; }
+@keyframes focusPulse { to{opacity:0.3} }
+.focus-box.acquiring .focus-corner { opacity: 0.7; animation: focusPulse 0.6s ease-in-out infinite alternate; }
+.focus-box.locked .focus-corner { border-color: var(--green-hi); }
+.focus-label {
+  position: absolute; bottom: -18px; left: 0;
+  font-size: 9px; color: var(--amber); letter-spacing: 1px; white-space: nowrap;
+  font-family: var(--font-ui);
+}
+.focus-box.locked .focus-label { color: var(--green-hi); }
+
+/* ── I8: Grid Overlay ── */
+.grid-overlay-demo {
+  width: 240px; height: 160px; background: #1a1a1a;
+  border: 1px solid #2a2a2a; border-radius: var(--radius-sm);
+  position: relative; overflow: hidden;
+}
+.grid-line-v { position: absolute; top: 0; bottom: 0; width: 1px; background: rgba(255,255,255,0.12); }
+.grid-line-h { position: absolute; left: 0; right: 0; height: 1px; background: rgba(255,255,255,0.12); }
+.grid-center-dot {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 6px; height: 6px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2);
+}
+
+/* ── I9: Tooltip (HUD callout) ── */
+.tooltip {
+  position: relative; display: inline-flex; padding: 6px 12px;
+  background: var(--bg-raised); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-sm); box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  color: var(--text-primary); letter-spacing: 0.5px;
+}
+.tooltip::after {
+  content: ''; position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%);
+  width: 8px; height: 8px; background: var(--bg-raised);
+  border-right: 1px solid var(--border-mid); border-bottom: 1px solid var(--border-mid);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+/* ── I10: Modal (device screen overlay) ── */
+.modal-overlay {
+  width: 300px; height: 200px; position: relative;
+  background: rgba(0,0,0,0.6); border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-content {
+  background: var(--bg-raised); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-lg); padding: 20px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  max-width: 240px; width: 100%;
+}
+
+/* ── I11: Popover ── */
+.popover {
+  padding: 10px 14px; background: var(--bg-raised);
+  border: 1px solid var(--border-mid); border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  font-family: var(--font-ui); font-size: 10px; color: var(--text-secondary);
+  max-width: 180px; line-height: 1.6;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   J. STATUS & INDICATORS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── J1: Status Chips ── */
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.status-chip {
+  padding: 4px 10px; border-radius: var(--radius-sm);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 500;
+  letter-spacing: 2px; background: var(--bg-panel);
+  border: 1px solid var(--border-mid); color: var(--text-muted);
+  transition: all 0.12s;
+}
+.status-chip.active { color: var(--amber); border-color: var(--amber-dim); box-shadow: 0 0 8px var(--amber-glow); }
+
+/* ── J2: Selectable Chips ── */
+.chip {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border-radius: var(--radius-pill);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 500;
+  letter-spacing: 1px; background: var(--bg-surface);
+  border: 1px solid var(--border-subtle); color: var(--text-secondary);
+  cursor: pointer; transition: all 0.15s;
+}
+.chip:hover { border-color: var(--border-mid); }
+.chip.active { background: rgba(68,119,204,0.1); border-color: var(--blue-info); color: var(--blue-info); }
+.chip .chip-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+
+/* ── J3: Badges / Pills ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 8px; border-radius: var(--radius-pill);
+  font-family: var(--font-ui); font-size: 9px; font-weight: 600; letter-spacing: 1px;
+}
+.badge.blue { background: var(--blue-info); color: #fff; }
+.badge.green { background: var(--green-on); color: #fff; }
+.badge.red { background: var(--red-alert); color: #fff; }
+.badge.amber { background: var(--amber); color: #1a1a1a; }
+
+/* ── J4: LED Dots ── */
+.led-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; vertical-align: middle; }
+.led-dot.green { background: var(--green-on); box-shadow: 0 0 6px var(--green-on); }
+.led-dot.red { background: var(--red-alert); box-shadow: 0 0 6px var(--red-alert); }
+.led-dot.blue { background: var(--blue-info); box-shadow: 0 0 6px var(--blue-info); }
+.led-dot.amber { background: var(--amber); box-shadow: 0 0 6px var(--amber); }
+.led-dot.off { background: var(--text-muted); opacity: 0.3; box-shadow: none; }
+
+/* ── J5: Mode Badge ── */
+.mode-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--bg-panel); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-md); padding: 6px 14px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--border-hi);
+}
+.mode-letter { font-family: var(--font-display); font-size: 28px; color: #fff; line-height: 1; }
+.mode-detail { display: flex; flex-direction: column; gap: 2px; }
+.mode-key { font-size: 7px; letter-spacing: 2px; color: var(--text-muted); font-family: var(--font-ui); }
+.mode-sub { font-size: 10px; color: var(--text-primary); letter-spacing: 1px; font-family: var(--font-ui); font-weight: 500; }
+
+/* ── J6: Profile Badge ── */
+.pp-badge {
+  display: inline-flex; flex-direction: column; align-items: center;
+  background: var(--bg-panel); border: 1px solid var(--border-mid);
+  border-radius: var(--radius-sm); padding: 4px 10px;
+  box-shadow: 0 2px 0 var(--border-deep), inset 0 1px 0 var(--border-hi);
+  gap: 1px; cursor: pointer; transition: background 0.1s;
+}
+.pp-badge:hover { background: var(--bg-surface); }
+.pp-key { font-size: 7px; letter-spacing: 2px; color: var(--text-muted); font-family: var(--font-ui); }
+.pp-val { font-family: var(--font-mono); font-size: 12px; color: var(--text-primary); letter-spacing: 1px; }
+.pp-badge.active-pp .pp-val { color: var(--amber); }
+
+/* ── J7: Spinners ── */
+.spinner { width: 32px; height: 32px; border-radius: 50%; border: 3px solid var(--border-subtle); border-top-color: var(--blue-info); animation: spin 0.8s linear infinite; }
+@keyframes spin { to{transform:rotate(360deg)} }
+.cd-spinner {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--bg-surface), var(--bg-panel));
+  border: 2px solid var(--border-mid); position: relative;
+  animation: spin 3s linear infinite;
+  box-shadow: inset 0 0 0 4px var(--bg-inset);
+}
+.cd-spinner::after {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 6px; height: 6px; border-radius: 50%; background: var(--text-muted);
+}
+
+/* ── J8: Skeleton Loading ── */
+.skeleton-wrap {
+  width: 200px; padding: 16px; display: flex; flex-direction: column; gap: 10px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+.skeleton-line {
+  height: 8px; border-radius: 4px; background: var(--bg-surface);
+  animation: skeletonPulse 1.5s ease-in-out infinite;
+}
+.skeleton-line:nth-child(2) { width: 70%; }
+.skeleton-line:nth-child(3) { width: 50%; }
+.skeleton-line:nth-child(4) { height: 28px; }
+@keyframes skeletonPulse { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+
+/* ── J9: Accordion ── */
+.accordion {
+  background: var(--bg-raised); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); overflow: hidden; min-width: 200px;
+}
+.accordion-item { border-bottom: 1px solid var(--border-subtle); }
+.accordion-item:last-child { border-bottom: none; }
+.accordion-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 8px 12px; cursor: pointer;
+  font-family: var(--font-ui); font-size: 10px; font-weight: 500;
+  color: var(--text-primary); letter-spacing: 1px; transition: background 0.12s;
+}
+.accordion-header:hover { background: var(--glow-color); }
+.acc-arrow { font-size: 8px; color: var(--text-muted); transition: transform 0.2s; }
+.accordion-item.open .acc-arrow { transform: rotate(90deg); }
+.accordion-body {
+  padding: 0 12px; max-height: 0; overflow: hidden;
+  transition: max-height 0.25s var(--ease-out), padding 0.25s var(--ease-out);
+}
+.accordion-item.open .accordion-body { max-height: 80px; padding: 4px 12px 10px; }
+.accordion-body p { font-family: var(--font-ui); font-size: 9px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ── J10: Transport Controls ── */
+.transport-wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.transport {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-raised); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-pill); padding: 4px;
+  box-shadow: 0 2px 0 var(--border-deep);
+}
+.transport-btn {
+  width: 32px; height: 32px; border-radius: 50%;
+  border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(155deg, var(--bg-surface), var(--bg-panel));
+  box-shadow: 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 0 var(--glossy-hi);
+  color: var(--text-primary); font-size: 12px;
+  transition: transform 0.07s var(--snap-fast);
+}
+.transport-btn:active { transform: scale(0.92); box-shadow: 0 1px 0 rgba(0,0,0,0.2); }
+.transport-btn.play {
+  width: 36px; height: 36px;
+  background: linear-gradient(155deg, var(--blue-info), #335599);
+  color: #fff; font-size: 14px;
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   K. DATA DISPLAY & COMPOSITIONS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── K1: Data Table ── */
+.data-table {
+  width: 100%; border-collapse: collapse;
+  font-family: var(--font-mono); font-size: 11px;
+  background: var(--bg-inset); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); overflow: hidden;
+}
+.data-table th {
+  padding: 8px 12px; text-align: left;
+  font-family: var(--font-ui); font-size: 9px; font-weight: 600;
+  letter-spacing: 2px; color: var(--text-muted); text-transform: uppercase;
+  background: var(--bg-surface); border-bottom: 1px solid var(--border-subtle);
+}
+.data-table td {
+  padding: 6px 12px; color: var(--text-primary);
+  border-bottom: 1px solid rgba(128,128,128,0.06);
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr:hover td { background: var(--glow-color); }
+.data-table td.val { color: var(--amber); font-family: var(--font-display); font-size: 12px; }
+
+/* ── K2: Media Grid (proof sheet) ── */
+.media-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+.media-thumb {
+  aspect-ratio: 1; background: var(--bg-surface);
+  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
+  cursor: pointer; transition: border-color 0.12s;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; color: var(--text-muted);
+}
+.media-thumb:hover { border-color: var(--border-mid); }
+.media-thumb.selected { border-color: var(--amber); box-shadow: 0 0 8px var(--amber-glow); }
+
+/* ── K3: Film Strip ── */
+.film-strip {
+  display: flex; gap: 4px; padding: 8px;
+  background: #0a0a0a; border: 1px solid #1e1e1e;
+  border-radius: var(--radius-sm); overflow-x: auto;
+}
+.film-strip::before, .film-strip::after {
+  content: ''; flex-shrink: 0; width: 8px;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 6px, #333 6px, #333 8px);
+}
+.film-frame {
+  flex-shrink: 0; width: 60px; height: 40px;
+  background: var(--bg-surface); border: 1px solid #333;
+  border-radius: 2px; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; color: var(--text-muted); cursor: pointer;
+  transition: border-color 0.12s;
+}
+.film-frame:hover { border-color: var(--amber); }
+.film-frame.selected { border-color: var(--amber); box-shadow: 0 0 6px var(--amber-glow); }
+
+/* ── LED Cluster ── */
+.led-cluster { display: flex; gap: 6px; padding: 6px 10px; background: var(--bg-inset); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); }
+.led-cluster .led-dot { width: 6px; height: 6px; }
+
+/* ── Serial / Fabrication Details ── */
+.serial { margin-top: 16px; color: var(--text-muted); font-size: 9px; letter-spacing: 2px; display: flex; justify-content: space-between; font-family: var(--font-ui); }
+
+
+/* ══════════════════════════════════════════════════════════════
+   L. OPTICAL & MECHANICAL COMPONENTS
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── L1: Camera Shutter Iris ── */
+.iris-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+.iris-outer {
+  width: 200px; height: 200px; border-radius: 50%;
+  background: radial-gradient(circle at 38% 32%, #363636, #1a1a1a 70%);
+  border: 3px solid #0a0a0a;
+  box-shadow:
+    0 4px 0 #080808,
+    0 8px 24px rgba(0,0,0,0.5),
+    inset 0 1px 0 #555,
+    inset 0 -1px 0 #111;
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; user-select: none;
+}
+[data-theme="light"] .iris-outer {
+  background: radial-gradient(circle at 38% 32%, #e8e6e0, #c8c6c0 70%);
+  border-color: #a8a6a0;
+  box-shadow:
+    0 4px 0 var(--border-deep),
+    0 8px 24px rgba(0,0,0,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.6),
+    inset 0 -1px 0 var(--border-mid);
+}
+/* Chrome bezel ring */
+.iris-outer::before {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  background: linear-gradient(180deg, #5a5855, #3a3835);
+  border: 1px solid #666;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4), inset 0 -1px 0 rgba(0,0,0,0.06);
+  z-index: -1;
+}
+[data-theme="light"] .iris-outer::before {
+  background: linear-gradient(180deg, #e8e6e0, #c8c6c0, #d0cec8);
+}
+/* Lens barrel interior */
+.iris-chamber {
+  width: 170px; height: 170px; border-radius: 50%;
+  background: radial-gradient(circle, #080808, #111 40%, #0a0a0a 100%);
+  border: 2px solid #1a1a1a;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.9), inset 0 0 0 1px #181818;
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+[data-theme="light"] .iris-chamber {
+  background: radial-gradient(circle, #1a1816, #222 40%, #1a1816 100%);
+}
+/* Lens coating ring (rainbow reflection) */
+.iris-chamber::after {
+  content: ''; position: absolute; inset: 3px; border-radius: 50%;
+  background: conic-gradient(
+    rgba(100,50,200,0.06) 0deg,
+    rgba(50,100,200,0.08) 60deg,
+    rgba(50,180,120,0.06) 120deg,
+    rgba(200,180,50,0.06) 180deg,
+    rgba(200,80,50,0.06) 240deg,
+    rgba(150,50,180,0.06) 300deg,
+    rgba(100,50,200,0.06) 360deg
+  );
+  z-index: 20;
+  pointer-events: none;
+}
+/* Blade container — centered in chamber */
+.iris-blades {
+  position: absolute;
+  width: 170px; height: 170px;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+/*
+  7-blade iris geometry (Nikon 50mm f/1.4D):
+  Each blade is a div positioned at the center, rotated to its sector (360/7 ≈ 51.43°).
+  The ::before pseudo-element is the actual blade leaf — a curved rectangle that
+  pivots at a pin near the chamber rim. When the iris opens, each blade swings
+  outward around its pin, uncovering the central aperture.
+*/
+.iris-blade {
+  position: absolute;
+  width: 0; height: 0;
+  top: 50%; left: 50%;
+}
+.iris-blade::before {
+  content: '';
+  position: absolute;
+  /* Blade leaf: starts from the pin point near the rim */
+  width: 80px; height: 90px;
+  /* Pin is near the center of the iris */
+  top: -85px; left: -10px;
+  background: linear-gradient(160deg, #2e2c2a 0%, #1e1c1a 35%, #141210 100%);
+  border: 1px solid rgba(60,58,55,0.5);
+  /* Curved top edge simulates the blade's leading edge radius */
+  border-radius: 30% 30% 2px 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.4),
+    1px 0 2px rgba(0,0,0,0.5);
+  /* Pivot at the pin point near center */
+  transform-origin: 10px 85px;
+  transition: transform 0.35s var(--spring);
+}
+/* Per-blade metallic sheen variation — each blade catches light differently */
+.iris-blade:nth-child(odd)::before {
+  background: linear-gradient(155deg, #323028 0%, #1e1c1a 40%, #121010 100%);
+}
+.iris-blade:nth-child(even)::before {
+  background: linear-gradient(165deg, #2a2826 0%, #1a1816 35%, #0e0c0a 100%);
+}
+/* Subtle edge highlight on blade that's "catching the light" */
+.iris-blade:nth-child(1)::before,
+.iris-blade:nth-child(2)::before {
+  border-top-color: rgba(80,78,72,0.5);
+}
+[data-theme="light"] .iris-blade::before {
+  background: linear-gradient(160deg, #5a5856 0%, #484644 35%, #363432 100%);
+  border-color: rgba(90,88,84,0.5);
+}
+[data-theme="light"] .iris-blade:nth-child(odd)::before {
+  background: linear-gradient(155deg, #5e5c58 0%, #4a4846 40%, #3a3836 100%);
+}
+[data-theme="light"] .iris-blade:nth-child(even)::before {
+  background: linear-gradient(165deg, #545250 0%, #444240 35%, #343230 100%);
+}
+/* Position each blade at its sector around the circle */
+.iris-blade:nth-child(1) { transform: rotate(0deg); }
+.iris-blade:nth-child(2) { transform: rotate(51.43deg); }
+.iris-blade:nth-child(3) { transform: rotate(102.86deg); }
+.iris-blade:nth-child(4) { transform: rotate(154.29deg); }
+.iris-blade:nth-child(5) { transform: rotate(205.71deg); }
+.iris-blade:nth-child(6) { transform: rotate(257.14deg); }
+.iris-blade:nth-child(7) { transform: rotate(308.57deg); }
+/* Closed state — blades swung inward, covering the aperture */
+.iris-blades.closed .iris-blade::before {
+  transform: rotate(0deg);
+}
+/* Open state — blades swung outward, revealing the aperture */
+.iris-blades.open .iris-blade::before {
+  transform: rotate(-38deg);
+}
+
+/* Center aperture glow — the dark center of the lens */
+.iris-aperture {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: radial-gradient(circle, #050505, #0a0a0a);
+  box-shadow: 0 0 8px 4px rgba(0,0,0,0.9);
+  z-index: 15;
+  transition: width 0.35s var(--spring), height 0.35s var(--spring),
+              box-shadow 0.35s ease;
+  pointer-events: none;
+}
+.iris-blades.open ~ .iris-aperture {
+  width: 100px; height: 100px;
+  box-shadow: 0 0 16px 6px rgba(0,0,0,0.7);
+}
+
+/* f-stop readout beneath iris */
+.iris-readout {
+  display: flex; align-items: center; gap: 8px;
+}
+.iris-fstop {
+  font-family: var(--font-mono); font-size: 16px; font-weight: 500;
+  color: var(--amber); letter-spacing: 1px;
+  text-shadow: 0 0 12px var(--amber-glow);
+}
+.iris-label {
+  font-family: var(--font-ui); font-size: 9px; font-weight: 600;
+  letter-spacing: 2px; color: var(--text-muted);
+}
+
+/* Shutter button (chrome ring + rubber center) */
+.iris-shutter-btn {
+  width: 48px; height: 48px; border-radius: 50%;
+  background: linear-gradient(180deg, var(--rubber-hi), var(--rubber-bg));
+  border: 3px solid #555;
+  box-shadow:
+    0 3px 0 var(--border-deep),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    inset 0 -1px 0 #111;
+  cursor: pointer; position: relative;
+  transition: transform 70ms ease, box-shadow 70ms ease;
+}
+.iris-shutter-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 var(--border-deep), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+.iris-shutter-btn::before {
+  content: ''; position: absolute; inset: -6px; border-radius: 50%;
+  background: linear-gradient(180deg, #5a5855, #3a3835);
+  border: 1px solid #666;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.3);
+  z-index: -1;
+}
+[data-theme="light"] .iris-shutter-btn::before {
+  background: linear-gradient(180deg, #e8e6e0, #c8c6c0, #d0cec8);
+}
+[data-theme="light"] .iris-shutter-btn {
+  background: linear-gradient(180deg, var(--rubber-hi), var(--rubber-bg));
+  border-color: #bbb;
+}
+.iris-shutter-btn .shutter-icon {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 2px solid var(--text-muted);
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Iris size variants */
+.iris-outer.sm { width: 120px; height: 120px; }
+.iris-outer.sm .iris-chamber { width: 100px; height: 100px; }
+.iris-outer.sm .iris-blades { width: 100px; height: 100px; }
+.iris-outer.sm .iris-blade::before { width: 48px; height: 54px; top: -51px; left: -6px; transform-origin: 6px 51px; }
+.iris-outer.sm .iris-aperture { width: 10px; height: 10px; }
+.iris-outer.sm .iris-blades.open ~ .iris-aperture { width: 58px; height: 58px; }
+
+.iris-outer.lg { width: 280px; height: 280px; }
+.iris-outer.lg .iris-chamber { width: 240px; height: 240px; }
+.iris-outer.lg .iris-blades { width: 240px; height: 240px; }
+.iris-outer.lg .iris-blade::before { width: 112px; height: 126px; top: -120px; left: -14px; transform-origin: 14px 120px; }
+.iris-outer.lg .iris-aperture { width: 22px; height: 22px; }
+.iris-outer.lg .iris-blades.open ~ .iris-aperture { width: 140px; height: 140px; }
+
+/* ── L2: Iris with aperture ring control ── */
+.iris-control-wrap {
+  display: flex; align-items: center; gap: 24px;
+}
+.aperture-ring {
+  width: 200px; height: 8px;
+  background: var(--bg-inset);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-inset);
+  position: relative;
+  cursor: pointer;
+}
+.aperture-ring-fill {
+  height: 100%; border-radius: var(--radius-pill);
+  background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+  box-shadow: 0 0 8px var(--amber-glow);
+  transition: width 0.3s var(--ease-out);
+  width: 50%;
+}
+.aperture-ring-label {
+  font-family: var(--font-mono); font-size: 10px;
+  color: var(--text-muted); letter-spacing: 1px;
+  display: flex; justify-content: space-between;
+  margin-top: 4px;
+}
+
+
+/* ── L3: Square Iris — 1:1 frame with steel blade mechanism ── */
+.sq-iris-frame {
+  width: 220px; height: 220px;
+  border-radius: var(--radius-lg);
+  position: relative;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; user-select: none;
+  /* Brushed aluminum chassis — diagonal grain */
+  background: linear-gradient(145deg, #d8d6d0, #b8b6b0);
+  border: 2px solid #a0a0a0;
+  box-shadow:
+    0 4px 0 #888,
+    0 8px 24px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.55),
+    inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+[data-theme="light"] .sq-iris-frame {
+  background: linear-gradient(145deg, #eceae4, #d8d6d0);
+  border-color: #bbb;
+  box-shadow:
+    0 4px 0 var(--border-deep),
+    0 8px 24px rgba(0,0,0,0.1),
+    inset 0 1px 0 rgba(255,255,255,0.7),
+    inset 0 -1px 0 rgba(0,0,0,0.06);
+}
+/* Brushed grain texture overlay */
+.sq-iris-frame::before {
+  content: ''; position: absolute; inset: 0;
+  border-radius: var(--radius-lg);
+  background:
+    repeating-linear-gradient(
+      145deg,
+      transparent 0px, transparent 1px,
+      rgba(255,255,255,0.03) 1px, rgba(255,255,255,0.03) 2px,
+      transparent 2px, transparent 4px
+    );
+  z-index: 1;
+  pointer-events: none;
+}
+/* Chamfered inner edge — the machined recess that holds the gate */
+.sq-iris-gate {
+  width: 190px; height: 190px;
+  border-radius: var(--radius-md);
+  background: #0c0c0c;
+  border: 2px solid #1a1a1a;
+  box-shadow:
+    inset 0 2px 8px rgba(0,0,0,0.9),
+    inset 0 0 0 1px #181818,
+    inset 0 -1px 0 rgba(255,255,255,0.04);
+  position: relative;
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+[data-theme="light"] .sq-iris-gate {
+  background: #141414;
+  border-color: #222;
+}
+/* Corner screws — machined hex cap fasteners */
+.sq-iris-frame .frame-screw {
+  position: absolute; width: 10px; height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ccc, #888 80%);
+  border: 1px solid #777;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.4), 0 1px 2px rgba(0,0,0,0.3);
+  z-index: 3;
+}
+.sq-iris-frame .frame-screw::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 5px; height: 1px;
+  background: #666;
+  box-shadow: 0 0 0 0.5px rgba(0,0,0,0.3);
+}
+.sq-iris-frame .frame-screw.tl { top: 10px; left: 10px; }
+.sq-iris-frame .frame-screw.tr { top: 10px; right: 10px; }
+.sq-iris-frame .frame-screw.bl { bottom: 10px; left: 10px; }
+.sq-iris-frame .frame-screw.br { bottom: 10px; right: 10px; }
+[data-theme="light"] .sq-iris-frame .frame-screw {
+  background: radial-gradient(circle at 35% 30%, #eee, #bbb 80%);
+  border-color: #aaa;
+}
+/*
+  Dual-channel shutter door mechanism inside the square gate.
+  Two steel panels slide horizontally from left/right edges,
+  meeting at center when closed — like a shop roller shutter
+  or industrial bi-parting blast door.
+*/
+.shutter-doors {
+  position: absolute; inset: 0;
+  display: flex;
+  overflow: hidden;
+  border-radius: calc(var(--radius-md) - 2px);
+}
+/* Individual door panel — each is 50% of the gate */
+.shutter-door {
+  width: 50%; height: 100%;
+  position: relative;
+  transition: transform 0.35s var(--spring);
+}
+/* Corrugated steel surface — horizontal ribs */
+.shutter-door::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255,255,255,0.06) 0px,
+      rgba(255,255,255,0.06) 1px,
+      transparent 1px,
+      transparent 2px,
+      rgba(0,0,0,0.12) 2px,
+      rgba(0,0,0,0.12) 3px,
+      transparent 3px,
+      transparent 12px
+    );
+  z-index: 1;
+  pointer-events: none;
+}
+/* Left panel — slides left to open */
+.shutter-door.left {
+  background: linear-gradient(90deg, #6a6a6a 0%, #848484 40%, #7a7a7a 80%, #909090 98%, #aaa 100%);
+  border-right: 1px solid #444;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.2),
+    inset -2px 0 4px rgba(0,0,0,0.2);
+}
+/* Right panel — slides right to open */
+.shutter-door.right {
+  background: linear-gradient(270deg, #6a6a6a 0%, #848484 40%, #7a7a7a 80%, #909090 98%, #aaa 100%);
+  border-left: 1px solid #444;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.15),
+    inset 0 -1px 0 rgba(0,0,0,0.2),
+    inset 2px 0 4px rgba(0,0,0,0.2);
+}
+[data-theme="light"] .shutter-door.left {
+  background: linear-gradient(90deg, #7a7a7a 0%, #949494 40%, #8a8a8a 80%, #a0a0a0 98%, #b8b8b8 100%);
+  border-right-color: #666;
+}
+[data-theme="light"] .shutter-door.right {
+  background: linear-gradient(270deg, #7a7a7a 0%, #949494 40%, #8a8a8a 80%, #a0a0a0 98%, #b8b8b8 100%);
+  border-left-color: #666;
+}
+/* Center seam detail — rubber gasket strip where doors meet */
+.shutter-door.left::after {
+  content: ''; position: absolute;
+  top: 0; right: -1px; width: 3px; height: 100%;
+  background: linear-gradient(180deg, #333 0%, #2a2a2a 50%, #333 100%);
+  box-shadow: inset 1px 0 0 rgba(255,255,255,0.05);
+  z-index: 2;
+}
+.shutter-door.right::after {
+  content: ''; position: absolute;
+  top: 0; left: -1px; width: 3px; height: 100%;
+  background: linear-gradient(180deg, #333 0%, #2a2a2a 50%, #333 100%);
+  box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);
+  z-index: 2;
+}
+/* Handle grab bars — horizontal pull bars on each door */
+.shutter-handle {
+  position: absolute; z-index: 3;
+  top: 50%; transform: translateY(-50%);
+  width: 18px; height: 36px;
+  border-radius: 3px;
+  background: linear-gradient(180deg, #a0a0a0, #808080);
+  border: 1px solid #666;
+  box-shadow:
+    0 1px 3px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3),
+    inset 0 -1px 0 rgba(0,0,0,0.15);
+}
+.shutter-handle::after {
+  content: ''; position: absolute;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 10px; height: 2px;
+  background: #555;
+  border-radius: 1px;
+  box-shadow: 0 4px 0 #555, 0 -4px 0 #555;
+}
+[data-theme="light"] .shutter-handle {
+  background: linear-gradient(180deg, #c0c0c0, #a0a0a0);
+  border-color: #888;
+}
+.shutter-door.left .shutter-handle { right: 8px; }
+.shutter-door.right .shutter-handle { left: 8px; }
+/* Track rails — top and bottom guide channels */
+.shutter-track {
+  position: absolute; left: 0; right: 0; height: 4px;
+  background: linear-gradient(180deg, #333, #444, #333);
+  border: 1px solid #222;
+  z-index: 4;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+.shutter-track.top { top: 0; border-radius: 6px 6px 0 0; }
+.shutter-track.bottom { bottom: 0; border-radius: 0 0 6px 6px; }
+[data-theme="light"] .shutter-track {
+  background: linear-gradient(180deg, #555, #666, #555);
+  border-color: #444;
+}
+
+/* ── Open state: panels slide apart ── */
+.shutter-doors.open .shutter-door.left {
+  transform: translateX(-100%);
+}
+.shutter-doors.open .shutter-door.right {
+  transform: translateX(100%);
+}
+/* Gasket strips hide when open */
+.shutter-doors.open .shutter-door::after {
+  opacity: 0;
+}
+
+/* ── Closed state (default) ── */
+.shutter-doors.closed .shutter-door.left,
+.shutter-doors.closed .shutter-door.right {
+  transform: translateX(0);
+}
+
+/* Size variants */
+.sq-iris-frame.sm {
+  width: 150px; height: 150px;
+}
+.sq-iris-frame.sm .sq-iris-gate {
+  width: 126px; height: 126px;
+}
+.sq-iris-frame.sm .shutter-handle {
+  width: 14px; height: 26px;
+}
+.sq-iris-frame.sm .shutter-handle::after {
+  width: 7px;
+  box-shadow: 0 3px 0 #555, 0 -3px 0 #555;
+}
+.sq-iris-frame.sm .frame-screw { width: 8px; height: 8px; }
+.sq-iris-frame.sm .frame-screw.tl { top: 7px; left: 7px; }
+.sq-iris-frame.sm .frame-screw.tr { top: 7px; right: 7px; }
+.sq-iris-frame.sm .frame-screw.bl { bottom: 7px; left: 7px; }
+.sq-iris-frame.sm .frame-screw.br { bottom: 7px; right: 7px; }
+
+.sq-iris-frame.lg {
+  width: 300px; height: 300px;
+}
+.sq-iris-frame.lg .sq-iris-gate {
+  width: 260px; height: 260px;
+}
+.sq-iris-frame.lg .shutter-handle {
+  width: 22px; height: 44px;
+}
+.sq-iris-frame.lg .shutter-handle::after {
+  width: 13px;
+  box-shadow: 0 5px 0 #555, 0 -5px 0 #555;
+}
+.sq-iris-frame.lg .shutter-track { height: 5px; }
+.sq-iris-frame.lg .frame-screw { width: 12px; height: 12px; }
+.sq-iris-frame.lg .frame-screw.tl { top: 12px; left: 12px; }
+.sq-iris-frame.lg .frame-screw.tr { top: 12px; right: 12px; }
+.sq-iris-frame.lg .frame-screw.bl { bottom: 12px; left: 12px; }
+.sq-iris-frame.lg .frame-screw.br { bottom: 12px; right: 12px; }
+
+/* Engraved frame label */
+.sq-iris-frame .frame-engrave {
+  position: absolute; bottom: 5px; left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display); font-size: 6px;
+  letter-spacing: 2px; color: rgba(0,0,0,0.25);
+  z-index: 3; white-space: nowrap;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.15);
+}
+[data-theme="light"] .sq-iris-frame .frame-engrave {
+  color: rgba(0,0,0,0.15);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+}
+
+
+/* ══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ══════════════════════════════════════════════════════════════ */
+
+@media (max-width: 720px) {
+  .section { padding: 24px 16px 0; }
+  .page-header { padding: 24px 16px; }
+  .page-header h1 { font-size: 20px; }
+  .component-row { gap: 20px; }
+}
+
+</style>
+</head>
+<body>
+
+<h1 class="sr-only">Chroma-01 — Definitive 2000s-Inspired UI Component Library</h1>
+
+<!-- ── NAV ── -->
+<nav class="dir-nav" aria-label="Component sections">
+  <a href="#buttons">A BUTTONS</a>
+  <a href="#toggles">B TOGGLES</a>
+  <a href="#dials">C DIALS</a>
+  <a href="#sliders">D SLIDERS</a>
+  <a href="#readouts">E READOUTS</a>
+  <a href="#meters">F METERS</a>
+  <a href="#navigation">G NAVIGATION</a>
+  <a href="#forms">H FORMS</a>
+  <a href="#overlays">I OVERLAYS</a>
+  <a href="#indicators">J INDICATORS</a>
+  <a href="#data">K DATA</a>
+  <a href="#iris">L IRIS</a>
+  <a href="#compositions">COMPOSITIONS</a>
+  <div class="theme-toggle-wrap">
+    <span>DARK</span>
+    <div class="theme-toggle" id="themeToggle" role="button" tabindex="0" aria-label="Toggle theme">
+      <div class="theme-toggle-thumb"></div>
+    </div>
+    <span>LIGHT</span>
+  </div>
+</nav>
+
+<!-- ── PAGE HEADER ── -->
+<header class="page-header">
+  <div class="eyebrow">CHROMA-01 . DEFINITIVE COMPONENT LIBRARY . REV 1.0</div>
+  <h1>CHROMA-01</h1>
+  <p class="subtitle">The definitive 2000s-inspired UI component library. 98 components across 11 categories, unified by six material surfaces, a three-plane depth model, and warm neutral palette. Inspired by Sony Walkman, Nikon cameras, iPod Classic, Nokia phones, DJ consoles, and sound studio hardware.</p>
+</header>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  A. BUTTONS & PRESSABLE CONTROLS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="buttons">
+  <div class="section-header">
+    <span class="num">A</span>
+    <h2>BUTTONS & PRESSABLE CONTROLS</h2>
+    <span class="desc">9 button types across 6 material surfaces</span>
+  </div>
+
+  <!-- A1: Push Button -->
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">A1 Push Button — Size Scale</div>
+      <div class="flex-row" style="align-items:center">
+        <button class="push-btn xs">XS</button>
+        <button class="push-btn sm">SM</button>
+        <button class="push-btn">MD</button>
+        <button class="push-btn lg">LARGE</button>
+        <button class="push-btn xl">X-LARGE</button>
+      </div>
+      <table class="spec-table">
+        <tr><td>analog</td><td>Tactile camera body switch</td></tr>
+        <tr><td>depth</td><td>3-plane shadow: edge + top chamfer + bottom chamfer</td></tr>
+        <tr><td>press</td><td>translateY(1px) + shadow collapse</td></tr>
+      </table>
+    </div>
+
+    <div class="component-block">
+      <div class="component-label">A1 Push Button — States</div>
+      <div class="flex-row" style="align-items:center">
+        <button class="push-btn sm">DEFAULT</button>
+        <button class="push-btn sm active">ACTIVE</button>
+        <button class="push-btn sm state-amber">AMBER</button>
+        <button class="push-btn sm error">ERROR</button>
+        <button class="push-btn sm disabled">DISABLED</button>
+        <button class="push-btn round sm">Fn</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- A2: Gel Button -->
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">A2 Gel Button — Glossy Polycarbonate</div>
+      <div class="flex-row">
+        <button class="gel-btn xs">XS</button>
+        <button class="gel-btn">GEL</button>
+        <button class="gel-btn lg">LARGE</button>
+        <button class="gel-btn blue">BLUE</button>
+        <button class="gel-btn green">GREEN</button>
+        <button class="gel-btn pink">PINK</button>
+        <button class="gel-btn active">SELECTED</button>
+      </div>
+      <table class="spec-table">
+        <tr><td>analog</td><td>iPod-era glossy polycarbonate</td></tr>
+        <tr><td>surface</td><td>Catch-light gradient overlay</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- A3-A4: Rubber & Clear -->
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">A3 Rubber Button</div>
+      <div class="flex-row">
+        <button class="rubber-btn">RUBBER</button>
+        <button class="rubber-btn active">ACTIVE</button>
+        <button class="rubber-btn xs">XS</button>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>Gameboy Start/Select, soft-touch matte</td></tr></table>
+    </div>
+    <div class="component-block">
+      <div class="component-label">A4 Clear/Glass Button</div>
+      <div class="flex-row">
+        <button class="clear-btn">CLEAR</button>
+        <button class="clear-btn active">ACTIVE</button>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>Translucent plastic with frosted blur</td></tr></table>
+    </div>
+  </div>
+
+  <!-- A5-A6: Keypad & REC -->
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">A5 Keypad Button</div>
+      <div class="flex-row" style="gap:4px">
+        <button class="keypad-btn">1</button>
+        <button class="keypad-btn">2<span class="kbd-letters">ABC</span></button>
+        <button class="keypad-btn">3<span class="kbd-letters">DEF</span></button>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>Nokia T9 number pad key</td></tr></table>
+    </div>
+    <div class="component-block">
+      <div class="component-label">A6 REC Button</div>
+      <div class="flex-row" style="align-items:center;gap:20px">
+        <div class="flex-col" style="align-items:center;gap:6px">
+          <button class="rec-btn" id="recBtn"><div class="rec-inner"></div></button>
+          <span style="font-size:8px;color:var(--text-muted);font-family:var(--font-ui)" id="recLabel">STANDBY</span>
+        </div>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>Camera record: radial gradient, ring gap</td></tr></table>
+    </div>
+  </div>
+
+  <!-- A7-A9: Fn Grid, Icon, Segmented -->
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">A7 Function Grid</div>
+      <div class="fn-grid cols-3" style="width:180px">
+        <button class="fn-btn fn-active"><span>WB</span></button>
+        <button class="fn-btn"><span>ISO</span></button>
+        <button class="fn-btn"><span>AF</span></button>
+        <button class="fn-btn"><span>DR</span></button>
+        <button class="fn-btn"><span>EV</span></button>
+        <button class="fn-btn"><span>MF</span></button>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">A8 Icon Button</div>
+      <div class="flex-row" style="align-items:center">
+        <button class="icon-btn sm">&#9654;</button>
+        <button class="icon-btn">&#9632;</button>
+        <button class="icon-btn active">&#9733;</button>
+        <button class="icon-btn lg round">&#9881;</button>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">A9 Segmented Control</div>
+      <div class="segmented">
+        <button class="segmented-item active">PHOTO</button>
+        <button class="segmented-item">VIDEO</button>
+        <button class="segmented-item">SLOW</button>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  B. TOGGLE & SWITCH CONTROLS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="toggles">
+  <div class="section-header">
+    <span class="num">B</span>
+    <h2>TOGGLE & SWITCH CONTROLS</h2>
+    <span class="desc">7 toggle/switch types including DIP, LED checkbox, radio</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">B1 Toggle Switch</div>
+      <div class="flex-row">
+        <div class="toggle-wrap" data-toggle>
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          <span class="toggle-label">OFF</span>
+        </div>
+        <div class="toggle-wrap" data-toggle>
+          <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+          <span class="toggle-label">STAB</span>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">B2 Slide Switch</div>
+      <div class="flex-row">
+        <div class="slide-switch" data-toggle>
+          <div class="slide-track"><div class="slide-thumb"></div></div>
+          <span class="slide-label">SILENT</span>
+        </div>
+        <div class="slide-switch" data-toggle>
+          <div class="slide-track on"><div class="slide-thumb"></div></div>
+          <span class="slide-label">RING</span>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">B3 Rocker</div>
+      <div class="rocker">
+        <button class="rocker-btn plus">+</button>
+        <button class="rocker-btn minus">&minus;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">B4 Power Toggle</div>
+      <div class="flex-row" style="align-items:center;gap:16px">
+        <div class="power-toggle on" data-power-toggle><div class="power-toggle-thumb"></div></div>
+        <span style="font-size:11px;color:var(--green-on);font-family:var(--font-ui);letter-spacing:2px">ONLINE</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">B5 DIP Switch Row</div>
+      <div class="dip-row">
+        <div class="dip-switch on" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch on" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch on" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch" data-dip><div class="dip-lever"></div></div>
+        <div class="dip-switch on" data-dip><div class="dip-lever"></div></div>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>PCB DIP switch bank, 8-bit</td></tr></table>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">B6 Checkbox (LED)</div>
+      <div class="flex-col" style="gap:10px">
+        <label class="led-checkbox" data-checkbox>
+          <div class="led-check-box checked"><div class="led-check-mark"></div></div>
+          <span class="led-check-label">Face Detection</span>
+        </label>
+        <label class="led-checkbox" data-checkbox>
+          <div class="led-check-box"><div class="led-check-mark"></div></div>
+          <span class="led-check-label">Eye AF</span>
+        </label>
+        <label class="led-checkbox" data-checkbox>
+          <div class="led-check-box checked"><div class="led-check-mark"></div></div>
+          <span class="led-check-label">Grid Overlay</span>
+        </label>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">B7 Radio Button</div>
+      <div class="flex-col" style="gap:10px" data-radio-group>
+        <label class="radio-wrap">
+          <div class="radio-dot-outer selected"><div class="radio-dot-inner"></div></div>
+          <span class="radio-label">Single Shot</span>
+        </label>
+        <label class="radio-wrap">
+          <div class="radio-dot-outer"><div class="radio-dot-inner"></div></div>
+          <span class="radio-label">Continuous Hi</span>
+        </label>
+        <label class="radio-wrap">
+          <div class="radio-dot-outer"><div class="radio-dot-inner"></div></div>
+          <span class="radio-label">Timer 10s</span>
+        </label>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  C. ROTARY & DIAL CONTROLS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="dials">
+  <div class="section-header">
+    <span class="num">C</span>
+    <h2>ROTARY & DIAL CONTROLS</h2>
+    <span class="desc">7 dial types: rotary, mode, radial, cylindrical, click wheel</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">C1 Rotary Encoder</div>
+      <div class="rotary-wrap">
+        <div class="rotary">
+          <div class="rotary-notch"></div>
+          <div class="rotary-center"><div class="rotary-text">AUX</div></div>
+        </div>
+        <div>
+          <div class="panel-label">KNURLED KNOB</div>
+          <div style="line-height:1.8;color:var(--text-secondary);font-size:11px;font-family:var(--font-ui)">
+            Knurled edge<br>Spring easing<br>Physical inertia
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">C2 Mode Dial</div>
+      <div class="mode-dial-wrap">
+        <div class="mode-dial-outer">
+          <div class="mode-dial-body">
+            <div class="mode-dial-notch"></div>
+            <div class="mode-dial-center">
+              <div class="mode-dial-label">M</div>
+              <div class="mode-dial-sub">MANUAL</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">C3 Radial Dial — 3 Materials</div>
+      <div class="flex-row" style="gap:24px">
+        <div class="radial-dial">
+          <div class="radial-knob"><div class="radial-indicator"></div><div class="knob-center"></div></div>
+          <span class="radial-value">RUBBER</span>
+        </div>
+        <div class="radial-dial">
+          <div class="radial-knob variant-metal"><div class="radial-indicator"></div><div class="knob-center"></div></div>
+          <span class="radial-value">METAL</span>
+        </div>
+        <div class="radial-dial">
+          <div class="radial-knob variant-glossy"><div class="radial-indicator"></div><div class="knob-center"></div></div>
+          <span class="radial-value">GLOSSY</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">C4 Cylindrical Scroll Dial</div>
+      <div class="dial-cyl-wrap">
+        <div class="dial-cyl-title">SHUTTER</div>
+        <div class="dial-cylinder">
+          <div class="dial-knurl left"></div>
+          <div class="dial-knurl right"></div>
+          <div class="dial-inner" style="top: -28px;">
+            <div class="dial-tick">1/30</div>
+            <div class="dial-tick">1/60</div>
+            <div class="dial-tick near">1/125</div>
+            <div class="dial-tick active">1/250</div>
+            <div class="dial-tick near">1/500</div>
+            <div class="dial-tick">1/1000</div>
+            <div class="dial-tick">1/2000</div>
+          </div>
+          <div class="dial-center-bar"></div>
+          <div class="dial-vignette"></div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">C5 Cylindrical Horizontal</div>
+      <div class="dial-h">
+        <div class="dial-h-label">EXPOSURE COMP</div>
+        <div class="dial-h-body">
+          <div class="knurl-cross"></div>
+          <div class="dial-cap"></div>
+          <div class="dial-badge">+0.7</div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">C6 Vertical Thumb Wheel</div>
+      <div class="dial-v-wrap">
+        <div class="dial-v-body">
+          <div class="knurl-cross"></div>
+          <div class="dial-badge">50</div>
+        </div>
+        <div class="dial-v-label">ISO</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">C7 Click Wheel</div>
+      <div class="clickwheel-wrap">
+        <div class="clickwheel">
+          <button class="clickwheel-btn menu">MENU</button>
+          <button class="clickwheel-btn prev">&#9664;&#9664;</button>
+          <button class="clickwheel-btn next">&#9654;&#9654;</button>
+          <button class="clickwheel-btn playpause">&#9654;&#10073;&#10073;</button>
+          <div class="clickwheel-center"><span>SELECT</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  D. SLIDER & RANGE CONTROLS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="sliders">
+  <div class="section-header">
+    <span class="num">D</span>
+    <h2>SLIDER & RANGE CONTROLS</h2>
+    <span class="desc">7 slider types: volume, scrubber, fader, crossfader, stepper</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">D1 Volume Slider</div>
+      <div class="slider-wrap">
+        <div class="slider-track">
+          <div class="slider-fill" style="width:60%"></div>
+          <div class="slider-thumb" style="left:60%"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;width:100%">
+          <span class="slider-label">VOL</span>
+          <span class="slider-value">60</span>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">D2 Scrubber</div>
+      <div class="scrubber-wrap">
+        <div class="scrubber-track">
+          <div class="scrubber-fill" style="width:35%"></div>
+          <div class="scrubber-thumb" style="left:35%"></div>
+        </div>
+        <div class="scrubber-time"><span>1:24</span><span>4:02</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">D3 Range Slider (Console Fader)</div>
+      <div class="fader-h-wrap">
+        <div class="fader-h-track">
+          <div class="fader-h-fill" style="width:45%"></div>
+          <div class="fader-h-thumb" style="left:45%"></div>
+        </div>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>Mixing console horizontal fader</td></tr></table>
+    </div>
+    <div class="component-block">
+      <div class="component-label">D4 Dual Range</div>
+      <div class="dual-range-wrap">
+        <div class="dual-range-track">
+          <div class="dual-range-fill" style="left:25%;width:40%"></div>
+          <div class="dual-range-thumb" style="left:25%"></div>
+          <div class="dual-range-thumb" style="left:65%"></div>
+        </div>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>Parametric EQ band range</td></tr></table>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">D5 Crossfader</div>
+      <div class="crossfader-wrap">
+        <div class="crossfader-labels"><span>DECK A</span><span>DECK B</span></div>
+        <div class="crossfader-track">
+          <div class="crossfader-center"></div>
+          <div class="crossfader-thumb" style="left:50%"></div>
+        </div>
+      </div>
+      <table class="spec-table"><tr><td>analog</td><td>DJ console crossfader</td></tr></table>
+    </div>
+    <div class="component-block">
+      <div class="component-label">D6 Stepper</div>
+      <div class="stepper-wrap">
+        <div class="stepper">
+          <button class="stepper-btn" data-stepper-dec>&minus;</button>
+          <span class="stepper-value" id="stepperVal">12</span>
+          <button class="stepper-btn" data-stepper-inc>+</button>
+        </div>
+        <span class="stepper-label">CHANNEL</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">D7 Vertical Fader</div>
+      <div class="flex-row" style="gap:16px">
+        <div class="fader-v-wrap">
+          <div class="fader-v-track">
+            <div class="fader-v-fill" style="height:70%"></div>
+            <div class="fader-v-thumb" style="bottom:70%"></div>
+          </div>
+          <span class="fader-v-label">CH 1</span>
+          <span class="fader-v-value">+3</span>
+        </div>
+        <div class="fader-v-wrap">
+          <div class="fader-v-track">
+            <div class="fader-v-fill" style="height:45%"></div>
+            <div class="fader-v-thumb" style="bottom:45%"></div>
+          </div>
+          <span class="fader-v-label">CH 2</span>
+          <span class="fader-v-value">-2</span>
+        </div>
+        <div class="fader-v-wrap">
+          <div class="fader-v-track">
+            <div class="fader-v-fill" style="height:85%"></div>
+            <div class="fader-v-thumb" style="bottom:85%"></div>
+          </div>
+          <span class="fader-v-label">MASTER</span>
+          <span class="fader-v-value">+6</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  E. DISPLAY & READOUT COMPONENTS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="readouts">
+  <div class="section-header">
+    <span class="num">E</span>
+    <h2>DISPLAY & READOUT COMPONENTS</h2>
+    <span class="desc">7 display types: OLED, camera readout, LCD, timecode, 7-segment, dot matrix</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">E1 Signal Display</div>
+      <div class="signal-display">
+        <div class="signal-display-label">PRIMARY OUTPUT</div>
+        <div class="signal-display-value">87.4%</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">E2 Camera Readout</div>
+      <div class="flex-row" style="gap:8px">
+        <div class="readout"><div class="readout-label">SHUTTER</div><div class="readout-value">1/250</div></div>
+        <div class="readout sm"><div class="readout-label">ISO</div><div class="readout-value">800</div></div>
+        <div class="readout inline"><div class="readout-label">F</div><div class="readout-value">2.8</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">E3 LCD Readout — Color Variants</div>
+      <div class="flex-row">
+        <div class="lcd-readout"><div class="lcd-label">TRACKS</div><div class="lcd-value">42</div></div>
+        <div class="lcd-readout green"><div class="lcd-label">SIGNAL</div><div class="lcd-value">OK</div></div>
+        <div class="lcd-readout amber"><div class="lcd-label">TEMP</div><div class="lcd-value">72<span class="lcd-unit">&deg;F</span></div></div>
+        <div class="lcd-readout pink"><div class="lcd-label">BPM</div><div class="lcd-value">128</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">E4 Timecode Display</div>
+      <div class="timecode-display">
+        <span class="tc-segment">01</span><span class="tc-colon tc-blink">:</span>
+        <span class="tc-segment">23</span><span class="tc-colon">:</span>
+        <span class="tc-segment">45</span><span class="tc-colon">:</span>
+        <span class="tc-segment">12</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">E5 Resource Monitor</div>
+      <div class="resource-grid" style="width:240px">
+        <div class="resource"><div class="resource-name">CPU</div><div class="resource-value">74%</div><div class="resource-bar"><div class="resource-fill" style="width:74%"></div></div></div>
+        <div class="resource"><div class="resource-name">MEM</div><div class="resource-value">52%</div><div class="resource-bar"><div class="resource-fill" style="width:52%"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">E6 Seven-Segment Display</div>
+      <div class="flex-row" style="gap:12px">
+        <div class="seven-seg">
+          <span class="seven-seg-digit">1</span><span class="seven-seg-digit">2</span>
+          <span class="seven-seg-colon">:</span>
+          <span class="seven-seg-digit">4</span><span class="seven-seg-digit">5</span>
+        </div>
+        <div class="seven-seg green">
+          <span class="seven-seg-digit">0</span><span class="seven-seg-digit">3</span>
+          <span class="seven-seg-colon">:</span>
+          <span class="seven-seg-digit">2</span><span class="seven-seg-digit">1</span>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">E7 Dot Matrix Display</div>
+      <div class="dot-matrix" style="width:200px">
+        <div class="dot-matrix-text">NOW PLAYING: TRACK 07 — MIDNIGHT CITY</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  F. METER & VISUALIZATION
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="meters">
+  <div class="section-header">
+    <span class="num">F</span>
+    <h2>METER & VISUALIZATION</h2>
+    <span class="desc">14 meter types: spectrum, VU, EQ, histogram, gauges, oscilloscope</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">F1 Signal Meter</div>
+      <div class="signal-meter">
+        <div class="signal-bar" style="height:28%"></div>
+        <div class="signal-bar" style="height:55%"></div>
+        <div class="signal-bar" style="height:80%"></div>
+        <div class="signal-bar" style="height:42%"></div>
+        <div class="signal-bar" style="height:64%"></div>
+        <div class="signal-bar" style="height:35%"></div>
+        <div class="signal-bar" style="height:72%"></div>
+        <div class="signal-bar" style="height:50%"></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F2 EV Meter</div>
+      <div class="ev-meter">
+        <span class="ev-sign">+</span>
+        <div class="ev-track">
+          <div class="ev-zero-line"></div>
+          <div class="ev-fill-bar" style="top:30%;height:20%"></div>
+        </div>
+        <span class="ev-sign">&minus;</span>
+        <span class="ev-readout">+0.7</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F3 VU Meter</div>
+      <div class="vu-wrap">
+        <div class="vu-meter">
+          <div class="vu-bar" style="height:55%"></div>
+          <div class="vu-bar" style="height:75%"></div>
+          <div class="vu-bar" style="height:90%"></div>
+          <div class="vu-bar" style="height:60%"></div>
+          <div class="vu-bar" style="height:40%"></div>
+          <div class="vu-bar" style="height:70%"></div>
+        </div>
+        <span class="vu-label">L CHANNEL</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F4 Equalizer</div>
+      <div class="eq-wrap">
+        <div class="eq-bars">
+          <div class="eq-band warm" style="height:30%"></div>
+          <div class="eq-band warm" style="height:50%"></div>
+          <div class="eq-band" style="height:70%"></div>
+          <div class="eq-band" style="height:90%"></div>
+          <div class="eq-band" style="height:75%"></div>
+          <div class="eq-band bright" style="height:55%"></div>
+          <div class="eq-band bright" style="height:35%"></div>
+          <div class="eq-band bright" style="height:20%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">F5 Histogram</div>
+      <div class="histogram-wrap">
+        <canvas class="histogram-canvas" width="200" height="80" id="histCanvas"></canvas>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F6 Waveform</div>
+      <div class="waveform-wrap">
+        <canvas class="waveform-canvas" width="200" height="80" id="waveCanvas"></canvas>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F14 Oscilloscope</div>
+      <div class="oscilloscope">
+        <div class="oscilloscope-line"></div>
+        <canvas width="200" height="80" id="oscCanvas"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">F7 Progress Bar</div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" style="width:65%"></div></div>
+        <div class="progress-label"><span>TRANSFER</span><span>65%</span></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F8 Signal Strength</div>
+      <div class="flex-row" style="gap:16px;align-items:center">
+        <div class="signal-bars">
+          <div class="signal-strength-bar"></div><div class="signal-strength-bar"></div>
+          <div class="signal-strength-bar"></div><div class="signal-strength-bar off"></div>
+          <div class="signal-strength-bar off"></div>
+        </div>
+        <span style="font-size:9px;color:var(--text-muted);font-family:var(--font-ui)">3G</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F9 Battery</div>
+      <div class="flex-row" style="gap:12px;align-items:center">
+        <div class="battery-icon"><div class="battery-body"><div class="battery-fill" style="width:80%"></div></div></div>
+        <div class="battery-icon"><div class="battery-body"><div class="battery-fill medium" style="width:40%"></div></div></div>
+        <div class="battery-icon"><div class="battery-body"><div class="battery-fill low" style="width:15%"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">F10 Level Indicator</div>
+      <div class="level-wrap">
+        <div class="level-bar">
+          <div class="level-center-mark"></div>
+          <div class="level-fill" style="left:45%;width:10%"></div>
+        </div>
+        <span class="level-text">HORIZON &mdash; +2&deg;</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F11 Exposure Scale</div>
+      <div class="exp-scale">
+        <div class="exp-track">
+          <div class="exp-ruler"></div>
+          <div class="exp-ticks">
+            <div class="exp-tick major" style="height:8px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick major" style="height:8px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick major" style="height:8px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick major" style="height:8px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick minor" style="height:4px"></div>
+            <div class="exp-tick major" style="height:8px"></div>
+          </div>
+          <div class="exp-indicator" style="left:62%"></div>
+        </div>
+        <div class="exp-labels"><span>-2</span><span>-1</span><span>0</span><span>+1</span><span>+2</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">F12 Analog Gauge (Semi)</div>
+      <div class="gauge-semi">
+        <div class="gauge-semi-scale"></div>
+        <div class="gauge-semi-needle" style="transform:rotate(-20deg)"></div>
+        <div class="gauge-semi-pivot"></div>
+        <div class="gauge-semi-labels"><span>-20</span><span>VU</span><span>+3</span></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">F13 Analog Gauge (Full)</div>
+      <div class="gauge-full">
+        <div class="gauge-full-needle" style="transform:rotate(45deg)"></div>
+        <div class="gauge-full-pivot"></div>
+        <span class="gauge-full-label" style="top:8px;left:50%;transform:translateX(-50%)">N</span>
+        <span class="gauge-full-label" style="right:8px;top:50%;transform:translateY(-50%)">E</span>
+        <span class="gauge-full-label" style="bottom:8px;left:50%;transform:translateX(-50%)">S</span>
+        <span class="gauge-full-label" style="left:8px;top:50%;transform:translateY(-50%)">W</span>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  G. NAVIGATION & MENU
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="navigation">
+  <div class="section-header">
+    <span class="num">G</span>
+    <h2>NAVIGATION & MENU</h2>
+    <span class="desc">12 navigation types: grid, list, tabs, d-pad, rack panel, breadcrumbs, pagination</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">G1 Menu Grid</div>
+      <div class="menu-grid-wrap">
+        <div class="menu-grid">
+          <div class="menu-grid-item active"><div class="mgi-icon">&#9742;</div>PHONE</div>
+          <div class="menu-grid-item"><div class="mgi-icon">&#9993;</div>MSG</div>
+          <div class="menu-grid-item"><div class="mgi-icon">&#9881;</div>SET</div>
+          <div class="menu-grid-item"><div class="mgi-icon">&#9835;</div>MUSIC</div>
+          <div class="menu-grid-item"><div class="mgi-icon">&#128247;</div>CAM</div>
+          <div class="menu-grid-item"><div class="mgi-icon">&#127760;</div>WEB</div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G2 Menu List</div>
+      <div class="menu-list-wrap">
+        <div class="menu-list-title">MUSIC</div>
+        <div class="menu-list-item active"><span class="mli-label">Now Playing</span><span class="mli-arrow">&#9654;</span></div>
+        <div class="menu-list-item"><span class="mli-label">Artists</span><span class="mli-arrow">&#9654;</span></div>
+        <div class="menu-list-item"><span class="mli-label">Albums</span><span class="mli-arrow">&#9654;</span></div>
+        <div class="menu-list-item"><span class="mli-label">Playlists</span><span class="mli-arrow">&#9654;</span></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G3 Tab Bar</div>
+      <div class="tab-bar" style="width:280px">
+        <button class="tab-item active">PHOTO</button>
+        <button class="tab-item">VIDEO</button>
+        <button class="tab-item">AUDIO</button>
+        <button class="tab-item">FILES</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">G4 D-Pad</div>
+      <div class="dpad-section">
+        <div class="dpad">
+          <button class="dpad-arm up">&#9650;</button>
+          <button class="dpad-arm down">&#9660;</button>
+          <button class="dpad-arm left">&#9664;</button>
+          <button class="dpad-arm right">&#9654;</button>
+          <button class="dpad-center"></button>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G5 Status Bar</div>
+      <div class="status-bar" style="width:260px">
+        <span class="sb-time">12:45</span>
+        <span class="sb-text">3G</span>
+        <div class="sb-icons">
+          <div class="signal-bars" style="height:14px">
+            <div class="signal-strength-bar" style="height:4px"></div>
+            <div class="signal-strength-bar" style="height:7px"></div>
+            <div class="signal-strength-bar" style="height:10px"></div>
+            <div class="signal-strength-bar off" style="height:13px"></div>
+          </div>
+          <div class="battery-icon"><div class="battery-body" style="width:20px;height:10px"><div class="battery-fill" style="width:70%"></div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">G7 Rack Panel (Sidebar)</div>
+      <div class="rack-panel">
+        <div class="rack-slot active"><div class="rack-slot-indicator"></div><span class="rack-slot-label">CHANNEL 1</span></div>
+        <div class="rack-slot"><div class="rack-slot-indicator"></div><span class="rack-slot-label">CHANNEL 2</span></div>
+        <div class="rack-slot"><div class="rack-slot-indicator"></div><span class="rack-slot-label">CHANNEL 3</span></div>
+        <div class="rack-slot"><div class="rack-slot-indicator"></div><span class="rack-slot-label">AUX SEND</span></div>
+        <div class="rack-slot"><div class="rack-slot-indicator"></div><span class="rack-slot-label">MASTER</span></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G8 Breadcrumbs</div>
+      <div class="breadcrumbs">
+        <span class="breadcrumb-item">HOME</span>
+        <span class="breadcrumb-sep">&#9654;</span>
+        <span class="breadcrumb-item">SETTINGS</span>
+        <span class="breadcrumb-sep">&#9654;</span>
+        <span class="breadcrumb-item active">DISPLAY</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G9 Pagination</div>
+      <div class="pagination">
+        <button class="page-btn">&#9664;</button>
+        <button class="page-btn">1</button>
+        <button class="page-btn active">2</button>
+        <button class="page-btn">3</button>
+        <button class="page-btn">4</button>
+        <button class="page-btn">&#9654;</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">G10 Context Menu (Radial)</div>
+      <div class="radial-menu">
+        <div class="radial-menu-item" style="top:8px;left:50%;transform:translateX(-50%)">&#9733;</div>
+        <div class="radial-menu-item" style="top:50%;right:8px;transform:translateY(-50%)">&#9998;</div>
+        <div class="radial-menu-item" style="bottom:8px;left:50%;transform:translateX(-50%)">&#128465;</div>
+        <div class="radial-menu-item" style="top:50%;left:8px;transform:translateY(-50%)">&#128269;</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G11 Custom Scrollbar</div>
+      <div class="custom-scrollbar-demo">
+        System log entries from diagnostic output. Channel 1 calibrated. Channel 2 calibrated. Channel 3 online. Master bus active. Signal routing complete. Buffer latency: 12ms. Sample rate: 48kHz. Bit depth: 24-bit. Monitoring enabled. Output routed to main speakers.
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">G12 Drawer</div>
+      <div class="drawer-demo" id="drawerDemo">
+        <div style="padding:12px;font-family:var(--font-ui);font-size:10px;color:var(--text-muted)">
+          <button class="push-btn xs" onclick="document.getElementById('drawerDemo').classList.toggle('open')">OPEN</button>
+        </div>
+        <div class="drawer-panel">
+          <div class="drawer-panel-title">SETTINGS</div>
+          <div class="flex-col" style="gap:8px">
+            <div class="toggle-wrap" data-toggle style="flex-direction:row;gap:8px">
+              <div class="toggle-track on" style="width:36px;height:18px"><div class="toggle-thumb" style="width:12px;height:12px"></div></div>
+              <span class="toggle-label" style="font-size:9px">AUTO</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  H. FORM INPUTS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="forms">
+  <div class="section-header">
+    <span class="num">H</span>
+    <h2>FORM INPUTS</h2>
+    <span class="desc">Text inputs, search, select, color picker, file input — all mechanically styled</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">H1 Text Input</div>
+      <div class="flex-col" style="gap:8px">
+        <input class="text-input sm" placeholder="Small input...">
+        <input class="text-input" placeholder="Standard input...">
+        <input class="text-input lg" placeholder="Large input...">
+        <input class="text-input error" placeholder="Error state..." value="Invalid">
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">H2 Textarea</div>
+      <textarea class="text-area" placeholder="Multi-line entry..."></textarea>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">H3 Search Bar</div>
+      <div class="search-bar">
+        <span class="search-bar-icon">&#128269;</span>
+        <input type="text" placeholder="Search files...">
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">H4 Select / Dropdown</div>
+      <div class="select-wrap" id="selectDemo">
+        <div class="select-trigger" onclick="document.getElementById('selectDemo').classList.toggle('open')">
+          <span>JPEG Fine</span>
+          <span class="select-arrow">&#9660;</span>
+        </div>
+        <div class="select-dropdown">
+          <div class="select-option selected">JPEG Fine</div>
+          <div class="select-option">JPEG Normal</div>
+          <div class="select-option">RAW</div>
+          <div class="select-option">RAW + JPEG</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">H7 Color Picker (TV Bars)</div>
+      <div class="color-bar-picker" style="width:210px">
+        <div class="color-bar-swatch" style="background:#fff"></div>
+        <div class="color-bar-swatch selected" style="background:#ffff00"></div>
+        <div class="color-bar-swatch" style="background:#00ffff"></div>
+        <div class="color-bar-swatch" style="background:#00ff00"></div>
+        <div class="color-bar-swatch" style="background:#ff00ff"></div>
+        <div class="color-bar-swatch" style="background:#ff0000"></div>
+        <div class="color-bar-swatch" style="background:#0000ff"></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">H9 File Input (Card Slot)</div>
+      <div class="file-input">
+        <span class="file-input-icon">&#128190;</span>
+        <span class="file-input-text">INSERT CARD</span>
+        <div class="file-input-eject">&#9166;</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  I. OVERLAYS & CONTAINERS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="overlays">
+  <div class="section-header">
+    <span class="num">I</span>
+    <h2>OVERLAYS & CONTAINERS</h2>
+    <span class="desc">12 container types: panels, bezels, dialogs, toasts, focus brackets, tooltips</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">I1 Panel (Machined Frame)</div>
+      <div class="panel" style="width:240px">
+        <div class="panel-title">CONTROL CLUSTER</div>
+        <div class="panel-label">SYSTEM STATUS</div>
+        <div class="flex-row" style="gap:8px">
+          <button class="push-btn xs active">MODE</button>
+          <button class="push-btn xs">SYS</button>
+          <button class="push-btn xs">NAV</button>
+        </div>
+        <div class="serial"><span>REV-B</span><span>UNIT-04</span></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">I2 Chassis Panel</div>
+      <div class="chassis-panel" style="width:200px">
+        <div class="cpanel-header">
+          <span class="cpanel-title">AUDIO OUT</span>
+          <span style="font-size:8px;color:var(--text-muted);font-family:var(--font-ui)">v2.1</span>
+        </div>
+        <div class="led-cluster">
+          <div class="led-dot green"></div>
+          <div class="led-dot green"></div>
+          <div class="led-dot off"></div>
+          <div class="led-dot red"></div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">I3 Plastic Card</div>
+      <div class="plastic-card" style="width:160px">
+        <div class="card-label">STORAGE</div>
+        <div class="card-value">32<span style="font-size:12px;color:var(--text-muted)">GB</span></div>
+        <div class="card-sub">CF Card — Slot 1</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">I4 Device Bezel</div>
+      <div class="device-bezel" style="width:160px;height:100px;display:flex;align-items:center;justify-content:center">
+        <span style="font-family:var(--font-display);font-size:9px;color:var(--text-muted);letter-spacing:2px">DISPLAY AREA</span>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">I5 Dialog</div>
+      <div class="phone-dialog">
+        <div class="dialog-title">DELETE FILE?</div>
+        <div class="dialog-body">This action cannot be undone. The file will be permanently removed.</div>
+        <div class="dialog-actions">
+          <button class="gel-btn">CANCEL</button>
+          <button class="gel-btn pink">DELETE</button>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">I6 Toast</div>
+      <div class="toast">
+        <div class="led-dot green"></div>
+        <span class="toast-text">File saved successfully</span>
+        <span class="toast-time">12:45</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">I7 Focus Brackets</div>
+      <div class="focus-demo" style="background:#333">
+        <div class="focus-box" style="top:20px;left:30px;width:60px;height:60px">
+          <div class="focus-corner tl"></div><div class="focus-corner tr"></div>
+          <div class="focus-corner bl"></div><div class="focus-corner br"></div>
+          <div class="focus-label">FACE</div>
+        </div>
+        <div class="focus-box locked" style="top:40px;left:120px;width:40px;height:40px">
+          <div class="focus-corner tl"></div><div class="focus-corner tr"></div>
+          <div class="focus-corner bl"></div><div class="focus-corner br"></div>
+          <div class="focus-label">EYE AF</div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">I8 Grid Overlay</div>
+      <div class="grid-overlay-demo">
+        <div class="grid-line-v" style="left:33.3%"></div>
+        <div class="grid-line-v" style="left:66.6%"></div>
+        <div class="grid-line-h" style="top:33.3%"></div>
+        <div class="grid-line-h" style="top:66.6%"></div>
+        <div class="grid-center-dot"></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">I9 Tooltip</div>
+      <div class="tooltip">ISO 800 — Auto</div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  J. STATUS & INDICATORS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="indicators">
+  <div class="section-header">
+    <span class="num">J</span>
+    <h2>STATUS & INDICATORS</h2>
+    <span class="desc">10 indicator types: chips, badges, LEDs, spinners, accordion, transport</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">J1 Status Chips</div>
+      <div class="chip-row">
+        <div class="status-chip active">CONNECTED</div>
+        <div class="status-chip">STANDBY</div>
+        <div class="status-chip active">REC</div>
+        <div class="status-chip">REMOTE</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">J2 Selectable Chips</div>
+      <div class="flex-row" style="gap:6px">
+        <div class="chip active"><span class="chip-dot" style="background:var(--blue-info)"></span>4K</div>
+        <div class="chip">1080p</div>
+        <div class="chip">720p</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">J3 Badges</div>
+      <div class="flex-row" style="gap:6px">
+        <span class="badge blue">NEW</span>
+        <span class="badge green">ONLINE</span>
+        <span class="badge red">LIVE</span>
+        <span class="badge amber">PRO</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">J4 LED Dots</div>
+      <div class="flex-row" style="gap:10px;align-items:center">
+        <div class="led-dot green"></div>
+        <div class="led-dot red"></div>
+        <div class="led-dot blue"></div>
+        <div class="led-dot amber"></div>
+        <div class="led-dot off"></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">J5 Mode Badge</div>
+      <div class="flex-row" style="gap:8px">
+        <div class="mode-badge">
+          <span class="mode-letter">M</span>
+          <div class="mode-detail"><span class="mode-key">MODE</span><span class="mode-sub">Manual</span></div>
+        </div>
+        <div class="mode-badge">
+          <span class="mode-letter">A</span>
+          <div class="mode-detail"><span class="mode-key">MODE</span><span class="mode-sub">Aperture</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">J6 Profile Badge</div>
+      <div class="flex-row" style="gap:6px">
+        <div class="pp-badge active-pp"><span class="pp-key">PP</span><span class="pp-val">S-Log3</span></div>
+        <div class="pp-badge"><span class="pp-key">PP</span><span class="pp-val">HLG</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">J7 Spinners</div>
+      <div class="flex-row" style="gap:20px;align-items:center">
+        <div class="spinner"></div>
+        <div class="cd-spinner"></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">J8 Skeleton Loading</div>
+      <div class="skeleton-wrap">
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+        <div class="skeleton-line"></div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">J9 Accordion</div>
+      <div class="accordion">
+        <div class="accordion-item open">
+          <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <span>Display Settings</span><span class="acc-arrow">&#9654;</span>
+          </div>
+          <div class="accordion-body"><p>Brightness, contrast, and color temperature controls for the main display output.</p></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <span>Audio Settings</span><span class="acc-arrow">&#9654;</span>
+          </div>
+          <div class="accordion-body"><p>Master volume, channel balance, and output routing configuration.</p></div>
+        </div>
+        <div class="accordion-item">
+          <div class="accordion-header" onclick="this.parentElement.classList.toggle('open')">
+            <span>Network</span><span class="acc-arrow">&#9654;</span>
+          </div>
+          <div class="accordion-body"><p>Wi-Fi, Bluetooth, and wired connection settings.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">J10 Transport Controls</div>
+      <div class="transport-wrap">
+        <div class="transport">
+          <button class="transport-btn">&#9198;</button>
+          <button class="transport-btn">&#9664;&#9664;</button>
+          <button class="transport-btn play">&#9654;</button>
+          <button class="transport-btn">&#9654;&#9654;</button>
+          <button class="transport-btn">&#9197;</button>
+        </div>
+        <span style="font-family:var(--font-ui);font-size:9px;font-weight:500;color:var(--text-muted);letter-spacing:1px">NOW PLAYING</span>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  K. DATA DISPLAY & COMPOSITIONS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="data">
+  <div class="section-header">
+    <span class="num">K</span>
+    <h2>DATA DISPLAY</h2>
+    <span class="desc">Data tables, media grids, film strips</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">K1 Data Table</div>
+      <table class="data-table" style="width:360px">
+        <thead><tr><th>PARAMETER</th><th>VALUE</th><th>STATUS</th></tr></thead>
+        <tbody>
+          <tr><td>CPU Temp</td><td class="val">72&deg;C</td><td><div class="led-dot green"></div></td></tr>
+          <tr><td>Fan Speed</td><td class="val">2400</td><td><div class="led-dot green"></div></td></tr>
+          <tr><td>Voltage</td><td class="val">12.1V</td><td><div class="led-dot amber"></div></td></tr>
+          <tr><td>Clock</td><td class="val">3.6GHz</td><td><div class="led-dot green"></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">K2 Media Grid (Proof Sheet)</div>
+      <div class="media-grid" style="width:240px">
+        <div class="media-thumb">01</div>
+        <div class="media-thumb selected">02</div>
+        <div class="media-thumb">03</div>
+        <div class="media-thumb">04</div>
+        <div class="media-thumb">05</div>
+        <div class="media-thumb">06</div>
+        <div class="media-thumb selected">07</div>
+        <div class="media-thumb">08</div>
+      </div>
+    </div>
+    <div class="component-block">
+      <div class="component-label">K3 Film Strip</div>
+      <div class="film-strip" style="width:320px">
+        <div class="film-frame">F01</div>
+        <div class="film-frame selected">F02</div>
+        <div class="film-frame">F03</div>
+        <div class="film-frame">F04</div>
+        <div class="film-frame">F05</div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  L. OPTICAL & MECHANICAL COMPONENTS
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="iris">
+  <div class="section-header">
+    <span class="num">L</span>
+    <h2>OPTICAL & MECHANICAL</h2>
+    <span class="desc">Camera shutter iris with functional open/close animation</span>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">L1 Shutter Iris — 7 Blade</div>
+      <div class="iris-wrap">
+        <div class="iris-outer" data-iris>
+          <div class="iris-chamber">
+            <div class="iris-blades closed">
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+            </div>
+            <div class="iris-aperture"></div>
+          </div>
+        </div>
+        <div class="iris-readout">
+          <span class="iris-label">APERTURE</span>
+          <span class="iris-fstop" data-iris-fstop>f/16</span>
+        </div>
+        <table class="spec-table">
+          <tr><td>BLADES</td><td>7 (heptagonal bokeh)</td></tr>
+          <tr><td>MATERIAL</td><td>Spring steel, matte black</td></tr>
+          <tr><td>ANALOG</td><td>Nikon 50mm f/1.4D</td></tr>
+          <tr><td>EASING</td><td>Spring (mechanical detent)</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="component-block">
+      <div class="component-label">L1.sm — Small Variant</div>
+      <div class="iris-wrap">
+        <div class="iris-outer sm" data-iris>
+          <div class="iris-chamber">
+            <div class="iris-blades closed">
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+            </div>
+            <div class="iris-aperture"></div>
+          </div>
+        </div>
+        <div class="iris-readout">
+          <span class="iris-label">APERTURE</span>
+          <span class="iris-fstop" data-iris-fstop>f/16</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block">
+      <div class="component-label">L1.lg — Large Variant</div>
+      <div class="iris-wrap">
+        <div class="iris-outer lg" data-iris>
+          <div class="iris-chamber">
+            <div class="iris-blades closed">
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+              <div class="iris-blade"></div>
+            </div>
+            <div class="iris-aperture"></div>
+          </div>
+        </div>
+        <div class="iris-readout">
+          <span class="iris-label">APERTURE</span>
+          <span class="iris-fstop" data-iris-fstop>f/16</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">L2 Iris + Shutter Button</div>
+      <div class="iris-wrap">
+        <div style="display:flex;align-items:center;gap:24px">
+          <div class="iris-outer" data-iris>
+            <div class="iris-chamber">
+              <div class="iris-blades closed">
+                <div class="iris-blade"></div>
+                <div class="iris-blade"></div>
+                <div class="iris-blade"></div>
+                <div class="iris-blade"></div>
+                <div class="iris-blade"></div>
+                <div class="iris-blade"></div>
+                <div class="iris-blade"></div>
+              </div>
+              <div class="iris-aperture"></div>
+            </div>
+          </div>
+          <div class="flex-col" style="align-items:center;gap:10px">
+            <div class="iris-shutter-btn" data-iris-shutter>
+              <div class="shutter-icon"></div>
+            </div>
+            <span class="iris-label">SHUTTER</span>
+            <div class="led-dot amber" style="margin-top:4px"></div>
+          </div>
+        </div>
+        <div class="iris-readout" style="margin-top:8px">
+          <span class="iris-label">APERTURE</span>
+          <span class="iris-fstop" data-iris-fstop>f/16</span>
+        </div>
+        <div class="component-spec">
+          Click iris to toggle open/close.<br>
+          Shutter button triggers close→open sequence.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider" style="margin:40px 0"></div>
+
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">L3 Square Shutter — Dual Channel Door</div>
+      <div class="iris-wrap">
+        <div class="sq-iris-frame" data-shutter>
+          <div class="frame-screw tl"></div>
+          <div class="frame-screw tr"></div>
+          <div class="frame-screw bl"></div>
+          <div class="frame-screw br"></div>
+          <span class="frame-engrave">CHROMA-01 MECHANICAL</span>
+          <div class="sq-iris-gate">
+            <div class="shutter-doors closed">
+              <div class="shutter-door left"><div class="shutter-handle"></div></div>
+              <div class="shutter-door right"><div class="shutter-handle"></div></div>
+            </div>
+            <div class="shutter-track top"></div>
+            <div class="shutter-track bottom"></div>
+          </div>
+        </div>
+        <div class="iris-readout">
+          <span class="iris-label">SHUTTER</span>
+          <span class="iris-fstop" data-shutter-label>CLOSED</span>
+        </div>
+        <table class="spec-table">
+          <tr><td>FRAME</td><td>1:1 brushed aluminum</td></tr>
+          <tr><td>DOORS</td><td>2 × corrugated steel</td></tr>
+          <tr><td>TRAVEL</td><td>Bi-parting horizontal</td></tr>
+          <tr><td>ANALOG</td><td>Shop roller shutter gate</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="component-block">
+      <div class="component-label">L3.sm — Small</div>
+      <div class="iris-wrap">
+        <div class="sq-iris-frame sm" data-shutter>
+          <div class="frame-screw tl"></div>
+          <div class="frame-screw tr"></div>
+          <div class="frame-screw bl"></div>
+          <div class="frame-screw br"></div>
+          <div class="sq-iris-gate">
+            <div class="shutter-doors closed">
+              <div class="shutter-door left"><div class="shutter-handle"></div></div>
+              <div class="shutter-door right"><div class="shutter-handle"></div></div>
+            </div>
+            <div class="shutter-track top"></div>
+            <div class="shutter-track bottom"></div>
+          </div>
+        </div>
+        <div class="iris-readout">
+          <span class="iris-label">SHUTTER</span>
+          <span class="iris-fstop" data-shutter-label>CLOSED</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="component-block">
+      <div class="component-label">L3.lg — Large</div>
+      <div class="iris-wrap">
+        <div class="sq-iris-frame lg" data-shutter>
+          <div class="frame-screw tl"></div>
+          <div class="frame-screw tr"></div>
+          <div class="frame-screw bl"></div>
+          <div class="frame-screw br"></div>
+          <span class="frame-engrave">CHROMA-01 MECHANICAL — BI-PART</span>
+          <div class="sq-iris-gate">
+            <div class="shutter-doors closed">
+              <div class="shutter-door left"><div class="shutter-handle"></div></div>
+              <div class="shutter-door right"><div class="shutter-handle"></div></div>
+            </div>
+            <div class="shutter-track top"></div>
+            <div class="shutter-track bottom"></div>
+          </div>
+        </div>
+        <div class="iris-readout">
+          <span class="iris-label">SHUTTER</span>
+          <span class="iris-fstop" data-shutter-label>CLOSED</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<div class="divider"></div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  COMPOSITIONS — Assembled Panels
+══════════════════════════════════════════════════════════ -->
+<section class="section" id="compositions">
+  <div class="section-header">
+    <span class="num">&#9670;</span>
+    <h2>COMPOSITIONS</h2>
+    <span class="desc">Assembled panels demonstrating components working together</span>
+  </div>
+
+  <!-- Composition 1: Camera Viewfinder HUD -->
+  <div class="component-row">
+    <div class="component-block" style="width:100%;max-width:560px">
+      <div class="component-label">Camera Viewfinder HUD</div>
+      <div class="panel" style="background:#111;padding:0;overflow:hidden">
+        <!-- Top status bar -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 14px;border-bottom:1px solid #222">
+          <div class="flex-row" style="gap:10px;align-items:center">
+            <div class="mode-badge" style="padding:3px 8px"><span class="mode-letter" style="font-size:16px">M</span></div>
+            <div class="readout inline" style="padding:3px 8px"><div class="readout-label" style="font-size:7px">SS</div><div class="readout-value" style="font-size:12px">1/250</div></div>
+            <div class="readout inline" style="padding:3px 8px"><div class="readout-label" style="font-size:7px">F</div><div class="readout-value" style="font-size:12px">2.8</div></div>
+            <div class="readout inline" style="padding:3px 8px"><div class="readout-label" style="font-size:7px">ISO</div><div class="readout-value" style="font-size:12px">800</div></div>
+          </div>
+          <div class="flex-row" style="gap:8px;align-items:center">
+            <div class="status-chip active" style="font-size:8px;padding:2px 6px">REC</div>
+            <div class="battery-icon"><div class="battery-body" style="width:20px;height:10px"><div class="battery-fill" style="width:70%"></div></div></div>
+          </div>
+        </div>
+        <!-- Viewfinder area -->
+        <div style="position:relative;height:180px;background:#1a1a1a">
+          <div class="grid-line-v" style="left:33.3%"></div>
+          <div class="grid-line-v" style="left:66.6%"></div>
+          <div class="grid-line-h" style="top:33.3%"></div>
+          <div class="grid-line-h" style="top:66.6%"></div>
+          <div class="grid-center-dot"></div>
+          <div class="focus-box" style="top:40px;left:180px;width:80px;height:80px">
+            <div class="focus-corner tl"></div><div class="focus-corner tr"></div>
+            <div class="focus-corner bl"></div><div class="focus-corner br"></div>
+          </div>
+        </div>
+        <!-- Bottom bar -->
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 14px;border-top:1px solid #222">
+          <div class="exp-scale" style="width:120px">
+            <div class="exp-track">
+              <div class="exp-ruler"></div>
+              <div class="exp-indicator" style="left:58%"></div>
+            </div>
+          </div>
+          <div class="timecode-display" style="padding:3px 10px">
+            <span class="tc-segment" style="font-size:14px">00</span><span class="tc-colon tc-blink" style="font-size:12px">:</span>
+            <span class="tc-segment" style="font-size:14px">12</span><span class="tc-colon" style="font-size:12px">:</span>
+            <span class="tc-segment" style="font-size:14px">34</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Composition 2: Audio Mixer Strip -->
+  <div class="component-row">
+    <div class="component-block">
+      <div class="component-label">Audio Mixer Strip</div>
+      <div class="panel" style="display:flex;gap:16px;align-items:flex-end;padding:16px">
+        <div class="flex-col" style="align-items:center;gap:6px">
+          <div class="radial-knob" style="width:40px;height:40px"><div class="radial-indicator" style="height:8px;top:4px;transform-origin:50% 16px"></div></div>
+          <span style="font-size:7px;color:var(--text-muted);letter-spacing:1px;font-family:var(--font-ui)">PAN</span>
+          <div class="vu-meter" style="height:50px;gap:2px">
+            <div class="vu-bar" style="width:6px;height:60%"></div>
+            <div class="vu-bar" style="width:6px;height:80%"></div>
+          </div>
+          <div class="fader-v-track" style="height:100px;width:8px">
+            <div class="fader-v-fill" style="height:65%"></div>
+            <div class="fader-v-thumb" style="bottom:65%;width:16px;height:8px"></div>
+          </div>
+          <span style="font-size:8px;color:var(--amber);font-family:var(--font-display)">CH1</span>
+          <div class="led-dot green"></div>
+        </div>
+        <div class="flex-col" style="align-items:center;gap:6px">
+          <div class="radial-knob" style="width:40px;height:40px"><div class="radial-indicator" style="height:8px;top:4px;transform-origin:50% 16px;transform:rotate(30deg)"></div></div>
+          <span style="font-size:7px;color:var(--text-muted);letter-spacing:1px;font-family:var(--font-ui)">PAN</span>
+          <div class="vu-meter" style="height:50px;gap:2px">
+            <div class="vu-bar" style="width:6px;height:45%"></div>
+            <div class="vu-bar" style="width:6px;height:55%"></div>
+          </div>
+          <div class="fader-v-track" style="height:100px;width:8px">
+            <div class="fader-v-fill" style="height:45%"></div>
+            <div class="fader-v-thumb" style="bottom:45%;width:16px;height:8px"></div>
+          </div>
+          <span style="font-size:8px;color:var(--amber);font-family:var(--font-display)">CH2</span>
+          <div class="led-dot green"></div>
+        </div>
+        <div class="flex-col" style="align-items:center;gap:6px">
+          <div class="radial-knob variant-metal" style="width:40px;height:40px"><div class="radial-indicator" style="height:8px;top:4px;transform-origin:50% 16px"></div></div>
+          <span style="font-size:7px;color:var(--text-muted);letter-spacing:1px;font-family:var(--font-ui)">PAN</span>
+          <div class="vu-meter" style="height:50px;gap:2px">
+            <div class="vu-bar" style="width:6px;height:90%"></div>
+            <div class="vu-bar" style="width:6px;height:95%"></div>
+          </div>
+          <div class="fader-v-track" style="height:100px;width:8px">
+            <div class="fader-v-fill" style="height:80%"></div>
+            <div class="fader-v-thumb" style="bottom:80%;width:16px;height:8px"></div>
+          </div>
+          <span style="font-size:8px;color:var(--red-alert);font-family:var(--font-display)">MST</span>
+          <div class="led-dot red"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+  Z. INTERACTIVE JS
+══════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  'use strict';
+
+  // Theme toggle
+  const themeToggle = document.getElementById('themeToggle');
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      const html = document.documentElement;
+      html.dataset.theme = html.dataset.theme === 'dark' ? 'light' : 'dark';
+    });
+  }
+
+  // Toggle switches (B1, B2)
+  document.querySelectorAll('[data-toggle]').forEach(el => {
+    el.addEventListener('click', () => {
+      const track = el.querySelector('.toggle-track, .slide-track');
+      if (track) track.classList.toggle('on');
+    });
+  });
+
+  // Power toggle (B4)
+  document.querySelectorAll('[data-power-toggle]').forEach(el => {
+    el.addEventListener('click', () => el.classList.toggle('on'));
+  });
+
+  // DIP switches (B5)
+  document.querySelectorAll('[data-dip]').forEach(el => {
+    el.addEventListener('click', () => el.classList.toggle('on'));
+  });
+
+  // Checkboxes (B6)
+  document.querySelectorAll('[data-checkbox]').forEach(el => {
+    el.addEventListener('click', () => {
+      const box = el.querySelector('.led-check-box');
+      if (box) box.classList.toggle('checked');
+    });
+  });
+
+  // Radio buttons (B7)
+  document.querySelectorAll('[data-radio-group]').forEach(group => {
+    group.querySelectorAll('.radio-wrap').forEach(radio => {
+      radio.addEventListener('click', () => {
+        group.querySelectorAll('.radio-dot-outer').forEach(d => d.classList.remove('selected'));
+        radio.querySelector('.radio-dot-outer').classList.add('selected');
+      });
+    });
+  });
+
+  // REC button (A6)
+  const recBtn = document.getElementById('recBtn');
+  const recLabel = document.getElementById('recLabel');
+  if (recBtn) {
+    recBtn.addEventListener('click', () => {
+      recBtn.classList.toggle('recording');
+      if (recLabel) recLabel.textContent = recBtn.classList.contains('recording') ? 'RECORDING' : 'STANDBY';
+    });
+  }
+
+  // Segmented control (A9)
+  document.querySelectorAll('.segmented').forEach(seg => {
+    seg.querySelectorAll('.segmented-item').forEach(item => {
+      item.addEventListener('click', () => {
+        seg.querySelectorAll('.segmented-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+      });
+    });
+  });
+
+  // Tab bar (G3)
+  document.querySelectorAll('.tab-bar').forEach(bar => {
+    bar.querySelectorAll('.tab-item').forEach(tab => {
+      tab.addEventListener('click', () => {
+        bar.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+      });
+    });
+  });
+
+  // Stepper (D6)
+  const stepVal = document.getElementById('stepperVal');
+  if (stepVal) {
+    document.querySelectorAll('[data-stepper-inc]').forEach(btn => {
+      btn.addEventListener('click', () => { stepVal.textContent = parseInt(stepVal.textContent) + 1; });
+    });
+    document.querySelectorAll('[data-stepper-dec]').forEach(btn => {
+      btn.addEventListener('click', () => { stepVal.textContent = parseInt(stepVal.textContent) - 1; });
+    });
+  }
+
+  // Rack panel (G7)
+  document.querySelectorAll('.rack-panel').forEach(panel => {
+    panel.querySelectorAll('.rack-slot').forEach(slot => {
+      slot.addEventListener('click', () => {
+        panel.querySelectorAll('.rack-slot').forEach(s => s.classList.remove('active'));
+        slot.classList.add('active');
+      });
+    });
+  });
+
+  // Canvas: Histogram (F5)
+  const histCanvas = document.getElementById('histCanvas');
+  if (histCanvas) {
+    const ctx = histCanvas.getContext('2d');
+    const w = histCanvas.width, h = histCanvas.height;
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, w, h);
+    for (let x = 0; x < w; x++) {
+      const v = Math.pow(Math.sin(x * 0.05) * 0.5 + 0.5, 0.8) * h * (0.6 + Math.random() * 0.4);
+      const g = ctx.createLinearGradient(0, h, 0, h - v);
+      g.addColorStop(0, 'rgba(245,166,35,0.1)'); g.addColorStop(1, 'rgba(245,166,35,0.6)');
+      ctx.fillStyle = g; ctx.fillRect(x, h - v, 1, v);
+    }
+  }
+
+  // Canvas: Waveform (F6)
+  const waveCanvas = document.getElementById('waveCanvas');
+  if (waveCanvas) {
+    const ctx = waveCanvas.getContext('2d');
+    const w = waveCanvas.width, h = waveCanvas.height;
+    ctx.fillStyle = '#0a0a0a'; ctx.fillRect(0, 0, w, h);
+    ctx.strokeStyle = 'rgba(102,255,102,0.6)'; ctx.lineWidth = 1;
+    ctx.beginPath();
+    for (let x = 0; x < w; x++) {
+      const y = h / 2 + Math.sin(x * 0.08) * (h * 0.3) + Math.sin(x * 0.03) * (h * 0.15) + (Math.random() - 0.5) * 8;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+  }
+
+  // Canvas: Oscilloscope (F14)
+  const oscCanvas = document.getElementById('oscCanvas');
+  if (oscCanvas) {
+    const ctx = oscCanvas.getContext('2d');
+    const w = oscCanvas.width, h = oscCanvas.height;
+    function drawOsc() {
+      ctx.fillStyle = 'rgba(14,12,10,0.3)'; ctx.fillRect(0, 0, w, h);
+      ctx.strokeStyle = 'rgba(102,255,102,0.8)'; ctx.lineWidth = 1.5;
+      ctx.shadowColor = 'rgba(102,255,102,0.4)'; ctx.shadowBlur = 4;
+      ctx.beginPath();
+      const t = Date.now() * 0.003;
+      for (let x = 0; x < w; x++) {
+        const y = h / 2 + Math.sin(x * 0.06 + t) * (h * 0.3) + Math.sin(x * 0.15 + t * 1.5) * (h * 0.1);
+        x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      requestAnimationFrame(drawOsc);
+    }
+    drawOsc();
+  }
+
+  // Close select dropdown on outside click
+  document.addEventListener('click', (e) => {
+    document.querySelectorAll('.select-wrap.open').forEach(wrap => {
+      if (!wrap.contains(e.target)) wrap.classList.remove('open');
+    });
+  });
+
+  // Select option click
+  document.querySelectorAll('.select-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const wrap = opt.closest('.select-wrap');
+      const trigger = wrap.querySelector('.select-trigger span:first-child');
+      wrap.querySelectorAll('.select-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      if (trigger) trigger.textContent = opt.textContent;
+      wrap.classList.remove('open');
+    });
+  });
+
+  // Iris shutter — click to toggle open/closed
+  function toggleIris(irisOuter) {
+    const blades = irisOuter.querySelector('.iris-blades');
+    if (!blades) return;
+    const isOpen = blades.classList.contains('open');
+    blades.classList.toggle('open', !isOpen);
+    blades.classList.toggle('closed', isOpen);
+    // Update f-stop readout
+    const wrap = irisOuter.closest('.iris-wrap') || irisOuter.closest('.component-block');
+    if (wrap) {
+      const fstop = wrap.querySelector('[data-iris-fstop]');
+      if (fstop) fstop.textContent = isOpen ? 'f/16' : 'f/1.4';
+    }
+  }
+
+  document.querySelectorAll('[data-iris]').forEach(el => {
+    el.addEventListener('click', () => toggleIris(el));
+  });
+
+  // Shutter button — triggers close→open sequence (simulates shutter fire)
+  document.querySelectorAll('[data-iris-shutter]').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const block = btn.closest('.iris-wrap') || btn.closest('.component-block');
+      const irisOuter = block ? block.querySelector('[data-iris]') : null;
+      if (!irisOuter) return;
+      const blades = irisOuter.querySelector('.iris-blades');
+      const fstop = block.querySelector('[data-iris-fstop]');
+      if (!blades) return;
+
+      // Shutter fire sequence: close → pause → open → pause → close
+      blades.classList.remove('open');
+      blades.classList.add('closed');
+      if (fstop) fstop.textContent = 'f/16';
+
+      setTimeout(() => {
+        blades.classList.remove('closed');
+        blades.classList.add('open');
+        if (fstop) fstop.textContent = 'f/1.4';
+        setTimeout(() => {
+          blades.classList.remove('open');
+          blades.classList.add('closed');
+          if (fstop) fstop.textContent = 'f/16';
+        }, 400);
+      }, 200);
+    });
+  });
+
+  // Square shutter — dual channel door toggle
+  document.querySelectorAll('[data-shutter]').forEach(el => {
+    el.addEventListener('click', () => {
+      const doors = el.querySelector('.shutter-doors');
+      if (!doors) return;
+      const isOpen = doors.classList.contains('open');
+      doors.classList.toggle('open', !isOpen);
+      doors.classList.toggle('closed', isOpen);
+      const wrap = el.closest('.iris-wrap') || el.closest('.component-block');
+      if (wrap) {
+        const label = wrap.querySelector('[data-shutter-label]');
+        if (label) label.textContent = isOpen ? 'CLOSED' : 'OPEN';
+      }
+    });
+  });
+
+})();
+</script>
+
+</body>
+</html>

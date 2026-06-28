@@ -1,0 +1,351 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const breadcrumbs = [{ label: "Native Integration" }];
+const headings = [
+  { text: "SwiftUI (iOS/macOS)", id: "swiftui", depth: 2 },
+  { text: "Jetpack Compose (Android)", id: "compose", depth: 2 },
+  { text: "Flutter", id: "flutter", depth: 2 },
+  { text: "React Native", id: "react-native", depth: 2 },
+  { text: "Translation Patterns", id: "patterns", depth: 2 },
+];
+
+const swiftui = `import SwiftUI
+
+struct PushButton: View {
+    let label: String
+    var size: ButtonSize = .md
+    var material: ButtonMaterial = .panel
+    var isActive: Bool = false
+    var action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(label)
+                .font(.system(size: size.fontSize, weight: .semibold))
+                .tracking(1.5)
+                .textCase(.uppercase)
+                .foregroundColor(isActive ? Color("amber") : Color("textPrimary"))
+        }
+        .padding(.horizontal, size.hPadding)
+        .padding(.vertical, size.vPadding)
+        .background(
+            LinearGradient(
+                colors: [Color("bgPanel"), Color("bgSurface")],
+                startPoint: .top, endPoint: .bottom
+            )
+        )
+        .cornerRadius(8)
+        // Three-plane depth model
+        .shadow(color: .black.opacity(0.4), radius: 0, y: 2)           // bottom edge
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(Color.white.opacity(0.14), lineWidth: 1)        // top highlight
+                .offset(y: -0.5)
+        )
+    }
+}
+
+// Size variants mirror the CSS spec
+enum ButtonSize {
+    case xs, sm, md, lg, xl
+    var fontSize: CGFloat {
+        switch self {
+        case .xs: return 8; case .sm: return 9
+        case .md: return 10; case .lg: return 11; case .xl: return 13
+        }
+    }
+    var hPadding: CGFloat {
+        switch self {
+        case .xs: return 8; case .sm: return 10
+        case .md: return 14; case .lg: return 18; case .xl: return 22
+        }
+    }
+    var vPadding: CGFloat {
+        switch self {
+        case .xs: return 4; case .sm: return 5
+        case .md: return 6; case .lg: return 8; case .xl: return 10
+        }
+    }
+}`;
+
+const compose = `import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+// pudge-ui tokens
+val bgPanel = Color(0xFF22201E)
+val bgSurface = Color(0xFF2A2826)
+val textPrimary = Color(0xFFD8D4CC)
+val amber = Color(0xFFF5A623)
+
+@Composable
+fun PushButton(
+    label: String,
+    isActive: Boolean = false,
+    onClick: () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .shadow(2.dp, RoundedCornerShape(8.dp))
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(bgPanel, bgSurface)
+                ),
+                shape = RoundedCornerShape(8.dp)
+            )
+            .padding(horizontal = 14.dp, vertical = 6.dp)
+    ) {
+        Text(
+            text = label.uppercase(),
+            color = if (isActive) amber else textPrimary,
+            fontSize = 10.sp,
+            fontWeight = FontWeight.SemiBold,
+            letterSpacing = 1.5.sp
+        )
+    }
+}`;
+
+const flutter = `import 'package:flutter/material.dart';
+
+// pudge-ui tokens
+const bgPanel = Color(0xFF22201E);
+const bgSurface = Color(0xFF2A2826);
+const textPrimary = Color(0xFFD8D4CC);
+const amber = Color(0xFFF5A623);
+const borderDeep = Color(0xFF0A0908);
+
+class PushButton extends StatelessWidget {
+  final String label;
+  final bool isActive;
+  final VoidCallback? onPressed;
+
+  const PushButton({
+    super.key,
+    required this.label,
+    this.isActive = false,
+    this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        decoration: BoxDecoration(
+          // Three-plane depth: gradient + shadow + highlight
+          gradient: const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [bgPanel, bgSurface],
+          ),
+          borderRadius: BorderRadius.circular(8),
+          boxShadow: const [
+            BoxShadow(color: borderDeep, offset: Offset(0, 2)),
+          ],
+          border: Border(
+            top: BorderSide(
+              color: Colors.white.withValues(alpha: 0.14),
+              width: 1,
+            ),
+          ),
+        ),
+        child: Text(
+          label.toUpperCase(),
+          style: TextStyle(
+            color: isActive ? amber : textPrimary,
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.5,
+          ),
+        ),
+      ),
+    );
+  }
+}`;
+
+const reactNative = `import { Pressable, Text, StyleSheet, Platform } from 'react-native';
+
+// pudge-ui tokens
+const tokens = {
+  bgPanel: '#22201e',
+  bgSurface: '#2a2826',
+  textPrimary: '#d8d4cc',
+  amber: '#f5a623',
+  borderDeep: '#0a0908',
+};
+
+export function PushButton({ label, active, onPress }) {
+  return (
+    <Pressable
+      onPress={onPress}
+      style={({ pressed }) => [
+        styles.button,
+        active && styles.active,
+        pressed && styles.pressed,
+      ]}
+    >
+      <Text style={[
+        styles.label,
+        active && styles.activeLabel,
+      ]}>
+        {label.toUpperCase()}
+      </Text>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  button: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    backgroundColor: tokens.bgPanel,
+    borderRadius: 8,
+    // Three-plane depth (platform-specific shadows)
+    ...Platform.select({
+      ios: {
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.4,
+        shadowRadius: 0,
+      },
+      android: { elevation: 3 },
+    }),
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(255,255,255,0.14)',
+  },
+  pressed: {
+    transform: [{ translateY: 1 }],
+    ...Platform.select({
+      ios: { shadowOffset: { width: 0, height: 1 } },
+      android: { elevation: 1 },
+    }),
+  },
+  active: {
+    borderColor: tokens.amber,
+    borderWidth: 1,
+  },
+  label: {
+    color: tokens.textPrimary,
+    fontSize: 10,
+    fontWeight: '600',
+    letterSpacing: 1.5,
+  },
+  activeLabel: {
+    color: tokens.amber,
+  },
+});`;
+---
+
+<DocsLayout
+  title="Native Integration"
+  breadcrumbs={breadcrumbs}
+  headings={headings}
+  pudgePose="cape"
+  pudgeMessage="Gradients, shadows, and corner radius work on every platform. The physics are universal."
+>
+  <h1>Native & Mobile Integration</h1>
+  <p>
+    pudge-ui specs translate to any rendering platform. The CSS properties map directly to native
+    APIs: gradients become platform gradient constructors, shadows become platform shadow APIs,
+    border-radius becomes corner radius, and the three-plane depth model works everywhere.
+  </p>
+
+  <h2 id="swiftui">SwiftUI (iOS/macOS)</h2>
+  <p>
+    SwiftUI modifiers map cleanly to CSS properties. The depth model uses <code>.shadow()</code> for bottom
+    edges and <code>.overlay()</code> with stroked shapes for top highlights.
+  </p>
+  <pre><code>{swiftui}</code></pre>
+
+  <h2 id="compose">Jetpack Compose (Android)</h2>
+  <p>
+    Compose <code>Modifier</code> chains mirror CSS property stacks. <code
+      >Brush.verticalGradient</code
+    > replaces <code>linear-gradient</code>, and <code>shadow()</code> handles depth.
+  </p>
+  <pre><code>{compose}</code></pre>
+
+  <h2 id="flutter">Flutter</h2>
+  <p>
+    Flutter's <code>BoxDecoration</code> maps directly to the CSS box model. <code
+      >LinearGradient</code
+    > replaces <code>linear-gradient</code>, <code>BoxShadow</code> replaces <code>box-shadow</code
+    >.
+  </p>
+  <pre><code>{flutter}</code></pre>
+
+  <h2 id="react-native">React Native</h2>
+  <p>
+    React Native uses <code>StyleSheet.create</code> with platform-specific shadow handling. iOS gets
+    <code>shadowColor/Offset/Opacity</code>, Android gets <code>elevation</code>.
+  </p>
+  <pre><code>{reactNative}</code></pre>
+
+  <h2 id="patterns">Translation Patterns</h2>
+  <p>Every pudge-ui CSS property has a native equivalent:</p>
+  <div class="table-scroll">
+    <table>
+      <thead>
+        <tr><th>CSS Property</th><th>SwiftUI</th><th>Compose</th><th>Flutter</th></tr>
+      </thead>
+      <tbody>
+        <tr
+          ><td><code>linear-gradient</code></td><td><code>LinearGradient</code></td><td
+            ><code>Brush.verticalGradient</code></td
+          ><td><code>LinearGradient</code></td></tr
+        >
+        <tr
+          ><td><code>box-shadow</code></td><td><code>.shadow()</code></td><td
+            ><code>Modifier.shadow()</code></td
+          ><td><code>BoxShadow</code></td></tr
+        >
+        <tr
+          ><td><code>border-radius</code></td><td><code>.cornerRadius()</code></td><td
+            ><code>RoundedCornerShape</code></td
+          ><td><code>BorderRadius.circular()</code></td></tr
+        >
+        <tr
+          ><td><code>inset box-shadow</code></td><td><code>.overlay() + stroke</code></td><td
+            ><code>drawBehind {}</code></td
+          ><td><code>Border(top:)</code></td></tr
+        >
+        <tr
+          ><td><code>letter-spacing</code></td><td><code>.tracking()</code></td><td
+            ><code>letterSpacing</code></td
+          ><td><code>letterSpacing</code></td></tr
+        >
+        <tr
+          ><td><code>font-weight: 600</code></td><td><code>.semibold</code></td><td
+            ><code>FontWeight.SemiBold</code></td
+          ><td><code>FontWeight.w600</code></td></tr
+        >
+        <tr
+          ><td><code>text-transform: uppercase</code></td><td><code>.textCase(.uppercase)</code></td
+          ><td><code>.uppercase()</code></td><td><code>.toUpperCase()</code></td></tr
+        >
+        <tr
+          ><td><code>transition</code></td><td><code>.animation()</code></td><td
+            ><code>animateAs*()</code></td
+          ><td><code>AnimatedContainer</code></td></tr
+        >
+      </tbody>
+    </table>
+  </div>
+
+  <p>
+    pudge-ui specs describe <strong>visual physics</strong> (materials, depth, light), not web-specific
+    APIs. Any rendering engine that can draw gradients, shadows, and rounded rectangles can implement
+    the full spec.
+  </p>
+</DocsLayout>

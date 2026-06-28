@@ -1,0 +1,46 @@
+---
+const frameworks = [
+  // Tier 1: Major web frameworks
+  { name: "React", icon: "react" },
+  { name: "Vue", icon: "vue" },
+  { name: "Svelte", icon: "svelte" },
+  { name: "Angular", icon: "angular" },
+  { name: "Next.js", icon: "nextjs" },
+  { name: "Solid", icon: "solid" },
+  // Tier 2: Native & cross-platform
+  { name: "SwiftUI", icon: "swiftui" },
+  { name: "Compose", icon: "compose" },
+  { name: "Flutter", icon: "flutter" },
+  // Tier 3: Emerging & alternative
+  { name: "Qwik", icon: "qwik" },
+  { name: "Ember", icon: "ember" },
+  { name: "HTMX", icon: "htmx" },
+];
+---
+
+<section class="scene scene--frameworks" id="scene-frameworks" aria-label="Supported frameworks">
+  <div class="scene__inner">
+    <div class="scene__eyebrow">FRAMEWORK-AGNOSTIC</div>
+    <h2 class="scene__heading">One spec, every stack</h2>
+    <div class="framework-mosaic">
+      {
+        frameworks.map((fw) => (
+          <div class="framework-tile reveal-item">
+            <img
+              src={`/frameworks/${fw.icon}.svg`}
+              alt={fw.name}
+              width="48"
+              height="48"
+              loading="lazy"
+            />
+            <span>{fw.name}</span>
+          </div>
+        ))
+      }
+    </div>
+    <p class="framework-tagline">
+      ...and any stack your MCP-compatible agent can target.<br />
+      <strong>The spec is the source of truth, not the runtime.</strong>
+    </p>
+  </div>
+</section>

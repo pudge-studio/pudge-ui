@@ -1,0 +1,22 @@
+{
+  "name": "pudge-ui-docs",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.2.6",
+    "@astrojs/sitemap": "^3.7.3",
+    "astro": "^5.9.4",
+    "marked": "^15.0.6",
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.3.1",
+    "tailwindcss": "^4.3.1"
+  }
+}
