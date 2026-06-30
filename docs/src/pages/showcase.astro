@@ -1,0 +1,62 @@
+---
+import DocsLayout from "../layouts/DocsLayout.astro";
+import ComingSoon from "../components/shared/ComingSoon.astro";
+
+const breadcrumbs = [{ label: "Showcase" }];
+---
+
+<DocsLayout
+  title="Showcase"
+  description="Real interfaces built with pudge-ui — coming soon."
+  breadcrumbs={breadcrumbs}
+  showToc={false}
+  pudgePose="happytalk"
+  pudgeMessage="A gallery of real products built from these specs is on the way."
+>
+  <ComingSoon
+    eyebrow="Showcase"
+    title="Showcase"
+    lead="A gallery of real interfaces built from pudge-ui specs — music players, camera backs, mixing consoles, and more. We're assembling the reel."
+    screen="SHOWCASE"
+    sub="CURATING · COMING SOON"
+    knobLabel="HYPE"
+    accent="amber"
+  >
+    <aside class="cs-note">
+      <span class="cs-note__tag">FYI</span>
+      <p>
+        This very documentation site is built with pudge-ui. Every knob, fader, LED, and LCD you've
+        been touching uses the same specs you're browsing — the showcase starts here.
+      </p>
+    </aside>
+  </ComingSoon>
+</DocsLayout>
+
+<style>
+  .cs-note {
+    max-width: 560px;
+    margin: var(--space-xl) auto 0;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-left: 3px solid var(--amber);
+    border-radius: var(--radius-md);
+    padding: var(--space-md) var(--space-lg);
+  }
+  .cs-note__tag {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+  .cs-note p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+  }
+</style>

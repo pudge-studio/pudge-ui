@@ -242,6 +242,19 @@
   background: rgba(245, 166, 35, 0.05);
 }
 
+.sidebar-link__badge {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--amber) 30%, transparent);
+  border-radius: 999px;
+  padding: 1px 6px;
+}
+
 /* Category Groups */
 
 .sidebar-category {

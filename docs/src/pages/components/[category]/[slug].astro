@@ -51,6 +51,48 @@ for (const state of statePatterns) {
   }
 }
 
+// Derive an interaction "trait" from the demo markup so the stage can show
+// the right affordance hint + a live-value badge. Mirrors the selector
+// vocabulary in scripts/component-interactivity.js.
+const has = (re: RegExp) => re.test(demoHtml);
+const trait = {
+  rotary: has(/radial-knob|class="rotary|mode-dial-body|dial-v-body|dial-h-body/),
+  linear: has(/slider-track|fader-[hv]-track|scrubber-track|crossfader-track|dual-range-track/),
+  toggle: has(/data-(toggle|power-toggle|dip|checkbox|radio-group)|rec-btn/),
+  select: has(
+    /segmented|tab-bar|rack-panel|film-strip|media-grid|menu-list|menu-grid|pagination|select-wrap/,
+  ),
+  stepper: has(/class="stepper|rocker/),
+  live: has(
+    /vu-bar|eq-band|gauge-(full|semi)-needle|oscilloscope|histogram-canvas|waveform-canvas|signal-bar/,
+  ),
+};
+const hint = trait.rotary
+  ? "Drag to turn"
+  : trait.linear
+    ? "Drag to slide"
+    : trait.stepper
+      ? "Tap to step"
+      : trait.toggle
+        ? "Click to switch"
+        : trait.select
+          ? "Click to select"
+          : trait.live
+            ? "Live"
+            : null;
+const showLiveValue = trait.rotary || trait.linear || trait.stepper;
+const isLiveOnly = trait.live && !trait.rotary && !trait.linear;
+
+// Target stacks for the "hand it to your agent" panel
+const stacks = [
+  { id: "css", label: "Plain CSS" },
+  { id: "react", label: "React" },
+  { id: "react-native", label: "React Native" },
+  { id: "swiftui", label: "SwiftUI" },
+  { id: "compose", label: "Jetpack Compose" },
+  { id: "flutter", label: "Flutter" },
+];
+
 // Read foundation files for CopyForLLM
 const foundationFiles = [
   "philosophy.md",
@@ -265,8 +307,30 @@ const tocHeadings = [
       )
     }
 
-    <div class="playground__stage" id="playground-stage">
+    <div
+      class:list={["playground__stage", isLiveOnly && "is-live"]}
+      id="playground-stage"
+      data-trait={hint ? hint.toLowerCase().replace(/\s+/g, "-") : "static"}
+    >
       <style set:html={demoCss}></style>
+      {
+        hint && (
+          <span
+            class:list={["playground__hint", trait.live && !showLiveValue && "is-live"]}
+            aria-hidden="true"
+          >
+            {trait.live && !showLiveValue && <span class="playground__hint-dot" />}
+            {hint}
+          </span>
+        )
+      }
+      {
+        showLiveValue && (
+          <span class="playground__value" data-live-value aria-hidden="true">
+            —
+          </span>
+        )
+      }
       <div class="playground__surface" data-demo-element set:html={demoHtml} />
     </div>
 
@@ -431,9 +495,48 @@ const tocHeadings = [
     )
   }
 
-  <div class="copy-llm">
-    <button class="copy-llm__btn" type="button" data-copy-llm> Copy spec for LLM </button>
-  </div>
+  <section class="agent-panel" id="build" data-comp-id={comp.id} data-comp-name={comp.name}>
+    <div class="agent-panel__head">
+      <h2 class="agent-panel__title">Hand it to your agent</h2>
+      <p class="agent-panel__sub">
+        pudge-ui is a spec, not a package — there's nothing to <code>npm install</code>. Pick your
+        stack, copy the prompt, and your coding agent builds this component from the spec.
+      </p>
+    </div>
+
+    <div class="agent-panel__stacks" role="tablist" aria-label="Target stack">
+      {
+        stacks.map((s, i) => (
+          <button
+            class:list={["agent-stack", i === 0 && "is-active"]}
+            type="button"
+            data-stack={s.id}
+            data-stack-label={s.label}
+          >
+            {s.label}
+          </button>
+        ))
+      }
+    </div>
+
+    <div class="agent-panel__view">
+      <div class="agent-panel__tabs">
+        <button class="agent-tab is-active" type="button" data-atab="prompt">Prompt</button>
+        <button class="agent-tab" type="button" data-atab="mcp">MCP</button>
+      </div>
+      <pre
+        class="agent-panel__out is-active"
+        data-apanel="prompt"><code data-prompt-out>—</code></pre>
+      <pre class="agent-panel__out" data-apanel="mcp"><code data-mcp-out>—</code></pre>
+    </div>
+
+    <div class="agent-panel__actions">
+      <button class="agent-panel__copy" type="button" data-agent-copy>Copy prompt</button>
+      <button class="agent-panel__copy is-ghost" type="button" data-copy-llm
+        >Copy full spec for LLM</button
+      >
+    </div>
+  </section>
 
   <script type="application/json" id="demo-html-data" set:html={JSON.stringify(demoHtml)} />
   <script
@@ -447,4 +550,5 @@ const tocHeadings = [
     set:html={JSON.stringify({ spec: specRaw, name: comp.name })}
   />
   <script src="../../../scripts/playground.js"></script>
+  <script src="../../../scripts/agent-panel.js"></script>
 </DocsLayout>

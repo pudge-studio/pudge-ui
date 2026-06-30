@@ -53,6 +53,8 @@ get_composition({ name: "audio-mixer-strip" })
 get_foundation({ extended: true })
 ```
 
+All tools are read-only (annotated with `readOnlyHint`) — the server never writes to your filesystem or makes network calls. Specs are bundled in the package.
+
 ## Development
 
 ```bash
@@ -60,4 +62,12 @@ npm install
 npm run dev        # run with tsx
 npm run build      # compile + copy spec
 npm run typecheck  # type-check only
+npm test           # run the test suite
 ```
+
+## Versioning & stability
+
+This server tracks pudge-ui's versioning and is pre-1.0. The component catalog grows
+between releases, but tool **names and input shapes are stable** — any change to a tool
+signature will come with a minor/major version bump and a CHANGELOG entry. Pin a version
+if you need byte-for-byte reproducibility.
