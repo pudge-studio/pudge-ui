@@ -7,6 +7,10 @@
     initAll(stage);
   });
 
+  // Fade the affordance hint once the visitor starts interacting
+  const markInteracted = () => stage.setAttribute("data-interacted", "1");
+  stage.addEventListener("pointerdown", markInteracted, { once: true });
+
   // Variant switcher
   document.querySelectorAll(".playground__controls [data-variant-group]").forEach((group) => {
     const groupName = group.dataset.variantGroup;

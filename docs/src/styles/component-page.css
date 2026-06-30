@@ -126,21 +126,124 @@
   box-shadow: var(--shadow-inset);
 }
 
-/* Playground Stage */
+/* Playground Stage — hero framing for the live component */
 
 .playground__stage {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 200px;
-  padding: var(--space-xl);
-  background: var(--bg-inset);
+  min-height: 320px;
+  padding: clamp(var(--space-xl), 6vw, 64px);
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 55%), var(--bg-inset);
   box-shadow: var(--shadow-inset);
   position: relative;
+  overflow: hidden;
+}
+
+/* soft directional key-light from top, settling shadow at the base */
+.playground__stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(80% 55% at 50% 38%, rgba(245, 166, 35, 0.04), transparent 70%),
+    radial-gradient(140% 120% at 50% 120%, rgba(0, 0, 0, 0.45), transparent 60%);
+}
+
+/* faint vignette frame so the surface reads as an object on a stage */
+.playground__stage::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 60px 12px rgba(0, 0, 0, 0.35);
 }
 
 .playground__surface {
-  /* Component renders here with full pudge-ui CSS */
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+}
+
+/* Affordance hint pill (top-right) */
+.playground__hint {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--bg-surface) 70%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 3px 9px;
+  backdrop-filter: blur(4px);
+  transition: opacity 0.4s ease;
+}
+
+/* hide the hint once the user starts interacting */
+.playground__stage[data-interacted="1"] .playground__hint {
+  opacity: 0;
+}
+
+.playground__hint.is-live {
+  color: var(--green-on);
+}
+
+.playground__hint-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-on);
+  box-shadow: 0 0 6px var(--green-on);
+  animation: pudge-live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes pudge-live-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Live numeric value badge (top-left), updated by the behavior engine */
+.playground__value {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  color: var(--amber);
+  background: color-mix(in srgb, var(--bg-inset) 80%, transparent);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 2px 8px;
+  min-width: 36px;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .playground__hint-dot {
+    animation: none;
+  }
 }
 
 /* Playground Actions */
@@ -437,5 +540,164 @@
 
 .copy-llm__btn.is-copied {
   color: var(--green-on);
+  border-color: var(--green-on);
+}
+
+/* Hand it to your agent — the agentic playground */
+
+.agent-panel {
+  margin-top: var(--space-2xl, var(--space-xl));
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--border-subtle);
+}
+
+.agent-panel__title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.agent-panel__sub {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-muted);
+  max-width: 60ch;
+}
+
+.agent-panel__sub code {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--bg-inset);
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+}
+
+.agent-panel__stacks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: var(--space-md) 0;
+}
+
+.agent-stack {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+
+.agent-stack:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-mid);
+}
+
+.agent-stack.is-active {
+  color: var(--amber);
+  background: var(--bg-inset);
+  border-color: var(--amber);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--amber) 30%, transparent);
+}
+
+.agent-panel__view {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-inset);
+}
+
+.agent-panel__tabs {
+  display: flex;
+  gap: 2px;
+  padding: 6px 8px 0;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.agent-tab {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  padding: 5px 12px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  cursor: pointer;
+  transition: color 0.12s;
+}
+
+.agent-tab.is-active {
+  color: var(--amber);
+  background: var(--bg-inset);
+}
+
+.agent-panel__out {
+  display: none;
+  margin: 0;
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.agent-panel__out.is-active {
+  display: block;
+}
+
+/* the global auto copy-button is redundant here — the panel has its own */
+.agent-panel__out .copy-code-btn {
+  display: none;
+}
+
+.agent-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-md);
+}
+
+.agent-panel__copy {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.5px;
+  color: var(--bg-inset);
+  background: var(--amber);
+  border: 1px solid var(--amber);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.agent-panel__copy:hover {
+  filter: brightness(1.08);
+}
+
+.agent-panel__copy.is-ghost {
+  color: var(--text-muted);
+  background: var(--bg-surface);
+  border-color: var(--border-subtle);
+}
+
+.agent-panel__copy.is-ghost:hover {
+  color: var(--text-primary);
+  border-color: var(--border-mid);
+  filter: none;
+}
+
+.agent-panel__copy.is-copied {
+  color: var(--green-on);
+  background: var(--bg-surface);
   border-color: var(--green-on);
 }
