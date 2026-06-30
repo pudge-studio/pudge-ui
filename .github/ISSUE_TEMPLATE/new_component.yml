@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         Every pudge-ui component must map to a **real 2000s-era physical analog** and document its
-        mechanical working principle — see the [extension guide](https://github.com/pudgestudio/pudge-ui/blob/main/spec/guides/extension.md).
+        mechanical working principle — see the [extension guide](https://github.com/pudge-studio/pudge-ui/blob/main/spec/guides/extension.md).
   - type: input
     id: name
     attributes:

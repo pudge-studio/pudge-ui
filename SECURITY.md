@@ -10,9 +10,9 @@ pudge-ui is pre-1.0. Security fixes are applied to the latest published version
 Please report security issues **privately** — do not open a public issue or PR.
 
 - Preferred: GitHub Security Advisories — go to the **Security** tab of
-  [pudgestudio/pudge-ui](https://github.com/pudgestudio/pudge-ui/security/advisories/new)
+  [pudge-studio/pudge-ui](https://github.com/pudge-studio/pudge-ui/security/advisories/new)
   and choose "Report a vulnerability".
-- Alternatively: email **security@pudgestudio.com**.
+- Alternatively: email **support@pudgestudio.com**.
 
 Please include:
 

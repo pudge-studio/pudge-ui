@@ -1,6 +1,16 @@
-# pudge-ui
+<img src="./docs/public/og-image.png" />
+
+<p align="center">
+  <a href="https://github.com/pudge-studio/pudge-ui/stargazers"><img src="https://img.shields.io/github/stars/pudge-studio/pudge-ui?style=flat&logo=github&label=Star&color=f5a623" alt="Star pudge-ui on GitHub"></a>
+  <a href="https://www.npmjs.com/package/@pudge-ui/mcp-server"><img src="https://img.shields.io/npm/v/@pudge-ui/mcp-server?style=flat&logo=npm&logoColor=white&label=npm&color=cb3837" alt="npm version"></a>
+  <a href="https://www.npmjs.com/package/@pudge-ui/mcp-server"><img src="https://img.shields.io/npm/dm/@pudge-ui/mcp-server?style=flat&logo=npm&logoColor=white&label=downloads&color=cb3837" alt="npm downloads"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue?style=flat" alt="MIT License"></a>
+  <a href="https://ui.pudgestudio.com"><img src="https://img.shields.io/badge/docs-ui.pudgestudio.com-f5a623?style=flat" alt="Documentation"></a>
+</p>
 
 A design system for 2000s-era consumer-electronics interfaces, written for coding agents.
+
+> **Like what you see?** [⭐ Star pudge-ui on GitHub](https://github.com/pudge-studio/pudge-ui) — it helps coding agents and developers discover the project.
 
 pudge-ui is a specification, not a component library. There's no package to install and no React components to import. Each component is a written spec — the physical part it imitates, how that part works, the exact CSS, and the rules that keep an implementation honest. You hand the spec to a coding agent, and it builds the component in whatever stack you're using: React Native, SwiftUI, Jetpack Compose, Flutter, or plain CSS.
 
@@ -30,7 +40,7 @@ Add to your MCP config:
   "mcpServers": {
     "pudge-ui": {
       "command": "npx",
-      "args": ["-y", "pudge-ui-mcp"]
+      "args": ["-y", "@pudge-ui/mcp-server"]
     }
   }
 }

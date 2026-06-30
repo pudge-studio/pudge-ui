@@ -17,7 +17,7 @@ const { componentCount } = Astro.props;
   "mcpServers": {
     "pudge-ui": {
       "command": "npx",
-      "args": ["-y", "pudge-ui-mcp"]
+      "args": ["-y", "@pudge-ui/mcp-server"]
     }
   }
 }`}</code></pre>
@@ -30,7 +30,13 @@ const { componentCount } = Astro.props;
       <a href="/components" class="btn-secondary">Browse All Components</a>
     </div>
     <div class="finale__pudge">
-      <img src="/pudge/cape.svg" alt="Pudge wearing a cape" width="90" height="90" loading="lazy" />
+      <img
+        src="/pudge/cape.webp"
+        alt="Pudge wearing a cape"
+        width="90"
+        height="90"
+        loading="lazy"
+      />
     </div>
   </div>
 </section>
