@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.0] — 2026-06-30
+
+### Added
+
+- **Live, interactive component previews.** Every component on the docs site is now genuinely
+  manipulable — knobs and dials turn, sliders and faders drag, toggles switch, gauges sway, and
+  meter displays (VU, EQ, oscilloscope) animate. Driven by a single selector-based behavior engine
+  (`docs/src/scripts/component-interactivity.js`), so all 93 components are wired with no per-spec
+  changes. Motion is gated behind `prefers-reduced-motion`.
+- **Affordance hints + live-value badge** on each preview stage ("Drag to turn", "Drag to slide",
+  etc.), plus hero staging with directional lighting and a vignette.
+- **"Hand it to your agent" panel** on every component page — pick a target stack
+  (React, React Native, SwiftUI, Jetpack Compose, Flutter, plain CSS) and copy a tailored prompt or
+  the exact `get_component(...)` MCP call, synced to the current variant state.
+- **Showcase** (`/showcase`) and **Figma Design System** (`/figma`) pages — interactive
+  "coming soon" device panels with a CTA to pudgestudio.com; Showcase notes the docs site is itself
+  built with pudge-ui. Added to header nav and a new sidebar "Explore" section.
+- **MCP registry + Smithery publishing manifests** — `server.json` (official MCP registry) and
+  `packages/mcp-server/smithery.yaml`, plus `mcpName` in the package for registry ownership
+  verification.
+
+### Changed
+
+- **Richer MCP tool descriptions** for `list_components`, `search_components`, `get_component`,
+  `get_components`, `get_composition`, and `get_foundation` — clearer guidance for agents on when to
+  call each. Tool names and signatures are unchanged.
+- `repository.url` in `@pudge-ui/mcp-server` normalized to the canonical
+  `git+https://github.com/pudge-studio/pudge-ui.git` form so npm renders the repo link correctly.
+- `copy-spec` build step hardened to `rm -rf ./spec` before copying, preventing a stale nested
+  `spec/spec` from accumulating in the published tarball.
+
+### Fixed
+
+- Refreshed OG image.
+
 ## [0.1.0] — 2026-06-22
 
 ### Added
