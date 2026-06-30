@@ -19,6 +19,9 @@ const currentPath = Astro.url.pathname;
 const fullTitle = `${title} | pudge-ui`;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL(image, Astro.site);
+// Cloudflare Web Analytics: set PUBLIC_CF_BEACON_TOKEN in Cloudflare Pages env
+// (Settings → Environment variables) to enable. Privacy-first, cookieless, no banner needed.
+const cfBeaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
 const jsonLd = {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
@@ -57,6 +60,16 @@ const jsonLd = {
     <meta name="twitter:image" content={ogImage} />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    {
+      cfBeaconToken && (
+        <script
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={JSON.stringify({ token: cfBeaconToken })}
+        />
+      )
+    }
 
     <link rel="icon" type="image/x-icon" sizes="32x32" href="/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
