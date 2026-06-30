@@ -1,0 +1,13 @@
+# Smithery listing config for @pudge-ui/mcp-server
+# https://smithery.ai/docs
+# This is a local (stdio) server distributed on npm and run via npx.
+# When submitting on smithery.ai, set the base directory to packages/mcp-server.
+startCommand:
+  type: stdio
+  # No runtime configuration required — the server bundles its specs.
+  configSchema:
+    type: object
+    properties: {}
+    required: []
+  commandFunction: |-
+    (config) => ({ command: 'npx', args: ['-y', '@pudge-ui/mcp-server'] })

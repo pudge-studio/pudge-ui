@@ -1,0 +1,23 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.pudge-studio/pudge-ui",
+  "description": "Query pudge-ui — 93 skeuomorphic 2000s-era UI component specs — for coding-agent context.",
+  "version": "0.2.0",
+  "websiteUrl": "https://ui.pudgestudio.com",
+  "repository": {
+    "url": "https://github.com/pudge-studio/pudge-ui",
+    "source": "github",
+    "subfolder": "packages/mcp-server"
+  },
+  "packages": [
+    {
+      "registryType": "npm",
+      "registryBaseUrl": "https://registry.npmjs.org",
+      "identifier": "@pudge-ui/mcp-server",
+      "version": "0.2.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ]
+}
