@@ -1,7 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.5">
-  <path d="M14 12v24"/>
-  <path d="M14 24h8"/>
-  <path d="M22 12v24"/>
-  <path d="M28 16l6 8-6 8"/>
-  <path d="M40 16l-6 8 6 8"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 48 48"><path d="M14 12v24M14 24h8M22 12v24M28 16l6 8-6 8M40 16l-6 8 6 8"/></svg>
