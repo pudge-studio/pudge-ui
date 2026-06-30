@@ -30,6 +30,11 @@ const quickLinks = [
   { href: "/for-llms", label: "For LLMs" },
 ];
 
+const exploreLinks = [
+  { href: "/showcase", label: "Showcase", soon: true },
+  { href: "/figma", label: "Figma Design System", soon: true },
+];
+
 const foundationLinks = [
   { href: "/foundation/tokens", label: "Design Tokens" },
   { href: "/foundation/materials", label: "Materials" },
@@ -54,6 +59,23 @@ const foundationLinks = [
             class:list={["sidebar-link", currentPath === link.href && "is-active"]}
           >
             {link.label}
+          </a>
+        ))
+      }
+    </div>
+
+    <hr class="sidebar-divider" />
+
+    <div class="sidebar-section">
+      <div class="sidebar-section__title">Explore</div>
+      {
+        exploreLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={["sidebar-link", currentPath === link.href && "is-active"]}
+          >
+            {link.label}
+            {link.soon && <span class="sidebar-link__badge">soon</span>}
           </a>
         ))
       }

@@ -1,0 +1,25 @@
+---
+import DocsLayout from "../layouts/DocsLayout.astro";
+import ComingSoon from "../components/shared/ComingSoon.astro";
+
+const breadcrumbs = [{ label: "Figma Design System" }];
+---
+
+<DocsLayout
+  title="Figma Design System"
+  description="A pudge-ui Figma library for designers — coming soon."
+  breadcrumbs={breadcrumbs}
+  showToc={false}
+  pudgePose="happytalk"
+  pudgeMessage="A Figma library so designers can work in pudge-ui too — in the works."
+>
+  <ComingSoon
+    eyebrow="Figma"
+    title="Figma Design System"
+    lead="A full pudge-ui Figma library — components, variants, and tokens — so designers can compose skeuomorphic interfaces and hand them to agents with the spec attached. In the works."
+    screen="FIGMA"
+    sub="DRAWING · COMING SOON"
+    knobLabel="POLISH"
+    accent="green"
+  />
+</DocsLayout>
