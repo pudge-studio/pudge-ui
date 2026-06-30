@@ -31,5 +31,5 @@ first, then the specific component spec.
 - [Native integration](https://ui.pudgestudio.com/guides/native-integration)
 
 ## Optional
-- [Source & specs on GitHub](https://github.com/pudgestudio/pudge-ui)
+- [Source & specs on GitHub](https://github.com/pudge-studio/pudge-ui)
 - [MCP server on npm](https://www.npmjs.com/package/@pudge-ui/mcp-server)

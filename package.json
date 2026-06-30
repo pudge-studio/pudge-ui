@@ -8,9 +8,9 @@
   "homepage": "https://ui.pudgestudio.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/pudgestudio/pudge-ui"
+    "url": "https://github.com/pudge-studio/pudge-ui"
   },
-  "bugs": "https://github.com/pudgestudio/pudge-ui/issues",
+  "bugs": "https://github.com/pudge-studio/pudge-ui/issues",
   "workspaces": [
     "packages/*",
     "docs"

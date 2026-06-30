@@ -46,7 +46,7 @@
 
     <div class="pudge-greeting__socials">
       <a
-        href="https://github.com/pudgestudio"
+        href="https://github.com/pudge-studio"
         target="_blank"
         rel="noopener"
         title="GitHub"
@@ -96,7 +96,7 @@
 
   <div class="pudge-avatar-wrap pudge-greeting__avatar" id="pudge-avatar">
     <img
-      src="/pudge/happytalk.svg"
+      src="/pudge/happytalk.webp"
       alt="Pudge the capybara"
       width="12"
       height="12"
@@ -120,10 +120,21 @@
 
   /* ── Dismiss animation ── */
   .pudge-greeting.is-dismissed .pudge-greeting__panel,
-  .pudge-greeting.is-dismissed .pudge-greeting__connector {
+  .pudge-greeting.is-dismissed .pudge-greeting__connector,
+  .pudge-greeting.is-dismissed .pudge-greeting__avatar {
     opacity: 0;
     transform: translateY(8px) scale(0.95);
     pointer-events: none;
+  }
+
+  /* Once dismissed, Pudge is fully gone — stop the float so nothing keeps moving. */
+  .pudge-greeting.is-dismissed .pudge-greeting__avatar {
+    animation: none;
+    visibility: hidden;
+    transition:
+      opacity 0.3s var(--ease-out),
+      transform 0.3s var(--snap-soft),
+      visibility 0s linear 0.3s;
   }
 
   /* ═══ HARDWARE PANEL ═══ */
@@ -315,7 +326,6 @@
   .pudge-greeting__avatar {
     animation: pudge-float 4s ease-in-out infinite;
     pointer-events: auto;
-    cursor: pointer;
     width: 6rem;
     transition: transform 0.2s var(--snap-fast);
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
@@ -378,26 +388,14 @@
 </style>
 
 <script>
-  const STORAGE_KEY = "pudge-greeting-dismissed";
+  // Greeting shows on every visit; closing hides it for the current session
+  // only (no persistence), so Pudge never "disappears on his own" on reload.
   const container = document.getElementById("pudge-greeting");
   const closeBtn = document.getElementById("pudge-close");
-  const avatar = document.getElementById("pudge-avatar");
 
-  if (container && closeBtn && avatar) {
-    if (localStorage.getItem(STORAGE_KEY) === "1") {
-      container.classList.add("is-dismissed");
-    }
-
+  if (container && closeBtn) {
     closeBtn.addEventListener("click", () => {
       container.classList.add("is-dismissed");
-      localStorage.setItem(STORAGE_KEY, "1");
-    });
-
-    avatar.addEventListener("click", () => {
-      if (container.classList.contains("is-dismissed")) {
-        container.classList.remove("is-dismissed");
-        localStorage.removeItem(STORAGE_KEY);
-      }
     });
   }
 </script>

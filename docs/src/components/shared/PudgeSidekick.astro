@@ -25,6 +25,13 @@ const { pose = "hello", message, link, size = 90 } = Astro.props;
     )
   }
   <div class="pudge-avatar-wrap pudge-sidekick__avatar" style={`--pudge-avatar-size:${size}px;`}>
-    <img src={`/pudge/${pose}.svg`} alt="Pudge" width={size} height={size} loading="lazy" />
+    <img
+      src={`/pudge/${pose}.webp`}
+      alt="Pudge"
+      width={size}
+      height={size}
+      loading="lazy"
+      decoding="async"
+    />
   </div>
 </div>

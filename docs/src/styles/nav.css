@@ -138,6 +138,49 @@
   background: var(--bg-surface);
 }
 
+/* Star on GitHub */
+
+.header-star {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  height: 44px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-inset);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 0.867rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  box-shadow: var(--shadow-inset);
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
+}
+
+.header-star:hover {
+  color: var(--text-primary);
+  border-color: var(--border-mid);
+  background: var(--bg-surface);
+}
+
+.header-star__icon {
+  color: inherit;
+  flex-shrink: 0;
+}
+
+.header-star__count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+  color: var(--amber);
+  padding-left: 2px;
+}
+
 /* Hamburger (mobile) */
 
 .hamburger {
@@ -389,6 +432,14 @@
   }
 
   .search-trigger__kbd {
+    display: none;
+  }
+
+  .header-star {
+    padding: 0 var(--space-sm);
+  }
+
+  .header-star__text {
     display: none;
   }
 }

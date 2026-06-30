@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Per our [contributing guide](https://github.com/pudgestudio/pudge-ui/blob/main/CONTRIBUTING.md),
+        Per our [contributing guide](https://github.com/pudge-studio/pudge-ui/blob/main/CONTRIBUTING.md),
         when an agent consistently misinterprets a spec, the **spec** needs tightening — not your prompt.
         Help us reproduce it.
   - type: input
