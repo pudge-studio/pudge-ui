@@ -1,0 +1,11 @@
+# Default owner for everything
+*                       @pudgestudio
+
+# Spec content (the product) — keep a tight review loop
+/spec/                  @pudgestudio @uskhokhar
+
+# MCP server (published to npm)
+/packages/mcp-server/   @pudgestudio @uskhokhar
+
+# CI / release plumbing
+/.github/               @pudgestudio 

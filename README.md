@@ -108,6 +108,12 @@ docs/             documentation site (ui.pudgestudio.com)
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+## License & brand
+
+Code and component specs are [MIT](LICENSE). The **pudge-ui** name, the **Pudge** capybara mascot,
+and the logo are trademarks of Pudge Studio and are **not** covered by the MIT license — please
+don't use them to imply endorsement or for a fork's branding.
+
 ## License
 
 [MIT](LICENSE)
