@@ -119,6 +119,18 @@ function initRotary(container, signal) {
       let startY = 0;
       let startAngle = 0;
       let dragging = false;
+      const STEP = cfg.detents
+        ? (cfg.max - cfg.min) / (cfg.detents.length - 1)
+        : cfg.steps
+        ? (cfg.max - cfg.min) / (cfg.steps.length - 1)
+        : (cfg.max - cfg.min) / 20;
+
+      knob.setAttribute("tabindex", "0");
+      if (!cfg.continuous) {
+        knob.setAttribute("role", "slider");
+        knob.setAttribute("aria-valuemin", "0");
+        knob.setAttribute("aria-valuemax", "100");
+      }
 
       const render = () => {
         target.style.transition = dragging ? "none" : "transform 0.25s cubic-bezier(.2,.9,.3,1.2)";
@@ -140,6 +152,12 @@ function initRotary(container, signal) {
             valEl.textContent = out;
             signal?.(out);
           }
+        }
+        if (!cfg.continuous) {
+          knob.setAttribute(
+            "aria-valuenow",
+            Math.round(((angle - cfg.min) / (cfg.max - cfg.min)) * 100),
+          );
         }
       };
 
@@ -171,6 +189,25 @@ function initRotary(container, signal) {
         window.addEventListener("pointerup", onUp);
       });
       knob.addEventListener("pointerup", () => knob.classList.remove("is-turning"));
+      knob.addEventListener("keydown", (e) => {
+        const inc = e.key === "ArrowUp" || e.key === "ArrowRight";
+        const dec = e.key === "ArrowDown" || e.key === "ArrowLeft";
+        if (!inc && !dec) return;
+        e.preventDefault();
+        const dir = inc ? 1 : -1;
+        if (cfg.detents) {
+          const span = (cfg.max - cfg.min) / (cfg.detents.length - 1);
+          const idx = clamp(Math.round((angle - cfg.min) / span), 0, cfg.detents.length - 1);
+          angle = cfg.min + clamp(idx + dir, 0, cfg.detents.length - 1) * span;
+        } else if (cfg.steps) {
+          const span = (cfg.max - cfg.min) / (cfg.steps.length - 1);
+          const idx = clamp(Math.round((angle - cfg.min) / span), 0, cfg.steps.length - 1);
+          angle = cfg.min + clamp(idx + dir, 0, cfg.steps.length - 1) * span;
+        } else {
+          angle = clamp(angle + dir * STEP, cfg.min, cfg.max);
+        }
+        render();
+      });
       knob.style.cursor = "ns-resize";
       knob.style.touchAction = "none";
       render();
@@ -258,6 +295,7 @@ function initLinear(container, signal) {
           setThumb(thumb, p);
           renderFill();
           updateValue(p);
+          thumb.setAttribute("aria-valuenow", Math.round(p * 100));
         };
         const up = () => {
           thumb.style.cursor = "grab";
@@ -271,8 +309,30 @@ function initLinear(container, signal) {
       };
 
       thumbs.forEach((thumb) => {
+        thumb.setAttribute("tabindex", "0");
+        thumb.setAttribute("role", "slider");
+        thumb.setAttribute("aria-valuemin", "0");
+        thumb.setAttribute("aria-valuemax", "100");
+        thumb.setAttribute("aria-valuenow", "0");
         thumb.style.touchAction = "none";
         thumb.addEventListener("pointerdown", drag(thumb));
+        thumb.addEventListener("keydown", (e) => {
+          const inc = e.key === "ArrowRight" || e.key === "ArrowUp";
+          const dec = e.key === "ArrowLeft" || e.key === "ArrowDown";
+          const toMin = e.key === "Home";
+          const toMax = e.key === "End";
+          if (!inc && !dec && !toMin && !toMax) return;
+          e.preventDefault();
+          const cur =
+            cfg.axis === "x"
+              ? (parseFloat(thumb.style.left) || 0) / 100
+              : (parseFloat(thumb.style.bottom) || 0) / 100;
+          const p = toMin ? 0 : toMax ? 1 : clamp(cur + (inc ? 0.05 : -0.05), 0, 1);
+          setThumb(thumb, p);
+          renderFill();
+          updateValue(p);
+          thumb.setAttribute("aria-valuenow", Math.round(p * 100));
+        });
       });
       // click on the track jumps the nearest thumb
       track.style.touchAction = "none";
