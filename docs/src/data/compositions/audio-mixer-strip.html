@@ -1,0 +1,409 @@
+<style>
+  .mix-container {
+    background: var(--bg-panel);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+    display: flex;
+    gap: 0;
+    align-items: flex-end;
+    padding: 16px;
+    overflow: hidden;
+    width: fit-content;
+  }
+
+  .mix-strip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 80px;
+    padding: 8px;
+    background: var(--bg-raised);
+    border-radius: var(--radius-md);
+  }
+
+  .mix-strip:not(:last-child) {
+    border-right: 1px solid var(--border-subtle);
+  }
+
+  /* Pan Knob */
+  .mix-pan-knob {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3a3835, #1a1816);
+    border: 2px solid var(--border-mid);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    position: relative;
+    flex-shrink: 0;
+    cursor: ns-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .mix-pan-knob.variant-metal {
+    background: radial-gradient(circle at 35% 35%, #2a2826, #0a0808);
+  }
+
+  .mix-pan-indicator {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 10px;
+    background: var(--amber);
+    border-radius: 2px;
+    transform-origin: 50% bottom;
+    pointer-events: none;
+  }
+
+  .mix-pan-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+    margin-top: -4px;
+  }
+
+  /* VU Meter */
+  .mix-vu-meter {
+    display: flex;
+    gap: 3px;
+    height: 50px;
+    align-items: flex-end;
+  }
+
+  .mix-vu-bar-wrap {
+    display: flex;
+    align-items: flex-end;
+    height: 50px;
+    width: 6px;
+  }
+
+  .mix-vu-bar {
+    width: 6px;
+    background: linear-gradient(
+      to bottom,
+      var(--red-alert) 0%,
+      var(--red-alert) 15%,
+      var(--amber) 15%,
+      var(--amber) 35%,
+      var(--green-on) 35%,
+      var(--green-on) 100%
+    );
+    border-radius: 2px 2px 0 0;
+    opacity: 0.9;
+  }
+
+  /* VU bar animations — channel strips */
+  @keyframes mix-vu-ch1-l {
+    0%,100% { height: 32px; }
+    25%      { height: 40px; }
+    50%      { height: 28px; }
+    75%      { height: 44px; }
+  }
+  @keyframes mix-vu-ch1-r {
+    0%,100% { height: 23px; }
+    30%     { height: 18px; }
+    60%     { height: 30px; }
+    80%     { height: 15px; }
+  }
+  @keyframes mix-vu-ch2-l {
+    0%,100% { height: 28px; }
+    20%     { height: 36px; }
+    55%     { height: 22px; }
+    80%     { height: 38px; }
+  }
+  @keyframes mix-vu-ch2-r {
+    0%,100% { height: 20px; }
+    35%     { height: 14px; }
+    65%     { height: 26px; }
+    85%     { height: 10px; }
+  }
+  /* VU bar animations — master (higher levels) */
+  @keyframes mix-vu-mst-l {
+    0%,100% { height: 40px; }
+    25%     { height: 46px; }
+    50%     { height: 36px; }
+    75%     { height: 48px; }
+  }
+  @keyframes mix-vu-mst-r {
+    0%,100% { height: 38px; }
+    30%     { height: 44px; }
+    60%     { height: 34px; }
+    80%     { height: 48px; }
+  }
+
+  .mix-vu-bar.ch1-l { animation: mix-vu-ch1-l 1.4s ease-in-out infinite; }
+  .mix-vu-bar.ch1-r { animation: mix-vu-ch1-r 1.4s ease-in-out infinite; animation-delay: 0.2s; }
+  .mix-vu-bar.ch2-l { animation: mix-vu-ch2-l 1.6s ease-in-out infinite; animation-delay: 0.35s; }
+  .mix-vu-bar.ch2-r { animation: mix-vu-ch2-r 1.6s ease-in-out infinite; animation-delay: 0.55s; }
+  .mix-vu-bar.mst-l { animation: mix-vu-mst-l 1.2s ease-in-out infinite; animation-delay: 0.1s; }
+  .mix-vu-bar.mst-r { animation: mix-vu-mst-r 1.2s ease-in-out infinite; animation-delay: 0.3s; }
+
+  /* Channel Fader */
+  .mix-fader-track {
+    width: 10px;
+    height: 100px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 5px;
+    position: relative;
+    cursor: ns-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .mix-fader-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    background: linear-gradient(to top, var(--amber-dim), var(--amber));
+    pointer-events: none;
+  }
+
+  .mix-fader-thumb {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 8px;
+    background: linear-gradient(90deg, var(--bg-raised), var(--bg-surface));
+    border: 1px solid var(--border-hi);
+    border-radius: 3px;
+    z-index: 1;
+    pointer-events: none;
+  }
+
+  /* Channel Label */
+  .mix-channel-label {
+    font-family: var(--font-display);
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--amber);
+  }
+
+  .mix-channel-label.master {
+    color: var(--red-alert);
+  }
+
+  /* Status LED */
+  .mix-led-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .mix-led-dot.green {
+    background: var(--green-on);
+    box-shadow: 0 0 6px var(--green-glow);
+  }
+
+  .mix-led-dot.red {
+    background: var(--red-alert);
+    box-shadow: 0 0 6px var(--red-glow);
+  }
+
+  .mix-led-dot.off {
+    background: var(--bg-inset);
+    box-shadow: none;
+    border: 1px solid var(--border-subtle);
+  }
+
+  .mix-led-dot:not(.static) {
+    cursor: pointer;
+  }
+</style>
+
+<div class="mix-container">
+
+  <!-- CH1 -->
+  <div class="mix-strip">
+    <span class="mix-led-dot green" id="mix-led-ch1"></span>
+
+    <div class="mix-pan-knob" id="mix-pan-ch1">
+      <div class="mix-pan-indicator" id="mix-pan-ind-ch1"></div>
+    </div>
+    <span class="mix-pan-label">PAN</span>
+
+    <div class="mix-vu-meter">
+      <div class="mix-vu-bar-wrap">
+        <div class="mix-vu-bar ch1-l" style="height: 32px;"></div>
+      </div>
+      <div class="mix-vu-bar-wrap">
+        <div class="mix-vu-bar ch1-r" style="height: 23px;"></div>
+      </div>
+    </div>
+
+    <div class="mix-fader-track" id="mix-fader-ch1">
+      <div class="mix-fader-fill" id="mix-fader-fill-ch1" style="height: 50px;"></div>
+      <div class="mix-fader-thumb" id="mix-fader-thumb-ch1" style="bottom: 46px;"></div>
+    </div>
+
+    <span class="mix-channel-label">CH1</span>
+  </div>
+
+  <!-- CH2 -->
+  <div class="mix-strip">
+    <span class="mix-led-dot green" id="mix-led-ch2"></span>
+
+    <div class="mix-pan-knob" id="mix-pan-ch2">
+      <div class="mix-pan-indicator" id="mix-pan-ind-ch2" style="transform: translateX(-50%) rotate(20deg);"></div>
+    </div>
+    <span class="mix-pan-label">PAN</span>
+
+    <div class="mix-vu-meter">
+      <div class="mix-vu-bar-wrap">
+        <div class="mix-vu-bar ch2-l" style="height: 28px;"></div>
+      </div>
+      <div class="mix-vu-bar-wrap">
+        <div class="mix-vu-bar ch2-r" style="height: 20px;"></div>
+      </div>
+    </div>
+
+    <div class="mix-fader-track" id="mix-fader-ch2">
+      <div class="mix-fader-fill" id="mix-fader-fill-ch2" style="height: 60px;"></div>
+      <div class="mix-fader-thumb" id="mix-fader-thumb-ch2" style="bottom: 56px;"></div>
+    </div>
+
+    <span class="mix-channel-label">CH2</span>
+  </div>
+
+  <!-- MASTER -->
+  <div class="mix-strip">
+    <span class="mix-led-dot red static"></span>
+
+    <div class="mix-pan-knob variant-metal" id="mix-pan-mst">
+      <div class="mix-pan-indicator" id="mix-pan-ind-mst"></div>
+    </div>
+    <span class="mix-pan-label">PAN</span>
+
+    <div class="mix-vu-meter">
+      <div class="mix-vu-bar-wrap">
+        <div class="mix-vu-bar mst-l" style="height: 40px;"></div>
+      </div>
+      <div class="mix-vu-bar-wrap">
+        <div class="mix-vu-bar mst-r" style="height: 38px;"></div>
+      </div>
+    </div>
+
+    <div class="mix-fader-track" id="mix-fader-mst">
+      <div class="mix-fader-fill" id="mix-fader-fill-mst" style="height: 80px;"></div>
+      <div class="mix-fader-thumb" id="mix-fader-thumb-mst" style="bottom: 76px;"></div>
+    </div>
+
+    <span class="mix-channel-label master">MASTER</span>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  /* ── Pan knob drag ──────────────────────────────────────────── */
+  function makeDraggableKnob(knobEl, indicatorEl, initAngle) {
+    let angle = initAngle;
+    knobEl.addEventListener('pointerdown', function (e) {
+      knobEl.setPointerCapture(e.pointerId);
+      const startY = e.clientY;
+      const startAngle = angle;
+      e.preventDefault();
+      function onMove(e) {
+        angle = Math.max(-90, Math.min(90, startAngle + (startY - e.clientY)));
+        indicatorEl.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+      }
+      knobEl.addEventListener('pointermove', onMove);
+      knobEl.addEventListener('pointerup', function () {
+        knobEl.removeEventListener('pointermove', onMove);
+      }, { once: true });
+    });
+  }
+
+  makeDraggableKnob(
+    document.getElementById('mix-pan-ch1'),
+    document.getElementById('mix-pan-ind-ch1'),
+    0
+  );
+  makeDraggableKnob(
+    document.getElementById('mix-pan-ch2'),
+    document.getElementById('mix-pan-ind-ch2'),
+    20
+  );
+  makeDraggableKnob(
+    document.getElementById('mix-pan-mst'),
+    document.getElementById('mix-pan-ind-mst'),
+    0
+  );
+
+  /* ── Channel fader drag ─────────────────────────────────────── */
+  // trackHeight = 100px, thumbHeight = 8px
+  // fillHeight range: 0–100px, thumbBottom = fillHeight - 4 (half thumb), clamped 0–92
+  function makeDraggableFader(trackEl, fillEl, thumbEl, initFill) {
+    const TRACK = 100;
+    const THUMB_HALF = 4;
+    let fillPx = initFill;
+
+    function applyFill(px) {
+      fillPx = Math.max(0, Math.min(TRACK, px));
+      fillEl.style.height = fillPx + 'px';
+      thumbEl.style.bottom = Math.max(0, Math.min(TRACK - THUMB_HALF * 2, fillPx - THUMB_HALF)) + 'px';
+    }
+
+    applyFill(fillPx); // set initial state
+
+    trackEl.addEventListener('pointerdown', function (e) {
+      trackEl.setPointerCapture(e.pointerId);
+      const startY = e.clientY;
+      const startFill = fillPx;
+      e.preventDefault();
+      function onMove(e) {
+        applyFill(startFill + (startY - e.clientY));
+      }
+      trackEl.addEventListener('pointermove', onMove);
+      trackEl.addEventListener('pointerup', function () {
+        trackEl.removeEventListener('pointermove', onMove);
+      }, { once: true });
+    });
+  }
+
+  makeDraggableFader(
+    document.getElementById('mix-fader-ch1'),
+    document.getElementById('mix-fader-fill-ch1'),
+    document.getElementById('mix-fader-thumb-ch1'),
+    50
+  );
+  makeDraggableFader(
+    document.getElementById('mix-fader-ch2'),
+    document.getElementById('mix-fader-fill-ch2'),
+    document.getElementById('mix-fader-thumb-ch2'),
+    60
+  );
+  makeDraggableFader(
+    document.getElementById('mix-fader-mst'),
+    document.getElementById('mix-fader-fill-mst'),
+    document.getElementById('mix-fader-thumb-mst'),
+    80
+  );
+
+  /* ── Status LED click to toggle ─────────────────────────────── */
+  function makeToggleLed(ledEl) {
+    ledEl.addEventListener('click', function () {
+      if (ledEl.classList.contains('green')) {
+        ledEl.classList.remove('green');
+        ledEl.classList.add('off');
+      } else {
+        ledEl.classList.remove('off');
+        ledEl.classList.add('green');
+      }
+    });
+  }
+
+  makeToggleLed(document.getElementById('mix-led-ch1'));
+  makeToggleLed(document.getElementById('mix-led-ch2'));
+  // MASTER LED (static) gets no toggle
+})();
+</script>

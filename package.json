@@ -1,6 +1,6 @@
 {
   "name": "pudge-ui",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": true,
   "description": "An LLM-agnostic, tech-stack-agnostic design system inspired by 2000s consumer electronics. Not a component library — a design specification that any coding agent can consume to generate pixel-perfect skeuomorphic UI.",
   "author": "Pudge Studio",

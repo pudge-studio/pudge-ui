@@ -3,6 +3,7 @@ name: Camera Viewfinder HUD
 id: camera-viewfinder
 components: [camera-readout, mode-badge, status-chips, battery-icon, focus-brackets, grid-overlay, exposure-scale, timecode-display]
 materials: [phosphor-screen]
+new: true
 ---
 
 # Camera Viewfinder HUD
@@ -64,3 +65,18 @@ Sony Alpha A7 III/IV EVF, Nikon Z6/Z8 EVF, Canon EOS R5 EVF, Fujifilm X-T4 EVF.
 | exposure-scale | compact | `width: 120px` |
 | timecode-display | compact | `font-size: 14px` on segments, `padding: 3px 10px` |
 | focus-brackets | mixed | One `.acquiring`, one `.locked` |
+
+## Constraints
+
+1. MUST render in landscape — a portrait viewfinder is physically impossible for a camera HUD.
+2. Focus brackets MUST be visible over the scene area — they are the primary interaction element.
+3. REC indicator MUST blink when recording — a static REC chip reads as inactive.
+
+## Interactivity
+
+1. **REC button**: Click to toggle recording state on/off. When recording: REC chip blinks, timecode auto-increments every second, a thin red border appears around the viewfinder area.
+2. **Mode badge**: Click to cycle through shooting modes: M (Manual) → A (Aperture Priority) → S (Shutter Priority) → P (Program).
+3. **Shutter speed (SS) readout**: Click to cycle through common shutter speeds: 1/30 → 1/60 → 1/125 → 1/250 → 1/500 → 1/1000.
+4. **Aperture (F) readout**: Click to cycle: f/1.8 → f/2.8 → f/4 → f/5.6 → f/8.
+5. **Focus brackets**: Click anywhere in the viewfinder area to reposition the center focus brackets to the clicked location. Triggers a brief "acquiring" animation (amber pulse) followed by "locked" state (green, solid).
+6. **Exposure scale**: Click left/right of center to shift EV value (−2 to +2), updating the indicator position and EV label.

@@ -1,0 +1,490 @@
+<style>
+  .gbx-panel {
+    width: 260px;
+    background: #b0aea8;
+    border-radius: 16px 16px 40px 16px;
+    padding: 16px 16px 20px;
+    border: 1px solid #8a8882;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.4);
+    font-family: var(--font-body);
+    box-sizing: border-box;
+  }
+
+  /* Power LED */
+  .gbx-led-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-bottom: 4px;
+  }
+
+  .gbx-led-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .gbx-led-dot.green {
+    background: var(--green-on);
+    box-shadow: 0 0 4px var(--green-glow), 0 0 8px var(--green-glow);
+  }
+
+  .gbx-led-label {
+    font-family: var(--font-mono);
+    font-size: 6px;
+    color: #6a6864;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+  }
+
+  /* Screen housing */
+  .gbx-screen-housing {
+    background: #2a2826;
+    border: 3px solid #3a3835;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+    margin: 12px 0;
+  }
+
+  .gbx-dot-matrix {
+    background: #0a1a08;
+    border: 1px solid #1a2a18;
+    border-radius: 2px;
+    padding: 8px;
+    overflow: hidden;
+    height: 44px;
+    display: flex;
+    align-items: center;
+  }
+
+  .gbx-dot-matrix-text {
+    font-family: var(--font-lcd);
+    color: var(--green-hi);
+    font-size: 22px;
+    white-space: nowrap;
+    animation: gbx-scroll 8s linear infinite;
+    display: block;
+  }
+
+  .gbx-dot-matrix-text.game-over {
+    color: var(--red-alert, #ff3333);
+    animation: gbx-blink 0.6s steps(1) infinite;
+  }
+
+  @keyframes gbx-scroll {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+
+  @keyframes gbx-blink {
+    0%   { opacity: 1; }
+    50%  { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Speaker grille */
+  .gbx-speaker {
+    background: repeating-linear-gradient(
+      90deg,
+      #3a3835 0,
+      #3a3835 1px,
+      transparent 1px,
+      transparent 5px
+    );
+    height: 8px;
+    border-radius: 1px;
+    width: 60%;
+    margin-left: auto;
+    margin-bottom: 8px;
+  }
+
+  /* Controls section */
+  .gbx-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+  }
+
+  /* D-pad */
+  .gbx-dpad {
+    width: 110px;
+    height: 110px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .gbx-dpad-arm {
+    background: linear-gradient(180deg, var(--rubber-hi), var(--rubber-bg));
+    border: 1px solid var(--border-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: var(--text-secondary);
+    position: absolute;
+    border-radius: 3px;
+    user-select: none;
+    cursor: pointer;
+    touch-action: manipulation;
+    transition: opacity 80ms, transform 80ms;
+  }
+
+  .gbx-dpad-arm.up {
+    width: 32px;
+    height: 36px;
+    left: 50%;
+    top: 8px;
+    transform: translateX(-50%);
+    border-radius: 3px 3px 1px 1px;
+  }
+
+  .gbx-dpad-arm.down {
+    width: 32px;
+    height: 36px;
+    left: 50%;
+    bottom: 8px;
+    transform: translateX(-50%);
+    border-radius: 1px 1px 3px 3px;
+  }
+
+  .gbx-dpad-arm.left {
+    width: 36px;
+    height: 32px;
+    top: 50%;
+    left: 8px;
+    transform: translateY(-50%);
+    border-radius: 3px 1px 1px 3px;
+  }
+
+  .gbx-dpad-arm.right {
+    width: 36px;
+    height: 32px;
+    top: 50%;
+    right: 8px;
+    transform: translateY(-50%);
+    border-radius: 1px 3px 3px 1px;
+  }
+
+  /* Active arm states — override transform while keeping base centering */
+  .gbx-dpad-arm.up.gbx-arm-active    { transform: translateX(-50%) translateY(1px);  opacity: 0.6; }
+  .gbx-dpad-arm.down.gbx-arm-active  { transform: translateX(-50%) translateY(-1px); opacity: 0.6; }
+  .gbx-dpad-arm.left.gbx-arm-active  { transform: translateY(-50%) translateX(1px);  opacity: 0.6; }
+  .gbx-dpad-arm.right.gbx-arm-active { transform: translateY(-50%) translateX(-1px); opacity: 0.6; }
+
+  .gbx-dpad-center {
+    width: 32px;
+    height: 32px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--rubber-bg);
+    border-radius: 2px;
+  }
+
+  /* A/B buttons */
+  .gbx-buttons-wrapper {
+    transform: rotate(-30deg);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .gbx-rubber-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(155deg, #7a3040, #4a1e28);
+    border: 1px solid #3a1020;
+    box-shadow: 0 2px 0 #2a0810, 0 3px 8px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: #d0a0b0;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    transition: transform 80ms, box-shadow 80ms;
+  }
+
+  .gbx-rubber-btn.gbx-btn-active {
+    transform: scale(0.9);
+    box-shadow: 0 1px 0 #2a0810, 0 1px 4px rgba(0,0,0,0.4);
+  }
+
+  /* Start/Select row */
+  .gbx-ss-row {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 8px 0;
+  }
+
+  .gbx-flat-btn {
+    height: 14px;
+    border-radius: 100px;
+    width: 44px;
+    background: var(--bg-inset);
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border: 1px solid var(--border-subtle);
+    box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+    text-transform: uppercase;
+    transition: box-shadow 80ms;
+  }
+
+  .gbx-flat-btn.gbx-flat-active {
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.7);
+  }
+
+  /* Volume slider */
+  .gbx-vol-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 0 2px;
+  }
+
+  .gbx-vol-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: #6a6864;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+  }
+
+  .gbx-vol-track {
+    flex: 1;
+    height: 4px;
+    background: #8a8882;
+    border-radius: 2px;
+    position: relative;
+    border: 1px solid #6a6864;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+    cursor: pointer;
+  }
+
+  .gbx-vol-fill {
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, #5a5854, #7a7874);
+    border-radius: 2px;
+  }
+
+  .gbx-vol-thumb {
+    width: 8px;
+    height: 12px;
+    background: linear-gradient(180deg, #d0cec8, #a0a09a);
+    border-radius: 2px;
+    border: 1px solid #6a6864;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    position: absolute;
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .gbx-vol-thumb:active {
+    cursor: grabbing;
+  }
+</style>
+
+<div class="gbx-panel">
+
+  <!-- Power LED -->
+  <div class="gbx-led-row">
+    <div class="gbx-led-dot green"></div>
+    <span class="gbx-led-label">Battery</span>
+  </div>
+
+  <!-- Screen housing -->
+  <div class="gbx-screen-housing">
+    <div class="gbx-dot-matrix">
+      <span class="gbx-dot-matrix-text" id="gbx-text">PUDGE / UI&nbsp;&nbsp;&nbsp;&nbsp;PUDGE / UI&nbsp;&nbsp;&nbsp;&nbsp;PUDGE / UI&nbsp;&nbsp;&nbsp;&nbsp;PUDGE / UI&nbsp;&nbsp;&nbsp;&nbsp;PUDGE / UI&nbsp;&nbsp;&nbsp;&nbsp;PUDGE / UI&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    </div>
+  </div>
+
+  <!-- Speaker grille -->
+  <div class="gbx-speaker"></div>
+
+  <!-- Controls -->
+  <div class="gbx-controls">
+
+    <!-- D-pad -->
+    <div class="gbx-dpad">
+      <div class="gbx-dpad-arm up"   id="gbx-arm-up">▲</div>
+      <div class="gbx-dpad-arm down" id="gbx-arm-down">▼</div>
+      <div class="gbx-dpad-arm left" id="gbx-arm-left">◀</div>
+      <div class="gbx-dpad-arm right" id="gbx-arm-right">▶</div>
+      <div class="gbx-dpad-center"></div>
+    </div>
+
+    <!-- A/B buttons -->
+    <div class="gbx-buttons-wrapper">
+      <div class="gbx-rubber-btn" id="gbx-btn-a">A</div>
+      <div class="gbx-rubber-btn" id="gbx-btn-b">B</div>
+    </div>
+
+  </div>
+
+  <!-- Start / Select -->
+  <div class="gbx-ss-row">
+    <div class="gbx-flat-btn" id="gbx-select">Select</div>
+    <div class="gbx-flat-btn" id="gbx-start">Start</div>
+  </div>
+
+  <!-- Volume slider -->
+  <div class="gbx-vol-row">
+    <span class="gbx-vol-label">VOL</span>
+    <div class="gbx-vol-track" id="gbx-vol-track">
+      <div class="gbx-vol-fill"  id="gbx-vol-fill"></div>
+      <div class="gbx-vol-thumb" id="gbx-vol-thumb"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  /* ── State ─────────────────────────────────────────────── */
+  const DEFAULT_DURATION   = 8;   // seconds
+  const MIN_DURATION       = 2;   // seconds
+  const SPEED_STEP         = 2;   // seconds reduced per A press
+  const PRESS_MS           = 100; // button flash duration
+
+  let scrollDuration  = DEFAULT_DURATION;
+  let scrollReversed  = false;
+  let gameOverActive  = false;
+
+  const text  = document.getElementById('gbx-text');
+  const track = document.getElementById('gbx-vol-track');
+  const fill  = document.getElementById('gbx-vol-fill');
+  const thumb = document.getElementById('gbx-vol-thumb');
+
+  /* ── Helpers ────────────────────────────────────────────── */
+  function applyScrollState() {
+    text.style.animationDuration  = scrollDuration + 's';
+    text.style.animationDirection = scrollReversed ? 'reverse' : 'normal';
+  }
+
+  function flashElement(el, cls, ms) {
+    el.classList.add(cls);
+    setTimeout(() => el.classList.remove(cls), ms);
+  }
+
+  function pauseScroll(ms) {
+    text.style.animationPlayState = 'paused';
+    setTimeout(() => { text.style.animationPlayState = 'running'; }, ms);
+  }
+
+  /* ── D-pad ──────────────────────────────────────────────── */
+  ['up', 'down', 'left', 'right'].forEach(function (dir) {
+    var arm = document.getElementById('gbx-arm-' + dir);
+    if (!arm) return;
+    arm.addEventListener('click', function () {
+      flashElement(arm, 'gbx-arm-active', PRESS_MS);
+      // Briefly pause scroll on any d-pad press
+      pauseScroll(300);
+    });
+  });
+
+  /* ── A button — speed up scroll ────────────────────────── */
+  document.getElementById('gbx-btn-a').addEventListener('click', function () {
+    if (gameOverActive) return;
+    flashElement(this, 'gbx-btn-active', PRESS_MS);
+    scrollDuration = Math.max(MIN_DURATION, scrollDuration - SPEED_STEP);
+    applyScrollState();
+  });
+
+  /* ── B button — reverse scroll direction ────────────────── */
+  document.getElementById('gbx-btn-b').addEventListener('click', function () {
+    if (gameOverActive) return;
+    flashElement(this, 'gbx-btn-active', PRESS_MS);
+    scrollReversed = !scrollReversed;
+    applyScrollState();
+  });
+
+  /* ── START — toggle game-over state ─────────────────────── */
+  document.getElementById('gbx-start').addEventListener('click', function () {
+    flashElement(this, 'gbx-flat-active', PRESS_MS);
+    gameOverActive = !gameOverActive;
+
+    if (gameOverActive) {
+      text.textContent = 'GAME OVER  GAME OVER  GAME OVER  GAME OVER  GAME OVER  GAME OVER  ';
+      text.classList.add('game-over');
+      text.style.animationName     = 'gbx-blink';
+      text.style.animationDuration = '0.6s';
+      text.style.animationTimingFunction = 'steps(1)';
+      text.style.animationDirection = 'normal';
+    } else {
+      text.innerHTML = 'PUDGE / UI    PUDGE / UI    PUDGE / UI    PUDGE / UI    PUDGE / UI    PUDGE / UI    ';
+      text.classList.remove('game-over');
+      text.style.animationName            = 'gbx-scroll';
+      text.style.animationTimingFunction  = 'linear';
+      applyScrollState();
+    }
+  });
+
+  /* ── SELECT — reset everything ──────────────────────────── */
+  document.getElementById('gbx-select').addEventListener('click', function () {
+    flashElement(this, 'gbx-flat-active', PRESS_MS);
+    scrollDuration = DEFAULT_DURATION;
+    scrollReversed = false;
+    gameOverActive = false;
+
+    text.innerHTML = 'PUDGE / UI    PUDGE / UI    PUDGE / UI    PUDGE / UI    PUDGE / UI    PUDGE / UI    ';
+    text.classList.remove('game-over');
+    text.style.animationName            = 'gbx-scroll';
+    text.style.animationTimingFunction  = 'linear';
+    text.style.animationPlayState       = 'running';
+    applyScrollState();
+  });
+
+  /* ── Volume slider ──────────────────────────────────────── */
+  function setVolFromX(clientX) {
+    var rect = track.getBoundingClientRect();
+    var pct  = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+    fill.style.width = (pct * 100) + '%';
+    thumb.style.left = (pct * 100) + '%';
+  }
+
+  thumb.addEventListener('pointerdown', function (e) {
+    thumb.setPointerCapture(e.pointerId);
+    e.preventDefault();
+
+    function onMove(e) {
+      setVolFromX(e.clientX);
+    }
+    thumb.addEventListener('pointermove', onMove);
+    thumb.addEventListener('pointerup', function () {
+      thumb.removeEventListener('pointermove', onMove);
+    }, { once: true });
+  });
+
+  /* Click anywhere on the track to jump */
+  track.addEventListener('click', function (e) {
+    if (e.target === thumb) return;
+    setVolFromX(e.clientX);
+  });
+}());
+</script>

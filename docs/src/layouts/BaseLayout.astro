@@ -3,6 +3,7 @@ import "../styles/main.css";
 import SiteHeader from "../components/layout/SiteHeader.astro";
 import SiteFooter from "../components/layout/SiteFooter.astro";
 import SearchDialog from "../components/shared/SearchDialog.astro";
+import VersionBanner from "../components/shared/VersionBanner.astro";
 
 interface Props {
   title: string;
@@ -85,11 +86,19 @@ const jsonLd = {
         ? "light"
         : "dark";
       document.documentElement.dataset.theme = stored || preferred;
+
+      // Reserve layout space for the version banner before first paint.
+      // VersionBanner.astro removes this property on dismiss.
+      // Keep in sync with BANNER_VERSION in src/data/changelog.ts.
+      if (!localStorage.getItem("pudge-banner-v0.2.1")) {
+        document.documentElement.style.setProperty("--banner-offset", "36px");
+      }
     </script>
   </head>
   <body>
     <div class="site-wrapper">
       <SiteHeader currentPath={currentPath} />
+      <VersionBanner />
       <main>
         <slot />
       </main>

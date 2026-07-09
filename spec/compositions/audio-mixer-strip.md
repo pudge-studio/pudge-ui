@@ -3,6 +3,7 @@ name: Audio Mixer Strip
 id: audio-mixer-strip
 components: [radial-knob, vu-meter, vertical-fader, led-dots, mode-badge]
 materials: [default, metal]
+new: true
 ---
 
 # Audio Mixer Strip
@@ -60,3 +61,16 @@ Mackie 1604-VLZ Pro, SSL Duality, Neve 5088, Yamaha 02R, Behringer X32 (channel 
 | vertical-fader | 100px track, varied fills | 100px track, high fill (80%) |
 | channel label | `color: var(--amber)` | `color: var(--red-alert)` |
 | led-dot | `.green` | `.red` |
+
+## Constraints
+
+1. MUST render as a horizontal row of strips — vertical stacking breaks the mixer metaphor.
+2. MUST show at least 3 strips (two channels + master) to read as a mixer bank section.
+3. Master strip MUST be visually distinct from channel strips — different label color and LED state.
+
+## Interactivity
+
+1. **Pan knobs**: Drag vertically to rotate — indicator dot angle updates in real-time. Range −90° (left) to +90° (right). Center (0°) is 12 o'clock.
+2. **Channel faders**: Drag vertically to move thumb — fill and thumb position update in real-time. Fader position determines the channel level (0%–100%).
+3. **VU meters**: CSS animation pulses the bar heights to simulate live audio levels. Each strip has a slightly different animation timing for visual variety.
+4. **Status LEDs**: Click to toggle solo (green) / mute (off) state per channel. Master LED is not interactive.

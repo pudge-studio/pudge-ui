@@ -1,0 +1,717 @@
+<style>
+  .djc-outer {
+    min-width: 440px;
+    padding: 14px 16px;
+    background: linear-gradient(180deg, #1e1c1a, #161412);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+
+  /* Top knob row */
+  .djc-knob-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .djc-knobs-left {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex: 2;
+  }
+
+  .djc-knob-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .djc-knob-wrap {
+    transform: scale(0.56);
+    transform-origin: center center;
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .djc-knob {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3a3835, #1a1816);
+    border: 2px solid var(--border-mid);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    position: relative;
+    cursor: ns-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .djc-knob-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 14px;
+    background: var(--amber);
+    border-radius: 2px;
+    transform-origin: center bottom;
+    pointer-events: none;
+  }
+
+  .djc-knob-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  /* Right side: LEDs + VU */
+  .djc-right-cluster {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex: 1;
+    justify-content: flex-end;
+  }
+
+  .djc-led-vu {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .djc-led-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    justify-content: flex-end;
+    align-items: flex-start;
+  }
+
+  .djc-led-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .djc-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  .djc-led.green {
+    background: var(--green-on);
+    box-shadow: 0 0 4px var(--green-glow);
+  }
+
+  .djc-led.amber {
+    background: var(--amber);
+    box-shadow: 0 0 4px var(--amber-glow);
+  }
+
+  .djc-led-text {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+
+  .djc-vu-meter {
+    height: 80px;
+    display: flex;
+    gap: 3px;
+    align-items: flex-end;
+  }
+
+  .djc-vu-bar-wrap {
+    height: 80px;
+    width: 8px;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .djc-vu-bar {
+    width: 8px;
+    border-radius: 2px;
+    background: linear-gradient(to top, var(--green-on) 0%, var(--green-on) 60%, var(--amber) 60%, var(--amber) 80%, var(--red-alert) 80%);
+    animation: djc-vu 1.4s ease-in-out infinite alternate;
+  }
+
+  .djc-vu-bar:nth-child(1) {
+    animation-delay: 0s;
+  }
+
+  .djc-vu-bar-wrap:nth-child(2) .djc-vu-bar {
+    animation-delay: 0.2s;
+  }
+
+  @keyframes djc-vu {
+    0%   { height: 28px; }
+    15%  { height: 52px; }
+    30%  { height: 38px; }
+    50%  { height: 64px; }
+    65%  { height: 44px; }
+    80%  { height: 56px; }
+    100% { height: 34px; }
+  }
+
+  /* Platter section */
+  .djc-platter-section {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .djc-platter-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .djc-jog-outer {
+    border: 2px solid var(--border-mid);
+    border-radius: 50%;
+    padding: 8px;
+    width: 164px;
+    height: 164px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #1a1816;
+    cursor: ew-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .djc-jog-inner {
+    width: 100px;
+    height: 100px;
+    transform: scale(1.5);
+    transform-origin: center;
+    position: relative;
+  }
+
+  .djc-jog-knob {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      #2a2826 0deg, #1a1816 20deg,
+      #2a2826 40deg, #1a1816 60deg,
+      #2a2826 80deg, #1a1816 100deg,
+      #2a2826 120deg, #1a1816 140deg,
+      #2a2826 160deg, #1a1816 180deg,
+      #2a2826 200deg, #1a1816 220deg,
+      #2a2826 240deg, #1a1816 260deg,
+      #2a2826 280deg, #1a1816 300deg,
+      #2a2826 320deg, #1a1816 340deg,
+      #2a2826 360deg
+    );
+    border: 2px solid var(--border-mid);
+    position: relative;
+  }
+
+  .djc-jog-notch {
+    position: absolute;
+    bottom: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 10px;
+    background: var(--amber);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  .djc-jog-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  /* Vertical faders */
+  .djc-fader-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .djc-fader-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  .djc-fader-track {
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 5px;
+    position: relative;
+    width: 10px;
+  }
+
+  .djc-fader-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    background: linear-gradient(to top, var(--amber-dim), var(--amber));
+  }
+
+  .djc-fader-thumb {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 24px;
+    height: 10px;
+    background: linear-gradient(90deg, var(--bg-raised), var(--bg-surface));
+    border: 1px solid var(--border-hi);
+    border-radius: 3px;
+    z-index: 1;
+    cursor: ns-resize;
+    touch-action: none;
+  }
+
+  /* Transport row */
+  .djc-transport-row {
+    display: flex;
+    gap: 10px;
+    padding-top: 10px;
+    align-items: center;
+  }
+
+  .djc-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(180deg, var(--bg-raised), var(--bg-surface));
+    border: 1px solid var(--border-mid);
+    box-shadow: 0 2px 0 var(--border-deep);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: background 0.1s, box-shadow 0.1s;
+  }
+
+  .djc-btn-play {
+    width: 52px;
+    height: 36px;
+    border-radius: var(--radius-md);
+    background: linear-gradient(180deg, #2a5a28, #1a3a18);
+    border: 1px solid #1a3a18;
+    box-shadow: 0 2px 0 #0a1a08;
+    color: var(--green-on);
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s, box-shadow 0.15s, color 0.15s;
+  }
+
+  .djc-btn-play.is-playing {
+    background: linear-gradient(180deg, #2a7a28, #1a4a18);
+    box-shadow: 0 2px 8px rgba(60, 200, 60, 0.35), 0 0 0 1px #2a7a28;
+    color: #6eff6a;
+  }
+
+  /* Crossfader row */
+  .djc-crossfader-row {
+    margin-top: 12px;
+    border-top: 1px solid var(--border-subtle);
+    padding-top: 12px;
+  }
+
+  .djc-crossfader-track {
+    height: 16px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    position: relative;
+    cursor: ew-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .djc-crossfader-center-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 1px;
+    background: var(--border-mid);
+    pointer-events: none;
+  }
+
+  .djc-crossfader-thumb {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 28px;
+    height: 24px;
+    background: linear-gradient(180deg, var(--bg-raised), var(--bg-surface));
+    border: 1px solid var(--border-hi);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+    pointer-events: none;
+  }
+
+  .djc-crossfader-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+  }
+
+  .djc-crossfader-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    letter-spacing: 0.5px;
+  }
+</style>
+
+<div class="djc-outer">
+
+  <!-- Top knob row -->
+  <div class="djc-knob-row">
+    <div class="djc-knobs-left">
+
+      <!-- GAIN knob -->
+      <div class="djc-knob-col">
+        <div class="djc-knob-wrap">
+          <div class="djc-knob" id="djc-knob-gain">
+            <div class="djc-knob-indicator" id="djc-ind-gain"></div>
+          </div>
+        </div>
+        <span class="djc-knob-label">GAIN</span>
+      </div>
+
+      <!-- HI knob -->
+      <div class="djc-knob-col">
+        <div class="djc-knob-wrap">
+          <div class="djc-knob" id="djc-knob-hi">
+            <div class="djc-knob-indicator" id="djc-ind-hi"></div>
+          </div>
+        </div>
+        <span class="djc-knob-label">HI</span>
+      </div>
+
+      <!-- MID knob -->
+      <div class="djc-knob-col">
+        <div class="djc-knob-wrap">
+          <div class="djc-knob" id="djc-knob-mid">
+            <div class="djc-knob-indicator" id="djc-ind-mid"></div>
+          </div>
+        </div>
+        <span class="djc-knob-label">MID</span>
+      </div>
+
+      <!-- LO knob -->
+      <div class="djc-knob-col">
+        <div class="djc-knob-wrap">
+          <div class="djc-knob" id="djc-knob-lo">
+            <div class="djc-knob-indicator" id="djc-ind-lo"></div>
+          </div>
+        </div>
+        <span class="djc-knob-label">LO</span>
+      </div>
+
+    </div>
+
+    <!-- Right: LED cluster + VU meter -->
+    <div class="djc-right-cluster">
+      <div class="djc-led-vu">
+
+        <div class="djc-led-stack">
+          <div class="djc-led-row">
+            <div class="djc-led green"></div>
+            <span class="djc-led-text">LOAD</span>
+          </div>
+          <div class="djc-led-row">
+            <div class="djc-led amber"></div>
+            <span class="djc-led-text">CUE</span>
+          </div>
+          <div class="djc-led-row">
+            <div class="djc-led amber"></div>
+            <span class="djc-led-text">SYNC</span>
+          </div>
+        </div>
+
+        <div class="djc-vu-meter">
+          <div class="djc-vu-bar-wrap">
+            <div class="djc-vu-bar" style="height: 48px;"></div>
+          </div>
+          <div class="djc-vu-bar-wrap">
+            <div class="djc-vu-bar" style="height: 40px; animation-delay: 0.2s;"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Platter section -->
+  <div class="djc-platter-section">
+
+    <!-- Jog wheel -->
+    <div class="djc-platter-left">
+      <div class="djc-jog-outer" id="djc-jog-outer">
+        <div class="djc-jog-inner" id="djc-jog-inner">
+          <div class="djc-jog-knob" id="djc-jog-platter">
+            <div class="djc-jog-notch"></div>
+          </div>
+        </div>
+      </div>
+      <span class="djc-jog-label">JOG WHEEL</span>
+    </div>
+
+    <!-- PITCH fader -->
+    <div class="djc-fader-col">
+      <span class="djc-fader-label">PITCH</span>
+      <div class="djc-fader-track" id="djc-pitch-track" style="height: 140px;">
+        <div class="djc-fader-fill" id="djc-pitch-fill" style="height: 70px;"></div>
+        <div class="djc-fader-thumb" id="djc-pitch-thumb" style="top: 50%; transform: translate(-50%, -50%);"></div>
+      </div>
+    </div>
+
+    <!-- CH fader -->
+    <div class="djc-fader-col">
+      <span class="djc-fader-label">CH</span>
+      <div class="djc-fader-track" id="djc-ch-track" style="height: 100px;">
+        <div class="djc-fader-fill" id="djc-ch-fill" style="height: 80px;"></div>
+        <div class="djc-fader-thumb" id="djc-ch-thumb" style="top: 20%; transform: translate(-50%, -50%);"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Transport row -->
+  <div class="djc-transport-row">
+    <button class="djc-btn" id="djc-btn-cue">CUE</button>
+    <button class="djc-btn" id="djc-btn-sync">SYNC</button>
+    <button class="djc-btn-play" id="djc-btn-play">&#9654;</button>
+  </div>
+
+  <!-- Crossfader row -->
+  <div class="djc-crossfader-row">
+    <div class="djc-crossfader-track" id="djc-xfader-track">
+      <div class="djc-crossfader-center-line"></div>
+      <div class="djc-crossfader-thumb" id="djc-xfader-thumb"></div>
+    </div>
+    <div class="djc-crossfader-labels">
+      <span class="djc-crossfader-label">DECK A</span>
+      <span class="djc-crossfader-label">DECK B</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // ── Knob rotation ──────────────────────────────────────────────────
+  var knobs = [
+    { knobId: 'djc-knob-gain', indId: 'djc-ind-gain', angle: -30 },
+    { knobId: 'djc-knob-hi',   indId: 'djc-ind-hi',   angle:  30 },
+    { knobId: 'djc-knob-mid',  indId: 'djc-ind-mid',  angle:   0 },
+    { knobId: 'djc-knob-lo',   indId: 'djc-ind-lo',   angle: -40 },
+  ];
+
+  knobs.forEach(function(k) {
+    var knob = document.getElementById(k.knobId);
+    var ind  = document.getElementById(k.indId);
+    if (!knob || !ind) return;
+
+    // Apply initial angle
+    ind.style.transform = 'translateX(-50%) rotate(' + k.angle + 'deg)';
+    ind.style.transformOrigin = 'center bottom';
+
+    knob.addEventListener('pointerdown', function(e) {
+      knob.setPointerCapture(e.pointerId);
+      var startY = e.clientY;
+      var startAngle = k.angle;
+
+      function onMove(e) {
+        k.angle = Math.max(-135, Math.min(135, startAngle + (startY - e.clientY) * 1.5));
+        ind.style.transform = 'translateX(-50%) rotate(' + k.angle + 'deg)';
+      }
+
+      knob.addEventListener('pointermove', onMove);
+      knob.addEventListener('pointerup', function() {
+        knob.removeEventListener('pointermove', onMove);
+      }, { once: true });
+      e.preventDefault();
+    });
+  });
+
+  // ── Jog wheel rotation ─────────────────────────────────────────────
+  var jogOuter   = document.getElementById('djc-jog-outer');
+  var jogPlatter = document.getElementById('djc-jog-platter');
+  var jogRotation = 0;
+
+  if (jogOuter && jogPlatter) {
+    jogOuter.addEventListener('pointerdown', function(e) {
+      jogOuter.setPointerCapture(e.pointerId);
+      var startX = e.clientX;
+      var startRotation = jogRotation;
+
+      function onMove(e) {
+        jogRotation = startRotation + (e.clientX - startX) * 1.2;
+        jogPlatter.style.transform = 'rotate(' + jogRotation + 'deg)';
+      }
+
+      jogOuter.addEventListener('pointermove', onMove);
+      jogOuter.addEventListener('pointerup', function() {
+        jogOuter.removeEventListener('pointermove', onMove);
+      }, { once: true });
+      e.preventDefault();
+    });
+  }
+
+  // ── Vertical fader helper ──────────────────────────────────────────
+  function makeVerticalFader(trackId, thumbId, fillId, initialFraction) {
+    var track = document.getElementById(trackId);
+    var thumb = document.getElementById(thumbId);
+    var fill  = document.getElementById(fillId);
+    if (!track || !thumb || !fill) return;
+
+    var fraction = initialFraction; // 0 = top, 1 = bottom
+
+    function applyFraction(f) {
+      fraction = Math.max(0, Math.min(1, f));
+      var trackH = track.offsetHeight;
+      var thumbH = thumb.offsetHeight;
+      var usable = trackH - thumbH;
+      var thumbTop = fraction * usable + thumbH / 2;
+      thumb.style.top = thumbTop + 'px';
+      thumb.style.transform = 'translate(-50%, -50%)';
+      fill.style.height = ((1 - fraction) * trackH) + 'px';
+    }
+
+    // Set initial state
+    applyFraction(fraction);
+
+    thumb.addEventListener('pointerdown', function(e) {
+      thumb.setPointerCapture(e.pointerId);
+      var startY = e.clientY;
+      var startFraction = fraction;
+      var trackH = track.offsetHeight;
+      var thumbH = thumb.offsetHeight;
+      var usable = trackH - thumbH;
+
+      function onMove(e) {
+        var delta = (e.clientY - startY) / (usable || 1);
+        applyFraction(startFraction + delta);
+      }
+
+      thumb.addEventListener('pointermove', onMove);
+      thumb.addEventListener('pointerup', function() {
+        thumb.removeEventListener('pointermove', onMove);
+      }, { once: true });
+      e.preventDefault();
+    });
+  }
+
+  // PITCH fader: thumb at center = 0.5 fraction
+  makeVerticalFader('djc-pitch-track', 'djc-pitch-thumb', 'djc-pitch-fill', 0.5);
+  // CH fader: thumb at 20% from top = 0.2 fraction (channel open)
+  makeVerticalFader('djc-ch-track', 'djc-ch-thumb', 'djc-ch-fill', 0.2);
+
+  // ── Crossfader ─────────────────────────────────────────────────────
+  var xfaderTrack = document.getElementById('djc-xfader-track');
+  var xfaderThumb = document.getElementById('djc-xfader-thumb');
+  var xfaderFraction = 0.5; // 0 = full left, 1 = full right
+
+  function applyXfader(f) {
+    xfaderFraction = Math.max(0, Math.min(1, f));
+    xfaderThumb.style.left = (xfaderFraction * 100) + '%';
+  }
+
+  if (xfaderTrack && xfaderThumb) {
+    applyXfader(xfaderFraction);
+
+    xfaderTrack.addEventListener('pointerdown', function(e) {
+      xfaderTrack.setPointerCapture(e.pointerId);
+      var rect = xfaderTrack.getBoundingClientRect();
+      var startX = e.clientX;
+      var startFraction = xfaderFraction;
+      var trackW = rect.width;
+
+      function onMove(e) {
+        var delta = (e.clientX - startX) / (trackW || 1);
+        applyXfader(startFraction + delta);
+      }
+
+      xfaderTrack.addEventListener('pointermove', onMove);
+      xfaderTrack.addEventListener('pointerup', function() {
+        xfaderTrack.removeEventListener('pointermove', onMove);
+      }, { once: true });
+      e.preventDefault();
+    });
+  }
+
+  // ── Transport buttons ──────────────────────────────────────────────
+  var btnPlay = document.getElementById('djc-btn-play');
+  var btnCue  = document.getElementById('djc-btn-cue');
+  var btnSync = document.getElementById('djc-btn-sync');
+  var playing = false;
+
+  if (btnPlay) {
+    btnPlay.addEventListener('click', function() {
+      playing = !playing;
+      if (playing) {
+        btnPlay.classList.add('is-playing');
+      } else {
+        btnPlay.classList.remove('is-playing');
+      }
+    });
+  }
+
+  if (btnCue) {
+    btnCue.addEventListener('click', function() {
+      btnCue.style.background = 'linear-gradient(180deg, #1a5a1a, #0a3a0a)';
+      btnCue.style.color = 'var(--green-on)';
+      btnCue.style.borderColor = '#1a5a1a';
+      setTimeout(function() {
+        btnCue.style.background = '';
+        btnCue.style.color = '';
+        btnCue.style.borderColor = '';
+      }, 300);
+    });
+  }
+
+  if (btnSync) {
+    btnSync.addEventListener('click', function() {
+      btnSync.style.background = 'linear-gradient(180deg, #1a2a5a, #0a1a3a)';
+      btnSync.style.color = '#6a9aff';
+      btnSync.style.borderColor = '#1a2a5a';
+      setTimeout(function() {
+        btnSync.style.background = '';
+        btnSync.style.color = '';
+        btnSync.style.borderColor = '';
+      }, 300);
+    });
+  }
+})();
+</script>

@@ -1,0 +1,554 @@
+<style>
+  /* ── Component classes ── */
+  .led-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+  .led-dot.green  { background: var(--green-on);   box-shadow: 0 0 6px var(--green-glow); }
+  .led-dot.red    { background: var(--red-alert);  box-shadow: 0 0 6px var(--red-glow); }
+  .led-dot.amber  { background: var(--amber);      box-shadow: 0 0 6px var(--amber-glow); }
+
+  .segmented {
+    display: inline-flex;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+  .segmented-item {
+    padding: 5px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-right: 1px solid var(--border-subtle);
+    transition: background 0.1s, color 0.1s;
+  }
+  .segmented-item:last-child { border-right: none; }
+  .segmented-item.active {
+    color: var(--amber);
+    background: rgba(245, 166, 35, 0.08);
+  }
+
+  .toggle-track {
+    width: 40px;
+    height: 20px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+  }
+  .toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--border-mid);
+    transition: left 0.15s;
+  }
+  .toggle-track.on .toggle-thumb {
+    left: 23px;
+    background: var(--amber);
+  }
+
+  .slider-track {
+    height: 6px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px;
+    position: relative;
+    flex: 1;
+  }
+  .slider-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: linear-gradient(90deg, var(--amber-dim), var(--amber));
+  }
+  .slider-thumb {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--bg-raised);
+    border: 2px solid var(--amber);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    cursor: grab;
+    touch-action: none;
+  }
+  .slider-thumb:active {
+    cursor: grabbing;
+  }
+
+  /* ── Walkman layout classes ── */
+  .wlk-chassis {
+    min-width: 360px;
+    width: 380px;
+    padding: 12px 16px;
+    background: linear-gradient(180deg, #1e1c18, #14120e);
+    border: 1px solid var(--border-mid);
+    border-radius: 14px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    font-family: var(--font-mono);
+    box-sizing: border-box;
+  }
+
+  /* ── Row separators ── */
+  .wlk-row {
+    padding: 10px 0;
+  }
+  .wlk-row + .wlk-row {
+    border-top: 1px solid var(--border-subtle);
+  }
+
+  /* ── Status row ── */
+  .wlk-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .wlk-led-cluster {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+  }
+
+  .wlk-led-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .wlk-led-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 0.5px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .wlk-readouts {
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+  }
+
+  .wlk-readout-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+  .wlk-readout-box.side {
+    background: #0a120a;
+    border: 1px solid #1a2a1a;
+    min-width: 44px;
+  }
+  .wlk-readout-box.counter {
+    background: #0a0800;
+    border: 1px solid #1e1800;
+    min-width: 60px;
+  }
+
+  .wlk-readout-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .wlk-readout-value {
+    font-family: var(--font-lcd);
+    line-height: 1;
+  }
+  .wlk-readout-value.side-val {
+    font-size: 20px;
+    color: var(--green-on);
+    text-shadow: 0 0 8px var(--green-glow);
+  }
+  .wlk-readout-value.counter-val {
+    font-size: 28px;
+    color: var(--amber);
+    text-shadow: 0 0 8px var(--amber-glow);
+    letter-spacing: 2px;
+  }
+
+  /* ── Transport row ── */
+  .wlk-transport-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .wlk-transport-pill {
+    display: flex;
+    align-items: center;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 100px;
+    padding: 8px 12px;
+    gap: 8px;
+    transition: opacity 0.15s;
+  }
+
+  .wlk-transport-pill.hold-on {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .wlk-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-mid);
+    color: var(--text-secondary);
+    font-size: 11px;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), inset 0 1px 0 var(--glossy-hi);
+    transition: box-shadow 0.1s, transform 0.08s;
+    flex-shrink: 0;
+    touch-action: none;
+  }
+
+  .wlk-btn:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 var(--glossy-md);
+  }
+
+  .wlk-btn:active,
+  .wlk-btn.pressed {
+    transform: translateY(1px);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), inset 0 1px 0 var(--glossy-hi);
+  }
+
+  .wlk-btn.play {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(160deg, #1a3a5c, #0d2040);
+    border-color: #2a5080;
+    color: var(--blue-info);
+    font-size: 13px;
+    box-shadow: 0 2px 8px rgba(0, 80, 160, 0.3), inset 0 1px 0 rgba(100, 160, 220, 0.15);
+  }
+
+  .wlk-btn.play.is-playing {
+    background: linear-gradient(160deg, #0d3a1a, #062010);
+    border-color: #1a6030;
+    color: var(--green-on);
+    box-shadow: 0 2px 8px rgba(0, 160, 60, 0.3), inset 0 1px 0 rgba(60, 200, 100, 0.15);
+  }
+
+  .wlk-btn.rec {
+    color: var(--red-alert);
+    font-size: 13px;
+  }
+
+  /* ── REC LED pulse animation ── */
+  @keyframes wlk-rec-pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--red-glow); }
+    50%       { opacity: 0.3; box-shadow: 0 0 2px var(--red-glow); }
+  }
+
+  .led-dot.red.pulsing {
+    animation: wlk-rec-pulse 1s ease-in-out infinite;
+  }
+
+  /* ── Config row ── */
+  .wlk-config-row {
+    padding-top: 10px;
+    padding-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .wlk-config-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .wlk-control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .wlk-control-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+  }
+
+  .wlk-output-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .wlk-output-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+</style>
+
+<div class="wlk-chassis chassis-panel">
+
+  <!-- Status row -->
+  <div class="wlk-row wlk-status-row">
+
+    <!-- LED cluster -->
+    <div class="wlk-led-cluster">
+      <div class="wlk-led-item">
+        <span class="led-dot green"></span>
+        <span class="wlk-led-label">PWR</span>
+      </div>
+      <div class="wlk-led-item">
+        <span class="led-dot red" id="wlk-rec-led"></span>
+        <span class="wlk-led-label">REC</span>
+      </div>
+      <div class="wlk-led-item">
+        <span class="led-dot amber"></span>
+        <span class="wlk-led-label">BATT LOW</span>
+      </div>
+    </div>
+
+    <!-- Readout boxes -->
+    <div class="wlk-readouts">
+      <div class="wlk-readout-box side">
+        <span class="wlk-readout-label">SIDE</span>
+        <span class="wlk-readout-value side-val">A</span>
+      </div>
+      <div class="wlk-readout-box counter">
+        <span class="wlk-readout-label">COUNTER</span>
+        <span class="wlk-readout-value counter-val" id="wlk-counter">008</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Transport row -->
+  <div class="wlk-row wlk-transport-row">
+    <div class="wlk-transport-pill" id="wlk-transport-pill">
+      <button class="wlk-btn" id="wlk-rew"   title="Rewind">◀◀</button>
+      <button class="wlk-btn" id="wlk-ff"    title="Fast Forward">▶▶</button>
+      <button class="wlk-btn" id="wlk-stop"  title="Stop">■</button>
+      <button class="wlk-btn play" id="wlk-play"  title="Play">▶</button>
+      <button class="wlk-btn" id="wlk-pause" title="Pause">⏸</button>
+      <button class="wlk-btn rec" id="wlk-rec" title="Record">●</button>
+    </div>
+  </div>
+
+  <!-- Config row -->
+  <div class="wlk-row wlk-config-row">
+
+    <div class="wlk-config-top">
+
+      <!-- Dolby NR segmented -->
+      <div class="wlk-control-group">
+        <span class="wlk-control-label">DOLBY NR</span>
+        <div class="segmented" id="wlk-dolby">
+          <div class="segmented-item" data-seg="B">B</div>
+          <div class="segmented-item active" data-seg="OFF">OFF</div>
+          <div class="segmented-item" data-seg="C">C</div>
+        </div>
+      </div>
+
+      <!-- HOLD toggle -->
+      <div class="wlk-control-group" style="align-items: center;">
+        <span class="wlk-control-label">HOLD</span>
+        <div class="toggle-track" id="wlk-hold-toggle">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- OUTPUT slider -->
+    <div class="wlk-output-row">
+      <span class="wlk-output-label">OUTPUT</span>
+      <div class="slider-track" id="wlk-slider-track">
+        <div class="slider-fill" id="wlk-slider-fill" style="width: 40%;"></div>
+        <div class="slider-thumb" id="wlk-slider-thumb" style="left: 40%;"></div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+(function () {
+  /* ── State ── */
+  var counterVal = 8;
+  var isPlaying  = false;
+  var isPaused   = false;
+  var interval   = null;
+
+  /* ── Element refs ── */
+  var counterEl   = document.getElementById('wlk-counter');
+  var recLed      = document.getElementById('wlk-rec-led');
+  var pill        = document.getElementById('wlk-transport-pill');
+  var btnPlay     = document.getElementById('wlk-play');
+  var btnStop     = document.getElementById('wlk-stop');
+  var btnPause    = document.getElementById('wlk-pause');
+  var btnRew      = document.getElementById('wlk-rew');
+  var btnFF       = document.getElementById('wlk-ff');
+  var btnRec      = document.getElementById('wlk-rec');
+  var holdToggle  = document.getElementById('wlk-hold-toggle');
+  var dolbyEl     = document.getElementById('wlk-dolby');
+  var sliderTrack = document.getElementById('wlk-slider-track');
+  var sliderFill  = document.getElementById('wlk-slider-fill');
+  var sliderThumb = document.getElementById('wlk-slider-thumb');
+
+  /* ── Counter helpers ── */
+  function padCounter(n) {
+    return String(n % 1000).padStart(3, '0');
+  }
+
+  function startInterval() {
+    if (interval) clearInterval(interval);
+    interval = setInterval(function () {
+      counterVal = (counterVal + 1) % 1000;
+      counterEl.textContent = padCounter(counterVal);
+    }, 2000);
+  }
+
+  function clearCounterInterval() {
+    if (interval) { clearInterval(interval); interval = null; }
+  }
+
+  /* ── Press-feedback helper ── */
+  function addPressFeedback(btn) {
+    btn.addEventListener('pointerdown', function () {
+      btn.classList.add('pressed');
+    });
+    btn.addEventListener('pointerup',   function () { btn.classList.remove('pressed'); });
+    btn.addEventListener('pointerleave', function () { btn.classList.remove('pressed'); });
+  }
+
+  [btnPlay, btnStop, btnPause, btnRew, btnFF, btnRec].forEach(addPressFeedback);
+
+  /* ── PLAY (toggle play/stop) ── */
+  btnPlay.addEventListener('click', function () {
+    if (isPlaying) {
+      // Stop
+      isPlaying = false;
+      isPaused  = false;
+      clearCounterInterval();
+      btnPlay.classList.remove('is-playing');
+      recLed.classList.remove('pulsing');
+    } else {
+      // Play
+      isPlaying = true;
+      isPaused  = false;
+      startInterval();
+      btnPlay.classList.add('is-playing');
+      recLed.classList.add('pulsing');
+    }
+  });
+
+  /* ── STOP ── */
+  btnStop.addEventListener('click', function () {
+    isPlaying = false;
+    isPaused  = false;
+    clearCounterInterval();
+    counterVal = 0;
+    counterEl.textContent = '000';
+    btnPlay.classList.remove('is-playing');
+    recLed.classList.remove('pulsing');
+  });
+
+  /* ── PAUSE ── */
+  btnPause.addEventListener('click', function () {
+    if (isPlaying && !isPaused) {
+      isPaused = true;
+      clearCounterInterval();
+    } else if (isPlaying && isPaused) {
+      isPaused = false;
+      startInterval();
+    } else if (!isPlaying) {
+      // Pressing pause from stopped — start in paused state
+      isPlaying = true;
+      isPaused  = true;
+      btnPlay.classList.add('is-playing');
+      recLed.classList.add('pulsing');
+    }
+  });
+
+  /* ── REW / FF (press feedback only) ── */
+  // No counter logic for REW/FF — just visual press feedback already wired above.
+
+  /* ── REC button (LED pulse toggle) ── */
+  btnRec.addEventListener('click', function () {
+    recLed.classList.toggle('pulsing');
+  });
+
+  /* ── DOLBY NR segmented control ── */
+  dolbyEl.addEventListener('click', function (e) {
+    var item = e.target.closest('.segmented-item');
+    if (!item) return;
+    dolbyEl.querySelectorAll('.segmented-item').forEach(function (el) {
+      el.classList.remove('active');
+    });
+    item.classList.add('active');
+  });
+
+  /* ── HOLD toggle ── */
+  holdToggle.addEventListener('click', function () {
+    holdToggle.classList.toggle('on');
+    if (holdToggle.classList.contains('on')) {
+      pill.classList.add('hold-on');
+    } else {
+      pill.classList.remove('hold-on');
+    }
+  });
+
+  /* ── OUTPUT slider drag ── */
+  var dragStartX = 0;
+  var dragStartPct = 0.4;
+
+  sliderThumb.addEventListener('pointerdown', function (e) {
+    sliderThumb.setPointerCapture(e.pointerId);
+    dragStartX = e.clientX;
+    dragStartPct = parseFloat(sliderFill.style.width) / 100;
+    e.preventDefault();
+
+    sliderThumb.addEventListener('pointermove', function onMove(e) {
+      var rect  = sliderTrack.getBoundingClientRect();
+      var raw   = (e.clientX - rect.left) / rect.width;
+      var pct   = Math.max(0, Math.min(1, raw));
+      var pctStr = (pct * 100).toFixed(1) + '%';
+      sliderFill.style.width = pctStr;
+      sliderThumb.style.left = pctStr;
+    });
+
+    sliderThumb.addEventListener('pointerup', function () {
+      sliderThumb.removeEventListener('pointermove', onMove);
+    }, { once: true });
+  });
+})();
+</script>
