@@ -2,6 +2,7 @@
 import DocsLayout from "../../layouts/DocsLayout.astro";
 import fs from "node:fs";
 import path from "node:path";
+import yaml from "yaml";
 import { renderSpec } from "@lib/spec";
 
 export function getStaticPaths() {
@@ -20,14 +21,399 @@ export function getStaticPaths() {
 }
 
 const { raw, slug } = Astro.props;
-const html = await renderSpec(raw);
 
-const titleMatch = raw.match(/^#\s+(.+)$/m) || raw.match(/name:\s*(.+)/m);
-const title = titleMatch ? titleMatch[1] : slug;
+// Parse frontmatter
+const fmMatch = raw.match(/^---\s*\n([\s\S]*?)\n---/);
+const fm = fmMatch ? yaml.parse(fmMatch[1]) : {};
+const specBody = fmMatch ? raw.slice(fmMatch[0].length).trim() : raw;
+
+const title = fm.name || slug.replace(/-/g, " ");
+const componentIds: string[] = fm.components || [];
+const materials: string[] = fm.materials || [];
+
+// Strip H1 already shown in page header
+const specBodyNoH1 = specBody.replace(/^#\s+.+$/m, "").trim();
+const specHtml = await renderSpec(specBodyNoH1);
+
+// Check for a self-contained implementation file
+const implDir = path.resolve(process.cwd(), "src", "data", "compositions");
+const implPath = path.join(implDir, `${slug}.html`);
+const implHtml = fs.existsSync(implPath) ? fs.readFileSync(implPath, "utf-8") : null;
+
+// Read foundation spec for agent panel
+const specRoot = path.resolve(process.cwd(), "..", "spec");
+const foundationFiles = ["philosophy.md", "tokens.md", "materials.md", "depth-model.md", "naming.md"];
+const foundationContent = foundationFiles
+  .map((f) => {
+    try { return fs.readFileSync(path.join(specRoot, "foundation", f), "utf-8"); }
+    catch { return ""; }
+  })
+  .join("\n\n---\n\n");
+
+// Load catalog for component pills
+const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
+const catalog = yaml.parse(indexYaml);
+const compMap: Record<string, any> = Object.fromEntries(catalog.components.map((c: any) => [c.id, c]));
 
 const breadcrumbs = [{ label: "Compositions", href: "/compositions" }, { label: title }];
+
+const stacks = [
+  { id: "css", label: "Plain CSS" },
+  { id: "react", label: "React" },
+  { id: "react-native", label: "React Native" },
+  { id: "swiftui", label: "SwiftUI" },
+  { id: "compose", label: "Jetpack Compose" },
+  { id: "flutter", label: "Flutter" },
+];
+
+const tocHeadings = [
+  ...(implHtml ? [{ text: "Live Preview", id: "preview", depth: 2 }] : []),
+  { text: "Spec", id: "spec", depth: 2 },
+  { text: "Components Used", id: "components-used", depth: 2 },
+  { text: "Hand it to your agent", id: "build", depth: 2 },
+];
 ---
 
-<DocsLayout title={title} breadcrumbs={breadcrumbs}>
-  <div class="spec-content" set:html={html} />
+<DocsLayout
+  title={title}
+  description={`${title} — a multi-component pudge-ui composition`}
+  breadcrumbs={breadcrumbs}
+  headings={tocHeadings}
+  pudgePose="whiteboard"
+  pudgeMessage="Compositions show how components assemble. Give the full spec to your agent."
+>
+  <div class="comp-header">
+    <div class="comp-header__meta">
+      <span class="category-badge">
+        <span class="category-badge__dot"></span>
+        composition
+      </span>
+      {materials.map((m) => (
+        <span class="comp-header__class">{m}</span>
+      ))}
+    </div>
+    <h1 class="comp-header__name">{title}</h1>
+  </div>
+
+  {implHtml ? (
+    <div class="comp-tabs" id="comp-tabs">
+      <div class="comp-tabs__bar">
+        <button class="comp-tab is-active" type="button" data-ctab="preview">Live Preview</button>
+        <button class="comp-tab" type="button" data-ctab="spec">Spec</button>
+        <button class="comp-tab-copy" type="button" data-copy-spec aria-label="Copy spec markdown">Copy Spec</button>
+      </div>
+
+      <div class="comp-tabs__panel is-active" data-cpanel="preview" id="preview">
+        <div class="comp-stage">
+          <div class="comp-stage__inner" set:html={implHtml} />
+        </div>
+      </div>
+
+      <div class="comp-tabs__panel" data-cpanel="spec" id="spec">
+        <div class="spec-content" set:html={specHtml} />
+      </div>
+    </div>
+  ) : (
+    <section id="spec">
+      <div class="spec-content" set:html={specHtml} />
+      <button class="comp-tab-copy is-standalone" type="button" data-copy-spec aria-label="Copy spec markdown">Copy Spec</button>
+    </section>
+  )}
+
+  <!-- Components used -->
+  <section class="comp-section" id="components-used">
+    <h2 class="comp-section__title">Components Used</h2>
+    <div class="comp-pills">
+      {componentIds.map((id) => {
+        const comp = compMap[id];
+        return comp ? (
+          <a href={`/components/${comp.category}/${comp.id}`} class="comp-pill">
+            <span class="comp-pill__class">{comp.class}</span>
+            <span class="comp-pill__name">{comp.name}</span>
+          </a>
+        ) : (
+          <span class="comp-pill comp-pill--missing">{id}</span>
+        );
+      })}
+    </div>
+  </section>
+
+  <!-- Agent panel -->
+  <section class="agent-panel" id="build" data-comp-id={slug} data-comp-name={title}>
+    <div class="agent-panel__head">
+      <h2 class="agent-panel__title">Hand it to your agent</h2>
+      <p class="agent-panel__sub">
+        This is a multi-component assembly spec — pass it to your coding agent along with the
+        foundation specs to build the complete interface in any framework.
+      </p>
+    </div>
+
+    <div class="agent-panel__stacks" role="tablist" aria-label="Target stack">
+      {stacks.map((s, i) => (
+        <button
+          class:list={["agent-stack", i === 0 && "is-active"]}
+          type="button"
+          data-stack={s.id}
+          data-stack-label={s.label}
+        >
+          {s.label}
+        </button>
+      ))}
+    </div>
+
+    <div class="agent-panel__view">
+      <div class="agent-panel__tabs">
+        <button class="agent-tab is-active" type="button" data-atab="prompt">Prompt</button>
+        <button class="agent-tab" type="button" data-atab="mcp">MCP</button>
+      </div>
+      <pre class="agent-panel__out is-active" data-apanel="prompt"><code data-prompt-out>—</code></pre>
+      <pre class="agent-panel__out" data-apanel="mcp"><code data-mcp-out>—</code></pre>
+    </div>
+
+    <div class="agent-panel__actions">
+      <button class="agent-panel__copy" type="button" data-agent-copy>Copy prompt</button>
+      <button class="agent-panel__copy is-ghost" type="button" data-copy-llm>Copy full spec for LLM</button>
+    </div>
+  </section>
+
+  <script type="application/json" id="foundation-data" set:html={JSON.stringify({ content: foundationContent })} />
+  <script type="application/json" id="spec-data" set:html={JSON.stringify({ spec: raw, name: title })} />
+  <script src="../../scripts/agent-panel.js"></script>
 </DocsLayout>
+
+<style>
+  /* Composition tab bar */
+  .comp-tabs {
+    margin-bottom: var(--space-xl);
+    border: 1px solid var(--border-mid);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--bg-raised);
+  }
+
+  .comp-tabs__bar {
+    display: flex;
+    border-bottom: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+  }
+
+  .comp-tab {
+    padding: var(--space-sm) var(--space-lg);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    min-height: 40px;
+  }
+
+  .comp-tab:hover {
+    color: var(--text-primary);
+  }
+
+  .comp-tab.is-active {
+    color: var(--amber);
+    border-bottom-color: var(--amber);
+  }
+
+  .comp-tabs__panel {
+    display: none;
+  }
+
+  .comp-tabs__panel.is-active {
+    display: block;
+  }
+
+  /* Preview stage */
+  .comp-stage {
+    padding: var(--space-2xl) var(--space-lg);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    min-height: 320px;
+    overflow: hidden;
+    background: var(--bg-inset);
+    background-image:
+      linear-gradient(var(--border-subtle) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+
+  .comp-stage__inner {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* Spec tab content */
+  .comp-tabs__panel [data-cpanel="spec"] .spec-content {
+    padding: var(--space-xl);
+  }
+
+  /* Component pills */
+  .comp-section {
+    margin-bottom: var(--space-xl);
+  }
+
+  .comp-section__title {
+    font-family: var(--font-display);
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+  }
+
+  .comp-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+
+  .comp-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 12px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  .comp-pill:hover {
+    border-color: var(--border-mid);
+    background: var(--bg-raised);
+  }
+
+  .comp-pill__class {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--amber);
+  }
+
+  .comp-pill__name {
+    font-family: var(--font-body);
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+  }
+
+  .comp-pill--missing {
+    opacity: 0.5;
+    cursor: default;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+  }
+
+  /* Spec panel padding */
+  .comp-tabs__panel.is-active .spec-content {
+    padding: var(--space-xl);
+  }
+
+  /* Copy Spec button */
+  .comp-tab-copy {
+    margin-left: auto;
+    padding: 5px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    background: none;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+    align-self: center;
+    margin-right: var(--space-sm);
+  }
+
+  .comp-tab-copy:hover {
+    color: var(--amber);
+    border-color: var(--amber-dim);
+  }
+
+  .comp-tab-copy.is-standalone {
+    display: block;
+    margin: var(--space-md) 0 0;
+  }
+</style>
+
+<script>
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>(".comp-tab");
+  const panels = document.querySelectorAll<HTMLElement>("[data-cpanel]");
+
+  tabBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const target = btn.dataset.ctab;
+      tabBtns.forEach((b) => b.classList.remove("is-active"));
+      panels.forEach((p) => p.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      document.querySelector<HTMLElement>(`[data-cpanel="${target}"]`)?.classList.add("is-active");
+    });
+  });
+
+  // Scale composition to fit the stage on small screens (Figma-style canvas)
+  (function () {
+    var stage = document.querySelector<HTMLElement>('.comp-stage');
+    var inner = document.querySelector<HTMLElement>('.comp-stage__inner');
+    if (!stage || !inner) return;
+
+    // Disable browser pan/zoom gestures inside the composition stage so that
+    // pointer events in each composition can handle drag without scroll fighting.
+    inner.style.touchAction = 'none';
+
+    var scheduled = false;
+    function fitScale() {
+      if (scheduled) return;
+      scheduled = true;
+      requestAnimationFrame(function () {
+        scheduled = false;
+        // Reset transform to measure the composition's natural size
+        inner!.style.transform = '';
+        inner!.style.marginBottom = '';
+        stage!.style.minHeight = '';
+
+        var hPad = 48; // matches the var(--space-lg) horizontal padding on both sides
+        var available = stage!.clientWidth - hPad;
+        var naturalW = inner!.scrollWidth;
+
+        if (naturalW <= available || available <= 0) return;
+
+        var scale = available / naturalW;
+        var naturalH = inner!.offsetHeight;
+        var scaledH = naturalH * scale;
+
+        inner!.style.transform = 'scale(' + scale.toFixed(4) + ')';
+        inner!.style.transformOrigin = 'top center';
+        // Collapse the vertical layout surplus caused by transform not affecting flow
+        inner!.style.marginBottom = (scaledH - naturalH) + 'px';
+        stage!.style.minHeight = (scaledH + 48) + 'px';
+      });
+    }
+
+    var ro = new ResizeObserver(fitScale);
+    ro.observe(stage);
+    fitScale();
+  })();
+
+  // Copy Spec buttons
+  document.querySelectorAll<HTMLButtonElement>("[data-copy-spec]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const specData = document.getElementById("spec-data");
+      if (!specData) return;
+      const { spec } = JSON.parse(specData.textContent || "{}");
+      if (!spec) return;
+      navigator.clipboard.writeText(spec).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = "Copied!";
+        setTimeout(() => { btn.textContent = orig; }, 1500);
+      });
+    });
+  });
+</script>

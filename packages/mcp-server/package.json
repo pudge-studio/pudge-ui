@@ -1,6 +1,6 @@
 {
   "name": "@pudge-ui/mcp-server",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "mcpName": "io.github.pudge-studio/pudge-ui",
   "description": "MCP server for pudge-ui design system — query component specs for LLM context",
   "type": "module",

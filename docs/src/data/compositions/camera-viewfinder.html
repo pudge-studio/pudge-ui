@@ -1,0 +1,585 @@
+<style>
+  @keyframes evf-blink { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+  @keyframes evf-pulse { 0%, 100% { opacity: 0.7 } 50% { opacity: 1 } }
+  @keyframes evf-acquiring { 0%, 100% { opacity: 1; border-color: var(--amber); } 50% { opacity: 0.4; border-color: var(--amber); } }
+  @keyframes evf-lock-flash { 0% { border-color: var(--amber); } 100% { border-color: var(--green-on); } }
+
+  .evf-root {
+    width: 440px;
+    background: linear-gradient(180deg, #080808, #111);
+    border: 1px solid #1a1a1a;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
+    font-family: var(--font-mono);
+  }
+
+  /* ── Top status bar ── */
+  .evf-topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    border-bottom: 1px solid #222;
+    background: rgba(0,0,0,0.6);
+  }
+
+  .evf-topbar-left {
+    display: flex;
+    align-items: center;
+  }
+
+  .evf-mode-badge {
+    background: var(--green-on);
+    color: #000;
+    font-family: var(--font-display);
+    font-size: 14px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-right: 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: opacity 0.15s;
+    touch-action: manipulation;
+  }
+  .evf-mode-badge:hover { opacity: 0.8; }
+
+  .evf-readout {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 10px;
+    gap: 1px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  .evf-readout-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+    line-height: 1;
+  }
+
+  .evf-readout-value {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--amber);
+    line-height: 1;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .evf-readout:hover .evf-readout-value {
+    border-bottom-color: var(--amber);
+    color: #fff;
+  }
+
+  .evf-topbar-right {
+    display: flex;
+    align-items: center;
+  }
+
+  .evf-rec {
+    background: var(--red-alert);
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 8px;
+    padding: 2px 6px;
+    border-radius: 3px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    user-select: none;
+    opacity: 0.4;
+    transition: opacity 0.15s;
+    touch-action: manipulation;
+  }
+  .evf-rec:hover { opacity: 0.7; }
+  .evf-rec.evf-recording {
+    animation: evf-blink 1s steps(1) infinite;
+    opacity: 1;
+  }
+
+  .evf-battery {
+    width: 22px;
+    height: 10px;
+    border: 1.5px solid #5a5a5a;
+    border-radius: 2px;
+    position: relative;
+    margin-left: 8px;
+  }
+
+  .evf-battery-fill {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    bottom: 2px;
+    width: 75%;
+    background: var(--green-on);
+  }
+
+  /* ── Viewfinder area ── */
+  .evf-vf {
+    position: relative;
+    min-height: 220px;
+    background: #1a1a1a;
+    overflow: hidden;
+    cursor: crosshair;
+    transition: box-shadow 0.2s;
+    touch-action: manipulation;
+  }
+
+  .evf-vf.evf-rec-border {
+    box-shadow: inset 0 0 0 2px var(--red-alert);
+  }
+
+  .evf-scene {
+    background: linear-gradient(135deg, #1c1a18 0%, #1a1c1e 50%, #181c1a 100%);
+    min-height: 220px;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* Grid lines */
+  .evf-grid-h {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: rgba(255,255,255,0.08);
+    left: 0;
+  }
+  .evf-grid-h1 { top: 33.3%; }
+  .evf-grid-h2 { top: 66.6%; }
+
+  .evf-grid-v {
+    position: absolute;
+    width: 1px;
+    height: 100%;
+    background: rgba(255,255,255,0.08);
+    top: 0;
+  }
+  .evf-grid-v1 { left: 33.3%; }
+  .evf-grid-v2 { left: 66.6%; }
+
+  .evf-grid-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.3);
+    transform: translate(-50%, -50%);
+  }
+
+  /* Focus brackets */
+  .evf-focus {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+
+  .evf-focus-center {
+    top: 50%;
+    left: 50%;
+    width: 80px;
+    height: 60px;
+    transition: top 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                left 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  .evf-focus-center.evf-focus-acquiring .evf-corner {
+    border-color: var(--amber);
+    animation: evf-acquiring 0.4s ease-in-out 2;
+  }
+
+  .evf-focus-center.evf-focus-locked .evf-corner {
+    border-color: var(--green-on);
+    animation: none;
+  }
+
+  .evf-focus-locked-static {
+    top: 35%;
+    left: 65%;
+    width: 50px;
+    height: 40px;
+  }
+
+  .evf-corner {
+    width: 12px;
+    height: 12px;
+    border-style: solid;
+    position: absolute;
+  }
+
+  /* Center brackets — amber by default */
+  .evf-focus-center .evf-corner { border-color: var(--amber); }
+  .evf-focus-center .evf-corner-tl {
+    top: 0; left: 0;
+    border-width: 2px 0 0 2px;
+  }
+  .evf-focus-center .evf-corner-tr {
+    top: 0; right: 0;
+    border-width: 2px 2px 0 0;
+  }
+  .evf-focus-center .evf-corner-bl {
+    bottom: 0; left: 0;
+    border-width: 0 0 2px 2px;
+  }
+  .evf-focus-center .evf-corner-br {
+    bottom: 0; right: 0;
+    border-width: 0 2px 2px 0;
+  }
+
+  /* Locked static brackets — green */
+  .evf-focus-locked-static .evf-corner { border-color: var(--green-on); }
+  .evf-focus-locked-static .evf-corner-tl {
+    top: 0; left: 0;
+    border-width: 2px 0 0 2px;
+  }
+  .evf-focus-locked-static .evf-corner-tr {
+    top: 0; right: 0;
+    border-width: 2px 2px 0 0;
+  }
+  .evf-focus-locked-static .evf-corner-bl {
+    bottom: 0; left: 0;
+    border-width: 0 0 2px 2px;
+  }
+  .evf-focus-locked-static .evf-corner-br {
+    bottom: 0; right: 0;
+    border-width: 0 2px 2px 0;
+  }
+
+  /* Histogram */
+  .evf-histogram {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    width: 60px;
+    height: 30px;
+    opacity: 0.6;
+    display: flex;
+    align-items: flex-end;
+    gap: 1px;
+    pointer-events: none;
+  }
+
+  .evf-histogram-bar {
+    flex: 1;
+    background: rgba(255,255,255,0.5);
+  }
+
+  /* ── Bottom bar ── */
+  .evf-bottombar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 10px;
+    border-top: 1px solid #222;
+    background: rgba(0,0,0,0.6);
+  }
+
+  .evf-ev {
+    width: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    cursor: pointer;
+    user-select: none;
+    touch-action: manipulation;
+  }
+
+  .evf-ev-track {
+    height: 4px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+    position: relative;
+  }
+  .evf-ev:hover .evf-ev-track {
+    background: rgba(255,255,255,0.18);
+  }
+
+  .evf-ev-center-mark {
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 1px;
+    height: 10px;
+    background: rgba(255,255,255,0.4);
+  }
+
+  .evf-ev-indicator {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 8px;
+    height: 4px;
+    background: var(--amber);
+    border-radius: 2px;
+    transition: left 0.15s;
+  }
+
+  .evf-ev-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+  }
+
+  .evf-af-lock {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--green-on);
+  }
+
+  .evf-tc-group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1px;
+  }
+
+  .evf-tc-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    color: var(--text-muted);
+  }
+
+  .evf-tc-value {
+    font-family: var(--font-lcd);
+    font-size: 16px;
+    color: var(--green-on);
+    line-height: 1;
+  }
+</style>
+
+<div class="evf-root">
+
+  <!-- Top status bar -->
+  <div class="evf-topbar">
+    <div class="evf-topbar-left">
+      <span class="evf-mode-badge" id="evf-mode-badge" title="Click to change mode">M</span>
+
+      <span class="evf-readout" id="evf-ss-readout" title="Click to change shutter speed">
+        <span class="evf-readout-label">SS</span>
+        <span class="evf-readout-value" id="evf-ss-value">1/250</span>
+      </span>
+
+      <span class="evf-readout" id="evf-f-readout" title="Click to change aperture">
+        <span class="evf-readout-label">F</span>
+        <span class="evf-readout-value" id="evf-f-value">f/2.8</span>
+      </span>
+
+      <span class="evf-readout">
+        <span class="evf-readout-label">ISO</span>
+        <span class="evf-readout-value">ISO 800</span>
+      </span>
+    </div>
+
+    <div class="evf-topbar-right">
+      <span class="evf-rec" id="evf-rec-chip" title="Click to toggle recording">REC</span>
+      <div class="evf-battery">
+        <div class="evf-battery-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Viewfinder area -->
+  <div class="evf-vf" id="evf-vf">
+    <div class="evf-scene"></div>
+
+    <!-- Rule-of-thirds grid -->
+    <div class="evf-grid-h evf-grid-h1"></div>
+    <div class="evf-grid-h evf-grid-h2"></div>
+    <div class="evf-grid-v evf-grid-v1"></div>
+    <div class="evf-grid-v evf-grid-v2"></div>
+    <div class="evf-grid-center"></div>
+
+    <!-- Center focus brackets (repositionable) -->
+    <div class="evf-focus evf-focus-center" id="evf-focus-center">
+      <span class="evf-corner evf-corner-tl"></span>
+      <span class="evf-corner evf-corner-tr"></span>
+      <span class="evf-corner evf-corner-bl"></span>
+      <span class="evf-corner evf-corner-br"></span>
+    </div>
+
+    <!-- Off-center locked brackets (green, static) -->
+    <div class="evf-focus evf-focus-locked-static">
+      <span class="evf-corner evf-corner-tl"></span>
+      <span class="evf-corner evf-corner-tr"></span>
+      <span class="evf-corner evf-corner-bl"></span>
+      <span class="evf-corner evf-corner-br"></span>
+    </div>
+
+    <!-- Histogram -->
+    <div class="evf-histogram">
+      <div class="evf-histogram-bar" style="height: 20%"></div>
+      <div class="evf-histogram-bar" style="height: 35%"></div>
+      <div class="evf-histogram-bar" style="height: 55%"></div>
+      <div class="evf-histogram-bar" style="height: 80%"></div>
+      <div class="evf-histogram-bar" style="height: 100%"></div>
+      <div class="evf-histogram-bar" style="height: 90%"></div>
+      <div class="evf-histogram-bar" style="height: 70%"></div>
+      <div class="evf-histogram-bar" style="height: 45%"></div>
+      <div class="evf-histogram-bar" style="height: 25%"></div>
+      <div class="evf-histogram-bar" style="height: 10%"></div>
+    </div>
+  </div>
+
+  <!-- Bottom bar -->
+  <div class="evf-bottombar">
+    <!-- Exposure scale -->
+    <div class="evf-ev" id="evf-ev" title="Click left/right to adjust exposure">
+      <div class="evf-ev-track" id="evf-ev-track">
+        <div class="evf-ev-center-mark"></div>
+        <div class="evf-ev-indicator" id="evf-ev-indicator"></div>
+      </div>
+      <span class="evf-ev-label" id="evf-ev-label">EV ±0</span>
+    </div>
+
+    <!-- AF lock -->
+    <div class="evf-af-lock">AF ●</div>
+
+    <!-- Timecode -->
+    <div class="evf-tc-group">
+      <span class="evf-tc-label">TC</span>
+      <span class="evf-tc-value" id="evf-tc-value">00:00:00</span>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const recChip     = document.getElementById('evf-rec-chip');
+  const viewfinderEl = document.getElementById('evf-vf');
+  const tcDisplay   = document.getElementById('evf-tc-value');
+  const modeBadge   = document.getElementById('evf-mode-badge');
+  const ssValue     = document.getElementById('evf-ss-value');
+  const fValue      = document.getElementById('evf-f-value');
+  const focusCenter = document.getElementById('evf-focus-center');
+  const evEl        = document.getElementById('evf-ev');
+  const evIndicator = document.getElementById('evf-ev-indicator');
+  const evLabel     = document.getElementById('evf-ev-label');
+  const evTrack     = document.getElementById('evf-ev-track');
+
+  /* ── REC toggle ── */
+  let recording = false;
+  let timecode = { h: 0, m: 0, s: 0 };
+  let tcInterval = null;
+
+  recChip.addEventListener('click', () => {
+    recording = !recording;
+    if (recording) {
+      recChip.classList.add('evf-recording');
+      viewfinderEl.classList.add('evf-rec-border');
+      tcInterval = setInterval(() => {
+        timecode.s++;
+        if (timecode.s >= 60) { timecode.s = 0; timecode.m++; }
+        if (timecode.m >= 60) { timecode.m = 0; timecode.h++; }
+        tcDisplay.textContent =
+          String(timecode.h).padStart(2, '0') + ':' +
+          String(timecode.m).padStart(2, '0') + ':' +
+          String(timecode.s).padStart(2, '0');
+      }, 1000);
+    } else {
+      recChip.classList.remove('evf-recording');
+      viewfinderEl.classList.remove('evf-rec-border');
+      clearInterval(tcInterval);
+    }
+  });
+
+  /* ── Mode badge cycling ── */
+  const modes = ['M', 'A', 'S', 'P'];
+  let modeIdx = 0;
+  modeBadge.addEventListener('click', () => {
+    modeIdx = (modeIdx + 1) % modes.length;
+    modeBadge.textContent = modes[modeIdx];
+  });
+
+  /* ── SS cycling ── */
+  const speeds = ['1/30', '1/60', '1/125', '1/250', '1/500', '1/1000'];
+  let ssIdx = 3; // starts at 1/250
+  document.getElementById('evf-ss-readout').addEventListener('click', () => {
+    ssIdx = (ssIdx + 1) % speeds.length;
+    ssValue.textContent = speeds[ssIdx];
+  });
+
+  /* ── F-stop cycling ── */
+  const fstops = ['f/1.8', 'f/2.8', 'f/4', 'f/5.6', 'f/8'];
+  let fIdx = 1; // starts at f/2.8
+  document.getElementById('evf-f-readout').addEventListener('click', () => {
+    fIdx = (fIdx + 1) % fstops.length;
+    fValue.textContent = fstops[fIdx];
+  });
+
+  /* ── Focus bracket repositioning ── */
+  let focusAnimTimeout = null;
+
+  viewfinderEl.addEventListener('click', (e) => {
+    // Ignore clicks that hit the histogram (bottom-right corner overlay)
+    if (e.target.closest('.evf-histogram')) return;
+
+    const rect = viewfinderEl.getBoundingClientRect();
+    const bW = 80; // bracket width
+    const bH = 60; // bracket height
+    const halfBW = bW / 2;
+    const halfBH = bH / 2;
+
+    // Clamp so brackets stay fully inside the viewfinder
+    const rawX = e.clientX - rect.left;
+    const rawY = e.clientY - rect.top;
+    const clampedX = Math.min(Math.max(rawX, halfBW), rect.width  - halfBW);
+    const clampedY = Math.min(Math.max(rawY, halfBH), rect.height - halfBH);
+
+    const pctX = (clampedX / rect.width)  * 100;
+    const pctY = (clampedY / rect.height) * 100;
+
+    // Move brackets
+    focusCenter.style.left = pctX + '%';
+    focusCenter.style.top  = pctY + '%';
+
+    // Acquiring animation (amber pulse)
+    focusCenter.classList.remove('evf-focus-acquiring', 'evf-focus-locked');
+    void focusCenter.offsetWidth; // force reflow to restart animation
+    focusCenter.classList.add('evf-focus-acquiring');
+
+    if (focusAnimTimeout) clearTimeout(focusAnimTimeout);
+    focusAnimTimeout = setTimeout(() => {
+      focusCenter.classList.remove('evf-focus-acquiring');
+      focusCenter.classList.add('evf-focus-locked');
+    }, 800); // 2 × 400 ms pulses
+  });
+
+  /* ── Exposure scale click ── */
+  let evValue = 0; // −2 to +2 in 0.5 steps
+  const EV_MIN = -2;
+  const EV_MAX =  2;
+  const EV_STEP = 0.5;
+
+  function updateEV() {
+    // Map EV range [−2, +2] → indicator left% [10%, 90%]
+    const pct = ((evValue - EV_MIN) / (EV_MAX - EV_MIN)) * 80 + 10;
+    evIndicator.style.left = pct + '%';
+    const sign = evValue > 0 ? '+' : (evValue < 0 ? '' : '±');
+    evLabel.textContent = 'EV ' + sign + evValue.toFixed(1).replace('.0', '');
+  }
+
+  evEl.addEventListener('click', (e) => {
+    const rect = evTrack.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const centerX = rect.width / 2;
+    if (clickX < centerX) {
+      evValue = Math.max(EV_MIN, evValue - EV_STEP);
+    } else {
+      evValue = Math.min(EV_MAX, evValue + EV_STEP);
+    }
+    updateEV();
+  });
+
+  // Initialise
+  updateEV();
+})();
+</script>

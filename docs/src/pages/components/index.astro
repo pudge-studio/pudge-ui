@@ -1,5 +1,6 @@
 ---
 import DocsLayout from "../../layouts/DocsLayout.astro";
+import NewBadge from "../../components/shared/NewBadge.astro";
 import fs from "node:fs";
 import path from "node:path";
 import yaml from "yaml";
@@ -99,7 +100,10 @@ const breadcrumbs = [{ label: "Components" }];
             data-search={searchText}
           >
             <div class="comp-card__body">
-              <div class="comp-card__name">{comp.name}</div>
+              <div class="comp-card__name">
+                {comp.name}
+                {comp.new && <NewBadge compact />}
+              </div>
               <div class="comp-card__class">{comp.class}</div>
               <p class="comp-card__desc">{comp.description}</p>
               <div class="comp-card__footer">

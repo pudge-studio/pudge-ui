@@ -14,7 +14,7 @@ canvas: false
 # Rubber Button
 
 ## Physical Analog
-**Reference devices**: Game Boy Advance Start/Select, Nokia 3310 side buttons, Sony Walkman transport controls.
+**Reference devices**: Game Boy Advance Start/Select, Sony Walkman transport controls, Commodore 64 keyboard.
 **Mechanism**: Conductive rubber dome (vulcanized silicone). Single piece with conductive carbon pill inside. Silicone deforms progressively, pushing carbon pill onto PCB traces. No sharp click -- soft, damped tactile feel. Silicone elasticity provides return force.
 
 ## Geometry

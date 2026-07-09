@@ -1,0 +1,745 @@
+<style>
+  /* ── Outer container ── */
+  .syn-panel {
+    min-width: 580px;
+    padding: 16px 20px;
+    background: linear-gradient(180deg, var(--bg-raised), var(--bg-surface));
+    border: 1px solid var(--border-mid);
+    border-top: 3px solid var(--amber);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    width: fit-content;
+  }
+
+  /* ── Panel header ── */
+  .syn-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  .syn-title {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+  }
+
+  .syn-brand {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ── Sections row ── */
+  .syn-sections {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  /* ── Chassis panel (sub-section) ── */
+  .syn-chassis {
+    background: var(--bg-raised);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px;
+  }
+
+  .syn-section-title {
+    font-family: var(--font-mono);
+    font-size: 9px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  /* ── Field label (above controls) ── */
+  .syn-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    display: block;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  /* ════════════════════════════════
+     VCO SECTION
+  ════════════════════════════════ */
+  .syn-vco {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* Mode dial */
+  .syn-dial-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .syn-dial-outer {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #3a3835, #1a1816);
+    border: 2px solid var(--border-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    user-select: none;
+    touch-action: none;
+  }
+
+  /* Notch at top — rotated to indicate waveform */
+  .syn-dial-notch {
+    position: absolute;
+    top: 6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 3px;
+    height: 8px;
+    background: var(--amber);
+    border-radius: 2px;
+    transform-origin: center 42px; /* pivot = center of dial (48px radius - 6px top offset) */
+    transition: transform 0.2s ease;
+  }
+
+  .syn-dial-body {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #2a2826, #0e0c0a);
+    border: 2px solid var(--border-deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .syn-dial-center {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--amber);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-lcd);
+    font-size: 16px;
+    color: var(--text-on-accent);
+    line-height: 1;
+    user-select: none;
+  }
+
+  /* Octave segmented control */
+  .syn-oct-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 12px;
+  }
+
+  .syn-segments {
+    display: inline-flex;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .syn-seg {
+    padding: 4px 10px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border-right: 1px solid var(--border-subtle);
+    cursor: pointer;
+    user-select: none;
+    transition: color 0.12s ease, background 0.12s ease;
+  }
+
+  .syn-seg:last-child {
+    border-right: none;
+  }
+
+  .syn-seg.active {
+    color: var(--amber);
+    background: rgba(245,166,35,0.08);
+  }
+
+  /* ════════════════════════════════
+     VCF SECTION
+  ════════════════════════════════ */
+  .syn-vcf-knobs {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 12px;
+  }
+
+  .syn-knob-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .syn-knob {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #3a3835, #1a1816);
+    border: 2px solid var(--border-mid);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+    position: relative;
+    flex-shrink: 0;
+    cursor: ns-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .syn-knob-indicator {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 4px;
+    height: 14px;
+    background: var(--amber);
+    border-radius: 2px;
+  }
+
+  /*
+    Knob indicator rotation.
+    Usable arc: -135deg (7 o'clock) → +135deg (5 o'clock), total 270deg.
+    pct 0% → -135deg, 100% → +135deg.
+    Indicator sits at bottom of knob; we rotate the knob body visually via
+    a rotated pseudo-element approach — instead we just rotate the whole knob
+    by placing indicator at bottom and rotating the knob element itself.
+    Simpler: keep indicator at bottom and rotate the knob div.
+    CUTOFF 40%  → -135 + 0.4*270 = -27deg
+    RESO   30%  → -135 + 0.3*270 = -54deg
+    ENV MOD 50% → -135 + 0.5*270 = +0deg (noon)
+  */
+  .syn-knob[data-pct="40"] {
+    transform: rotate(-27deg);
+  }
+
+  .syn-knob[data-pct="30"] {
+    transform: rotate(-54deg);
+  }
+
+  .syn-knob[data-pct="50"] {
+    transform: rotate(0deg);
+  }
+
+  .syn-knob-label {
+    font-family: var(--font-mono);
+    font-size: 7px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 5px;
+    text-align: center;
+  }
+
+  /* VCF toggles */
+  .syn-vcf-toggles {
+    display: flex;
+    gap: 16px;
+    margin-top: 4px;
+  }
+
+  .syn-toggle-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .syn-toggle-track {
+    width: 40px;
+    height: 20px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    position: relative;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+
+  .syn-toggle-track.on {
+    background: rgba(245,166,35,0.15);
+    border-color: var(--amber);
+  }
+
+  .syn-toggle-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--border-mid);
+    transition: left 0.15s ease, background 0.15s ease;
+  }
+
+  .syn-toggle-track.on .syn-toggle-thumb {
+    left: 23px;
+    background: var(--amber);
+  }
+
+  /* ════════════════════════════════
+     ENVELOPE SECTION
+  ════════════════════════════════ */
+  .syn-adsr-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .syn-fader-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .syn-fader-track {
+    width: 10px;
+    height: 80px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border-subtle);
+    border-radius: 5px;
+    position: relative;
+    cursor: ns-resize;
+    user-select: none;
+    touch-action: none;
+  }
+
+  .syn-fader-fill {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 5px;
+    background: linear-gradient(to top, var(--amber-dim), var(--amber));
+  }
+
+  .syn-fader-thumb {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 8px;
+    background: linear-gradient(90deg, var(--bg-raised), var(--bg-surface));
+    border: 1px solid var(--border-hi);
+    border-radius: 2px;
+    /* z-index above fill */
+    z-index: 1;
+  }
+
+  /* ════════════════════════════════
+     VCA SECTION
+  ════════════════════════════════ */
+  .syn-vca-inner {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  /* LED indicators */
+  .syn-leds {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+
+  .syn-led-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .syn-led {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+  }
+
+  .syn-led.blue {
+    background: var(--blue-info);
+    box-shadow: 0 0 6px var(--blue-glow);
+  }
+
+  .syn-led.green {
+    background: var(--green-on);
+    box-shadow: 0 0 6px var(--green-glow);
+  }
+
+  .syn-led.amber {
+    background: var(--amber);
+    box-shadow: 0 0 6px var(--amber-glow);
+  }
+
+  .syn-led-label {
+    font-family: var(--font-mono);
+    font-size: 6px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  /* ════════════════════════════════
+     GATE LED PULSE ANIMATION
+  ════════════════════════════════ */
+  .syn-gate-pulse {
+    animation: syn-gate-blink 0.5s steps(1) infinite;
+  }
+
+  @keyframes syn-gate-blink {
+    0%,49%  { opacity: 1; }
+    50%,100% { opacity: 0.3; }
+  }
+</style>
+
+<div class="syn-panel">
+  <!-- Header -->
+  <div class="syn-header">
+    <span class="syn-title">Synthesizer</span>
+    <span class="syn-brand">Model SY-1 &nbsp;·&nbsp; Analog Voice</span>
+  </div>
+
+  <!-- Sections -->
+  <div class="syn-sections">
+
+    <!-- VCO -->
+    <div class="syn-chassis">
+      <div class="syn-section-title">VCO</div>
+      <div class="syn-vco">
+        <!-- Mode dial -->
+        <div class="syn-dial-wrap">
+          <span class="syn-label">WAVE</span>
+          <div class="syn-dial-outer" id="syn-dial-outer">
+            <div class="syn-dial-notch" id="syn-dial-notch"></div>
+            <div class="syn-dial-body">
+              <div class="syn-dial-center" id="syn-dial-center">◢</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Octave segmented control -->
+        <div class="syn-oct-wrap">
+          <span class="syn-label">OCT</span>
+          <div class="syn-segments" id="syn-oct-segments">
+            <div class="syn-seg" data-oct="-1">-1</div>
+            <div class="syn-seg active" data-oct="0">0</div>
+            <div class="syn-seg" data-oct="+1">+1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VCF -->
+    <div class="syn-chassis">
+      <div class="syn-section-title">VCF</div>
+
+      <!-- Three knobs -->
+      <div class="syn-vcf-knobs">
+        <!-- CUTOFF 40% -->
+        <div class="syn-knob-group">
+          <div class="syn-knob" id="syn-knob-cutoff" data-pct="40">
+            <div class="syn-knob-indicator"></div>
+          </div>
+          <div class="syn-knob-label">CUTOFF</div>
+        </div>
+        <!-- RESO 30% -->
+        <div class="syn-knob-group">
+          <div class="syn-knob" id="syn-knob-reso" data-pct="30">
+            <div class="syn-knob-indicator"></div>
+          </div>
+          <div class="syn-knob-label">RESO</div>
+        </div>
+        <!-- ENV MOD 50% -->
+        <div class="syn-knob-group">
+          <div class="syn-knob" id="syn-knob-envmod" data-pct="50">
+            <div class="syn-knob-indicator"></div>
+          </div>
+          <div class="syn-knob-label">ENV MOD</div>
+        </div>
+      </div>
+
+      <!-- Two toggles -->
+      <div class="syn-vcf-toggles">
+        <div class="syn-toggle-group">
+          <span class="syn-label">KBD SYNC</span>
+          <div class="syn-toggle-track" id="syn-toggle-kbd">
+            <div class="syn-toggle-thumb"></div>
+          </div>
+          <span class="syn-label">SYNC</span>
+        </div>
+        <div class="syn-toggle-group">
+          <span class="syn-label">LFO SYNC</span>
+          <div class="syn-toggle-track" id="syn-toggle-lfo">
+            <div class="syn-toggle-thumb"></div>
+          </div>
+          <span class="syn-label">SYNC</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENVELOPE -->
+    <div class="syn-chassis">
+      <div class="syn-section-title">ENVELOPE</div>
+      <div class="syn-adsr-row">
+
+        <!-- A: 20% fill -->
+        <div class="syn-fader-group">
+          <span class="syn-label">A</span>
+          <div class="syn-fader-track" id="syn-fader-a">
+            <div class="syn-fader-fill" id="syn-fader-a-fill" style="height: 20%;"></div>
+            <div class="syn-fader-thumb" id="syn-fader-a-thumb" style="bottom: calc(20% - 4px);"></div>
+          </div>
+        </div>
+
+        <!-- D: 40% fill -->
+        <div class="syn-fader-group">
+          <span class="syn-label">D</span>
+          <div class="syn-fader-track" id="syn-fader-d">
+            <div class="syn-fader-fill" id="syn-fader-d-fill" style="height: 40%;"></div>
+            <div class="syn-fader-thumb" id="syn-fader-d-thumb" style="bottom: calc(40% - 4px);"></div>
+          </div>
+        </div>
+
+        <!-- S: 70% fill -->
+        <div class="syn-fader-group">
+          <span class="syn-label">S</span>
+          <div class="syn-fader-track" id="syn-fader-s">
+            <div class="syn-fader-fill" id="syn-fader-s-fill" style="height: 70%;"></div>
+            <div class="syn-fader-thumb" id="syn-fader-s-thumb" style="bottom: calc(70% - 4px);"></div>
+          </div>
+        </div>
+
+        <!-- R: 30% fill -->
+        <div class="syn-fader-group">
+          <span class="syn-label">R</span>
+          <div class="syn-fader-track" id="syn-fader-r">
+            <div class="syn-fader-fill" id="syn-fader-r-fill" style="height: 30%;"></div>
+            <div class="syn-fader-thumb" id="syn-fader-r-thumb" style="bottom: calc(30% - 4px);"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- VCA + Status -->
+    <div class="syn-chassis">
+      <div class="syn-section-title">VCA</div>
+      <div class="syn-vca-inner">
+
+        <!-- LVL fader: thumb at 80% -->
+        <div class="syn-fader-group">
+          <span class="syn-label">LVL</span>
+          <div class="syn-fader-track" id="syn-fader-lvl">
+            <div class="syn-fader-fill" id="syn-fader-lvl-fill" style="height: 80%;"></div>
+            <div class="syn-fader-thumb" id="syn-fader-lvl-thumb" style="bottom: calc(80% - 4px);"></div>
+          </div>
+        </div>
+
+        <!-- LEDs -->
+        <div class="syn-leds">
+          <div class="syn-led-row">
+            <div class="syn-led blue" id="syn-led-midi"></div>
+            <span class="syn-led-label">MIDI</span>
+          </div>
+          <div class="syn-led-row">
+            <div class="syn-led green" id="syn-led-pwr"></div>
+            <span class="syn-led-label">PWR</span>
+          </div>
+          <div class="syn-led-row">
+            <div class="syn-led amber" id="syn-led-gate"></div>
+            <span class="syn-led-label">GATE</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ─────────────────────────────────────────
+     MODE DIAL — click to cycle waveforms
+  ───────────────────────────────────────── */
+  const waveforms  = ['◢', '□', '∿', '⊓'];
+  const waveAngles = [0, 90, 180, 270];
+  let waveIdx = 0;
+
+  const dialOuter  = document.getElementById('syn-dial-outer');
+  const dialCenter = document.getElementById('syn-dial-center');
+  const dialNotch  = document.getElementById('syn-dial-notch');
+
+  dialOuter.addEventListener('click', () => {
+    waveIdx = (waveIdx + 1) % 4;
+    dialCenter.textContent = waveforms[waveIdx];
+    dialNotch.style.transform = `translateX(-50%) rotate(${waveAngles[waveIdx]}deg)`;
+  });
+
+  /* ─────────────────────────────────────────
+     OCT SEGMENTED CONTROL — click to select
+  ───────────────────────────────────────── */
+  const octSegments = document.querySelectorAll('#syn-oct-segments .syn-seg');
+  octSegments.forEach(seg => {
+    seg.addEventListener('click', () => {
+      octSegments.forEach(s => s.classList.remove('active'));
+      seg.classList.add('active');
+    });
+  });
+
+  /* ─────────────────────────────────────────
+     TOGGLE SWITCHES — click to toggle on/off
+  ───────────────────────────────────────── */
+  ['syn-toggle-kbd', 'syn-toggle-lfo'].forEach(id => {
+    const track = document.getElementById(id);
+    track.addEventListener('click', () => {
+      track.classList.toggle('on');
+    });
+  });
+
+  /* ─────────────────────────────────────────
+     KNOB DRAG — vertical drag rotates knob
+     Arc: -135° (0%) to +135° (100%)
+  ───────────────────────────────────────── */
+  function initKnob(knobEl) {
+    // Parse initial pct from data attribute
+    let pct = parseFloat(knobEl.dataset.pct) || 50;
+    let startY = 0;
+    let startPct = pct;
+
+    function applyKnobPct(p) {
+      pct = Math.min(100, Math.max(0, p));
+      const deg = -135 + pct * 2.7; // 270° range
+      knobEl.style.transform = `rotate(${deg}deg)`;
+      knobEl.dataset.pct = String(Math.round(pct));
+    }
+
+    // Set initial visual
+    applyKnobPct(pct);
+
+    knobEl.addEventListener('pointerdown', e => {
+      knobEl.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      startY    = e.clientY;
+      startPct  = pct;
+
+      function onMove(e) {
+        const dy = startY - e.clientY; // drag up = increase
+        applyKnobPct(startPct + dy * 0.5);
+      }
+
+      knobEl.addEventListener('pointermove', onMove);
+      knobEl.addEventListener('pointerup', function() {
+        knobEl.removeEventListener('pointermove', onMove);
+      }, { once: true });
+    });
+  }
+
+  ['syn-knob-cutoff', 'syn-knob-reso', 'syn-knob-envmod'].forEach(id => {
+    initKnob(document.getElementById(id));
+  });
+
+  /* ─────────────────────────────────────────
+     FADER DRAG — vertical drag moves thumb
+     Shared by ADSR (A/D/S/R) and VCA LVL.
+  ───────────────────────────────────────── */
+  function initFader(trackEl, fillEl, thumbEl, opts) {
+    opts = opts || {};
+    const onChangePct = opts.onChangePct || null;
+
+    // Retrieve initial pct from fill height (inline style "XX%")
+    let pct = parseFloat(fillEl.style.height) || 0;
+
+    function applyFaderPct(p) {
+      pct = Math.min(100, Math.max(0, p));
+      fillEl.style.height    = pct + '%';
+      thumbEl.style.bottom   = 'calc(' + pct + '% - 4px)';
+      if (onChangePct) onChangePct(pct);
+    }
+
+    thumbEl.addEventListener('pointerdown', e => {
+      thumbEl.setPointerCapture(e.pointerId);
+      e.preventDefault();
+      e.stopPropagation();
+
+      const trackH   = trackEl.getBoundingClientRect().height;
+      const startY   = e.clientY;
+      const startPct = pct;
+
+      function onMove(e) {
+        const dy = startY - e.clientY; // drag up = increase
+        applyFaderPct(startPct + (dy / trackH) * 100);
+      }
+
+      thumbEl.addEventListener('pointermove', onMove);
+      thumbEl.addEventListener('pointerup', function() {
+        thumbEl.removeEventListener('pointermove', onMove);
+      }, { once: true });
+    });
+  }
+
+  /* ADSR faders */
+  const adsrFaders = [
+    { track: 'syn-fader-a', fill: 'syn-fader-a-fill', thumb: 'syn-fader-a-thumb' },
+    { track: 'syn-fader-d', fill: 'syn-fader-d-fill', thumb: 'syn-fader-d-thumb' },
+    { track: 'syn-fader-s', fill: 'syn-fader-s-fill', thumb: 'syn-fader-s-thumb' },
+    { track: 'syn-fader-r', fill: 'syn-fader-r-fill', thumb: 'syn-fader-r-thumb' },
+  ];
+
+  adsrFaders.forEach(({ track, fill, thumb }) => {
+    initFader(
+      document.getElementById(track),
+      document.getElementById(fill),
+      document.getElementById(thumb)
+    );
+  });
+
+  /* VCA LVL fader — also drives GATE LED pulse */
+  const gateLed = document.getElementById('syn-led-gate');
+
+  initFader(
+    document.getElementById('syn-fader-lvl'),
+    document.getElementById('syn-fader-lvl-fill'),
+    document.getElementById('syn-fader-lvl-thumb'),
+    {
+      onChangePct(pct) {
+        if (pct > 50) {
+          gateLed.classList.add('syn-gate-pulse');
+        } else {
+          gateLed.classList.remove('syn-gate-pulse');
+        }
+      }
+    }
+  );
+
+  // Initialise gate LED state to match the default 80% fill
+  gateLed.classList.add('syn-gate-pulse');
+})();
+</script>

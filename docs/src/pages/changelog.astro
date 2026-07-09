@@ -1,0 +1,286 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { changelog } from "../data/changelog.js";
+---
+
+<BaseLayout title="Changelog" description="Version history for pudge-ui — every release, every addition.">
+  <div class="changelog-page">
+    <div class="changelog-header">
+      <div class="eyebrow">VERSION HISTORY</div>
+      <h1 class="changelog-title">Changelog</h1>
+      <p class="changelog-subtitle">
+        Every release in order. Components, compositions, and infrastructure.
+      </p>
+    </div>
+
+    <div class="changelog-feed">
+      {changelog.map((entry) => (
+        <div class="changelog-entry">
+          <div class="changelog-entry__sidebar">
+            <div class="changelog-entry__version">v{entry.version}</div>
+            <div class="changelog-entry__date">{entry.date}</div>
+            {entry.label && (
+              <span class="changelog-entry__label">{entry.label}</span>
+            )}
+            <div class="changelog-entry__line" aria-hidden="true"></div>
+          </div>
+
+          <div class="changelog-entry__body">
+            {entry.sections.added && entry.sections.added.length > 0 && (
+              <div class="changelog-section">
+                <div class="changelog-section__tag changelog-section__tag--added">ADDED</div>
+                <ul class="changelog-list">
+                  {entry.sections.added.map((item) => (
+                    <li class="changelog-list__item">
+                      <span class="changelog-list__mark">+</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {entry.sections.changed && entry.sections.changed.length > 0 && (
+              <div class="changelog-section">
+                <div class="changelog-section__tag changelog-section__tag--changed">CHANGED</div>
+                <ul class="changelog-list">
+                  {entry.sections.changed.map((item) => (
+                    <li class="changelog-list__item">
+                      <span class="changelog-list__mark changelog-list__mark--changed">~</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {entry.sections.fixed && entry.sections.fixed.length > 0 && (
+              <div class="changelog-section">
+                <div class="changelog-section__tag changelog-section__tag--fixed">FIXED</div>
+                <ul class="changelog-list">
+                  {entry.sections.fixed.map((item) => (
+                    <li class="changelog-list__item">
+                      <span class="changelog-list__mark changelog-list__mark--fixed">×</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {entry.sections.removed && entry.sections.removed.length > 0 && (
+              <div class="changelog-section">
+                <div class="changelog-section__tag changelog-section__tag--removed">REMOVED</div>
+                <ul class="changelog-list">
+                  {entry.sections.removed.map((item) => (
+                    <li class="changelog-list__item">
+                      <span class="changelog-list__mark changelog-list__mark--removed">−</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .changelog-page {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: var(--space-2xl) var(--space-xl) var(--space-2xl);
+  }
+
+  .changelog-header {
+    margin-bottom: var(--space-2xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    color: var(--amber);
+    text-transform: uppercase;
+    margin-bottom: var(--space-sm);
+  }
+
+  .changelog-title {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+    color: var(--text-primary);
+    margin: 0 0 var(--space-md);
+  }
+
+  .changelog-subtitle {
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+    line-height: 1.6;
+  }
+
+  /* Feed */
+
+  .changelog-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .changelog-entry {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: var(--space-xl);
+    padding: var(--space-xl) 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+
+  .changelog-entry:last-child {
+    border-bottom: none;
+  }
+
+  /* Sidebar */
+
+  .changelog-entry__sidebar {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-xs);
+    padding-top: 2px;
+  }
+
+  .changelog-entry__version {
+    font-family: var(--font-lcd);
+    font-size: 1.3rem;
+    color: var(--amber);
+    letter-spacing: 2px;
+    line-height: 1.1;
+  }
+
+  .changelog-entry__date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+  }
+
+  .changelog-entry__label {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--green-on);
+    background: color-mix(in srgb, var(--green-on) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--green-on) 30%, transparent);
+    padding: 1px 6px;
+    border-radius: 0;
+    width: fit-content;
+  }
+
+  .changelog-entry__line {
+    position: absolute;
+    top: 0;
+    bottom: -var(--space-xl);
+    left: -24px;
+    width: 1px;
+    background: var(--border-subtle);
+    display: none;
+  }
+
+  /* Entry body */
+
+  .changelog-entry__body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .changelog-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+  }
+
+  .changelog-section__tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 0;
+    width: fit-content;
+  }
+
+  .changelog-section__tag--added {
+    color: var(--green-on);
+    background: color-mix(in srgb, var(--green-on) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--green-on) 25%, transparent);
+  }
+
+  .changelog-section__tag--changed {
+    color: var(--amber);
+    background: color-mix(in srgb, var(--amber) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--amber) 25%, transparent);
+  }
+
+  .changelog-section__tag--fixed {
+    color: var(--blue-info);
+    background: color-mix(in srgb, var(--blue-info) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--blue-info) 25%, transparent);
+  }
+
+  .changelog-section__tag--removed {
+    color: var(--red-alert);
+    background: color-mix(in srgb, var(--red-alert) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--red-alert) 25%, transparent);
+  }
+
+  .changelog-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .changelog-list__item {
+    display: flex;
+    gap: var(--space-sm);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .changelog-list__mark {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--green-on);
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+
+  .changelog-list__mark--changed { color: var(--amber); }
+  .changelog-list__mark--fixed   { color: var(--blue-info); }
+  .changelog-list__mark--removed { color: var(--red-alert); }
+
+  @media (max-width: 600px) {
+    .changelog-entry {
+      grid-template-columns: 1fr;
+      gap: var(--space-md);
+    }
+
+    .changelog-page {
+      padding: var(--space-xl) var(--space-md);
+    }
+  }
+</style>
