@@ -1,13 +1,6 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
-import HeroPanel from "../components/landing/HeroPanel.astro";
-import ComponentShowcase from "../components/landing/ComponentShowcase.astro";
-import HowItWorks from "../components/landing/HowItWorks.astro";
-import MaterialGallery from "../components/landing/MaterialGallery.astro";
-import FrameworkMosaic from "../components/landing/FrameworkMosaic.astro";
-import QuickStartCTA from "../components/landing/QuickStartCTA.astro";
-import PudgeGreeting from "../components/landing/PudgeGreeting.astro";
-import "../styles/cinematic.css";
+import "../styles/monitor.css";
 import fs from "node:fs";
 import path from "node:path";
 import yaml from "yaml";
@@ -16,21 +9,20 @@ const specRoot = path.resolve(process.cwd(), "..", "spec");
 const indexYaml = fs.readFileSync(path.join(specRoot, "components", "_index.yaml"), "utf-8");
 const catalog = yaml.parse(indexYaml);
 
-const componentCount = catalog.components.length;
+const categoryCount = catalog.categories.length;
+const repoUrl = "https://github.com/pudge-studio/pudge-ui";
 
-// Helper: extract demo HTML/CSS from a spec markdown file
+// Pull the demo HTML/CSS straight out of each spec markdown file — same
+// approach the old hero used, so the floating parts are the real components.
 function extractDemo(comp: any) {
   try {
-    const specPath = path.join(specRoot, "components", comp.file);
-    const specRaw = fs.readFileSync(specPath, "utf-8");
+    const specRaw = fs.readFileSync(path.join(specRoot, "components", comp.file), "utf-8");
     const body = specRaw.replace(/^---[\s\S]*?---/, "").trim();
     const cssBlocks = [...body.matchAll(/```css\s*([\s\S]*?)```/g)].map((m) => m[1].trim());
     const htmlBlock = body.match(/```html\s*([\s\S]*?)```/);
     const primaryClass = comp.class.replace(/^\./, "").split(/\s+/)[0];
     return {
-      name: comp.name,
       id: comp.id,
-      category: comp.category,
       html: htmlBlock?.[1]?.trim() || `<button class="${primaryClass}">DEMO</button>`,
       css: cssBlocks.join("\n\n"),
     };
@@ -39,63 +31,120 @@ function extractDemo(comp: any) {
   }
 }
 
-// Hero panel: 6 curated components for the device chassis
-const heroIds = [
-  "rotary-encoder",
-  "push-button",
-  "lcd-readout",
-  "toggle-switch",
-  "vu-meter",
-  "segmented-control",
+// Floating field. Order matters: the responsive fallback keeps the first N,
+// so the most recognisable parts lead. Positions hug the edges, leaving the
+// centre clear for the HUD text.
+const floatLayout = [
+  { id: "rotary-encoder", x: "12%", y: "44%", scale: 1, dx: 7, dy: 9, rot: 3, dur: 11, delay: -1 },
+  { id: "vu-meter", x: "84%", y: "24%", scale: 0.78, dx: 6, dy: 8, rot: 2, dur: 13, delay: -3 },
+  { id: "toggle-switch", x: "14%", y: "76%", scale: 1, dx: 8, dy: 7, rot: 2.5, dur: 10, delay: -2 },
+  { id: "segmented-control", x: "82%", y: "74%", scale: 0.82, dx: 5, dy: 10, rot: 2, dur: 12, delay: -4 },
+  { id: "push-button", x: "42%", y: "13%", scale: 1, dx: 6, dy: 8, rot: 3.5, dur: 9, delay: -1.5 },
+  { id: "lcd-readout", x: "50%", y: "88%", scale: 0.76, dx: 5, dy: 6, rot: 1.5, dur: 12, delay: -5 },
+  { id: "mode-dial", x: "89%", y: "52%", scale: 0.82, dx: 7, dy: 9, rot: 3, dur: 11, delay: -2.5 },
+  { id: "gel-button", x: "26%", y: "92%", scale: 1, dx: 6, dy: 7, rot: 2.5, dur: 10, delay: -3.5 },
+  { id: "led-checkbox", x: "68%", y: "12%", scale: 1, dx: 8, dy: 8, rot: 2, dur: 13, delay: -0.5 },
+  { id: "rec-button", x: "8%", y: "58%", scale: 0.9, dx: 6, dy: 9, rot: 3, dur: 11, delay: -4.5 },
 ];
-const heroComponents = heroIds
-  .map((id: string) => catalog.components.find((c: any) => c.id === id))
-  .filter(Boolean)
-  .map(extractDemo)
-  .filter(Boolean);
 
-// Showcase grid: 12 components for the immersive tile grid
-const showcaseIds = [
-  "push-button",
-  "toggle-switch",
-  "rotary-encoder",
-  "lcd-readout",
-  "vu-meter",
-  "segmented-control",
-  "rec-button",
-  "stepper",
-  "slide-switch",
-  "led-checkbox",
-  "radio-button",
-  "mode-dial",
-];
-const showcaseComponents = showcaseIds
-  .map((id: string) => catalog.components.find((c: any) => c.id === id))
-  .filter(Boolean)
-  .map(extractDemo)
-  .filter(Boolean);
+const floaters = floatLayout
+  .map((f) => {
+    const comp = catalog.components.find((c: any) => c.id === f.id);
+    const demo = comp && extractDemo(comp);
+    return demo ? { ...f, ...demo } : null;
+  })
+  .filter(Boolean) as Array<(typeof floatLayout)[number] & { html: string; css: string }>;
 ---
 
 <BaseLayout
   title="Home"
-  description="pudge-ui — the agentic design system for 2000s-inspired interfaces. 93 components, spec-first, framework-agnostic."
+  description="pudge-ui — a design system for 2000s-era consumer-electronics interfaces, written for coding agents. 93 components, spec-first, framework-agnostic."
 >
-  <HeroPanel components={heroComponents} />
+  <div class="crt-boot" aria-hidden="true"></div>
 
-  <ComponentShowcase components={showcaseComponents} />
+  <main class="monitor-stage">
+    <div class="monitor" id="monitor">
+      <div class="monitor__frame">
+        <span class="screw screw--tl" aria-hidden="true"></span>
+        <span class="screw screw--tr" aria-hidden="true"></span>
+        <span class="screw screw--bl" aria-hidden="true"></span>
+        <span class="screw screw--br" aria-hidden="true"></span>
 
-  <HowItWorks componentCount={componentCount} />
+        <div class="monitor__screen" id="monitor-screen">
+          <div class="floaters" id="floaters" aria-hidden="true">
+            <div
+              class="float-item"
+              style="--x:14%;--y:20%;--scale:1;--dx:5px;--dy:7px;--rot:2deg;--dur:12s;--delay:-2s"
+              data-component="brand-medallion"
+            >
+              <div class="float-item__inner">
+                <div class="brand-medallion">
+                  <img src="/logo/circle.png" alt="pudge-ui logo" width="72" height="72" decoding="async" />
+                </div>
+              </div>
+            </div>
+            {
+              floaters.map((f) => (
+                <div
+                  class="float-item"
+                  style={`--x:${f.x};--y:${f.y};--scale:${f.scale};--dx:${f.dx}px;--dy:${f.dy}px;--rot:${f.rot}deg;--dur:${f.dur}s;--delay:${f.delay}s`}
+                  data-component={f.id}
+                >
+                  <div class="float-item__inner">
+                    <style set:html={f.css} />
+                    <div class="float-demo" set:html={f.html} />
+                  </div>
+                </div>
+              ))
+            }
+          </div>
 
-  <MaterialGallery />
+          <div class="screen__scanlines" aria-hidden="true"></div>
+          <div class="screen__glass" aria-hidden="true"></div>
 
-  <FrameworkMosaic />
+          <div class="hud">
+            <h1 class="hud__wordmark">PUDGE<span>-</span>UI</h1>
+            <p class="hud__tagline">
+              A design system for 2000s-era consumer-electronics interfaces, written for coding
+              agents.
+            </p>
+            <p class="hud__stat">90+ components · {categoryCount} categories · spec-first</p>
 
-  <QuickStartCTA componentCount={componentCount} />
+            <div class="hud__actions">
+              <a class="key key--primary" href="/components">Browse components</a>
+              <a class="key" href="/getting-started">Read the docs</a>
+              <a class="key key--ghost" href={repoUrl} target="_blank" rel="noopener">
+                <span class="key__star" aria-hidden="true">★</span> Star on GitHub
+              </a>
+            </div>
 
-  <PudgeGreeting />
+            <nav class="hud__links" aria-label="More">
+              <a href="/foundation">Foundation</a>
+              <span aria-hidden="true">·</span>
+              <a href="/guides/framework-integration">Guides</a>
+              <span aria-hidden="true">·</span>
+              <a href="/for-llms">For LLMs</a>
+              <span aria-hidden="true">·</span>
+              <a href="/showcase">Showcase</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <div class="monitor__base">
+        <span class="power-led" aria-hidden="true"></span>
+        <span class="monitor__brand">pudge-ui</span>
+        <span class="monitor__meta">
+          Maintained by
+          <a href="https://pudgestudio.com" target="_blank" rel="noopener">Pudge Studio</a>
+          <span aria-hidden="true">·</span>
+          <a href={`${repoUrl}/blob/main/LICENSE`} target="_blank" rel="noopener">MIT</a>
+        </span>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    import("../scripts/monitor.js");
+  </script>
 </BaseLayout>
-
-<script>
-  // Scroll director handles IntersectionObserver fallback + component interactivity
-  import("../scripts/scroll-director.js");
-</script>

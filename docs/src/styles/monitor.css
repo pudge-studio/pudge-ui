@@ -1,0 +1,542 @@
+/* ============================================================================
+   Landing "Monitor" — a single virtual CRT that holds the whole homepage.
+   Components drift inside the phosphor screen; the HUD carries the wordmark
+   and the CTAs into the (unchanged) docs. No scroll: the stage fills the
+   viewport below the fixed header. Idle motion is gated by prefers-reduced-motion.
+   ============================================================================ */
+
+/* Pixel-art (8-bit) pointer, used only inside the screen cavity. */
+:root {
+  --cursor-8bit: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='24'%20height='24'%20viewBox='0%200%2016%2016'%20shape-rendering='crispEdges'%3E%3Cpath%20d='M2%201V12L5%209L7%2014L9%2013L7%208H11Z'%20fill='%23e8e4dc'%20stroke='%230a0908'%20stroke-width='1'/%3E%3C/svg%3E")
+    2 1;
+}
+
+/* Landing is a fixed, no-scroll canvas. The site chrome (header + footer) is
+   folded away — the monitor is the whole page. Nav lives in the HUD/base, and
+   the header returns the moment the user steps into the actual docs. */
+body:has(.monitor-stage) {
+  overflow: hidden;
+}
+body:has(.monitor-stage) .site-header,
+body:has(.monitor-stage) .version-banner,
+body:has(.monitor-stage) .site-wrapper > footer {
+  display: none;
+}
+
+.monitor-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 100dvh;
+  margin-top: 0;
+  padding: clamp(12px, 2.4vw, 32px);
+  overflow: hidden;
+  background: #0d0b09;
+  isolation: isolate;
+}
+[data-theme="light"] .monitor-stage {
+  background: #ded7cc;
+}
+
+/* Animated, drifting colour blobs behind the monitor. */
+.monitor-stage::before {
+  content: "";
+  position: absolute;
+  inset: -25%;
+  z-index: -2;
+  background:
+    radial-gradient(38% 42% at 22% 28%, rgba(245, 166, 35, 0.16), transparent 68%),
+    radial-gradient(42% 46% at 80% 22%, rgba(68, 119, 204, 0.13), transparent 70%),
+    radial-gradient(48% 50% at 62% 82%, rgba(51, 204, 102, 0.11), transparent 70%),
+    radial-gradient(40% 44% at 24% 78%, rgba(238, 102, 136, 0.1), transparent 70%);
+  filter: blur(60px) saturate(1.1);
+  animation: stage-drift 26s ease-in-out infinite alternate;
+  will-change: transform;
+}
+[data-theme="light"] .monitor-stage::before {
+  filter: blur(60px) saturate(1.2);
+  opacity: 0.7;
+}
+
+/* Grain: a tiled SVG noise field, jittered for a film-grain shimmer. */
+.monitor-stage::after {
+  content: "";
+  position: absolute;
+  inset: -50%;
+  z-index: -1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='140'%20height='140'%3E%3Cfilter%20id='n'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='0.85'%20numOctaves='2'%20stitchTiles='stitch'/%3E%3C/filter%3E%3Crect%20width='100%25'%20height='100%25'%20filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  animation: grain-jitter 0.5s steps(3) infinite;
+  will-change: transform;
+}
+[data-theme="light"] .monitor-stage::after {
+  mix-blend-mode: multiply;
+  opacity: 0.045;
+}
+
+/* Lift the device above the animated backdrop. */
+.monitor {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── The monitor unit: bezel + screen + base ─────────────────────────────── */
+.monitor {
+  width: min(1200px, 100%);
+  height: 100%;
+  max-height: 780px;
+  display: flex;
+  flex-direction: column;
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.55));
+}
+
+.monitor__frame {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  border-radius: clamp(18px, 2.2vw, 30px);
+  padding: clamp(14px, 1.8vw, 26px);
+  background:
+    linear-gradient(180deg, var(--bg-surface), var(--bg-panel) 60%, var(--bg-raised));
+  box-shadow:
+    0 2px 0 var(--border-hi) inset,
+    0 -3px 0 var(--border-deep) inset,
+    0 0 0 1px var(--border-deep);
+}
+/* Molded-plastic sheen along the top lip of the bezel. */
+.monitor__frame::before {
+  content: "";
+  position: absolute;
+  inset: 3px 3px auto 3px;
+  height: 40%;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), transparent);
+  pointer-events: none;
+}
+
+/* Corner screws — small skeuomorphic detail. */
+.screw {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, var(--border-hi), var(--bg-inset) 80%);
+  box-shadow:
+    inset 0 0 0 1px var(--border-deep),
+    0 1px 0 var(--glossy-hi);
+}
+.screw::after {
+  content: "";
+  position: absolute;
+  inset: 3px 1px;
+  border-top: 1px solid var(--border-deep);
+  transform: rotate(35deg);
+  opacity: 0.7;
+}
+.screw--tl { top: 9px; left: 9px; }
+.screw--tr { top: 9px; right: 9px; }
+.screw--bl { bottom: 9px; left: 9px; }
+.screw--br { bottom: 9px; right: 9px; }
+
+/* ── The phosphor screen cavity ──────────────────────────────────────────── */
+.monitor__screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: clamp(10px, 1.2vw, 16px);
+  background:
+    radial-gradient(130% 120% at 50% 40%, #16140f 0%, #0c0a07 70%, #060504 100%);
+  box-shadow:
+    inset 0 2px 14px rgba(0, 0, 0, 0.9),
+    inset 0 0 0 1px #000,
+    inset 0 0 60px rgba(0, 0, 0, 0.7);
+  cursor: var(--cursor-8bit), auto;
+  isolation: isolate;
+}
+
+/* Curved-glass glare + edge vignette (screen "bulge"). */
+.screen__glass {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background:
+    radial-gradient(90% 60% at 28% 12%, rgba(255, 255, 255, 0.06), transparent 60%),
+    radial-gradient(120% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.55) 100%);
+  border-radius: inherit;
+}
+
+/* Horizontal scanlines — the electron-beam shadow mask. */
+.screen__scanlines {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.22) 0px,
+    rgba(0, 0, 0, 0.22) 1px,
+    transparent 2px,
+    transparent 3px
+  );
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* ── Floating components ─────────────────────────────────────────────────── */
+.floaters {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.float-item {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  transform: translate(-50%, -50%);
+  animation: drift var(--dur, 10s) var(--delay, 0s) ease-in-out infinite alternate;
+  will-change: transform;
+}
+.float-item__inner {
+  pointer-events: auto;
+  transform: scale(var(--scale, 1));
+  transition:
+    transform 0.35s var(--spring),
+    filter 0.35s var(--ease-out);
+  filter: saturate(0.9) brightness(0.96);
+  opacity: 0.92;
+}
+.float-item__inner:hover {
+  transform: scale(calc(var(--scale, 1) * 1.12));
+  filter: saturate(1.15) brightness(1.08) drop-shadow(0 6px 18px rgba(0, 0, 0, 0.5));
+  opacity: 1;
+}
+/* Pause drift while a part is being played with. */
+.float-item:hover {
+  animation-play-state: paused;
+  z-index: 4;
+}
+.float-demo {
+  display: inline-flex;
+}
+
+/* Brand medallion — the circular logo seated in a chromed device badge. */
+.brand-medallion {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  padding: 6px;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(
+    from 210deg,
+    #6b6660,
+    #d3cec3 12%,
+    #85807a 30%,
+    #efeae0 48%,
+    #7a756d 66%,
+    #cfcabf 84%,
+    #6b6660
+  );
+  box-shadow:
+    0 3px 0 var(--border-deep),
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 var(--glossy-hi);
+}
+.brand-medallion img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  background: #16140f;
+  box-shadow:
+    inset 0 0 0 2px rgba(0, 0, 0, 0.45),
+    0 0 0 1px var(--border-deep),
+    0 0 14px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes drift {
+  from {
+    transform: translate(-50%, -50%) translate(calc(var(--dx, 6px) * -1), calc(var(--dy, 8px) * -1))
+      rotate(calc(var(--rot, 2deg) * -1));
+  }
+  to {
+    transform: translate(-50%, -50%) translate(var(--dx, 6px), var(--dy, 8px)) rotate(var(--rot, 2deg));
+  }
+}
+
+/* ── HUD: wordmark, tagline, CTAs ────────────────────────────────────────── */
+.hud {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(10px, 1.4vh, 18px);
+  text-align: center;
+  padding: clamp(16px, 4vw, 48px);
+  pointer-events: none;
+}
+/* Legibility scrim so drifting parts never fight the text. */
+.hud::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(52% 46% at 50% 50%, rgba(6, 5, 4, 0.82) 0%, rgba(6, 5, 4, 0) 72%);
+  pointer-events: none;
+}
+
+.hud__wordmark {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.9rem, 5.5vw, 3.6rem);
+  letter-spacing: clamp(2px, 0.6vw, 6px);
+  line-height: 1;
+  color: #f3ede2;
+  text-shadow:
+    0 0 18px rgba(245, 166, 35, 0.18),
+    0 2px 0 #000;
+}
+.hud__wordmark span {
+  color: var(--amber);
+  text-shadow: 0 0 14px var(--amber-glow);
+}
+
+.hud__tagline {
+  margin: 0;
+  max-width: 30ch;
+  font-family: var(--font-ui);
+  font-size: clamp(0.9rem, 1.7vw, 1.12rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: #cfc9bf;
+}
+
+.hud__stat {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: clamp(0.62rem, 1.2vw, 0.74rem);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--green-hi);
+  text-shadow: 0 0 8px var(--green-glow);
+}
+.hud__stat::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-on);
+  box-shadow: 0 0 8px var(--green-on);
+  animation: led-blink 2.4s steps(1) infinite;
+}
+
+.hud__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(8px, 1.2vw, 14px);
+  justify-content: center;
+  margin-top: clamp(4px, 1vh, 10px);
+  pointer-events: auto;
+}
+
+/* Hardware-key CTA buttons (three-plane depth, snap on press). */
+.key {
+  --key-face: linear-gradient(180deg, var(--bg-surface), var(--bg-panel));
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 0 clamp(14px, 1.6vw, 22px);
+  border-radius: var(--radius-md);
+  font-family: var(--font-ui);
+  font-size: clamp(0.82rem, 1.4vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  text-decoration: none;
+  color: var(--text-primary);
+  background: var(--key-face);
+  box-shadow:
+    0 3px 0 var(--border-deep),
+    inset 0 1px 0 var(--border-hi),
+    inset 0 -1px 0 #111;
+  transition:
+    transform 0.07s ease,
+    box-shadow 0.07s ease,
+    color 0.15s ease;
+}
+.key:hover { color: #fff; }
+.key:active {
+  transform: translateY(2px);
+  box-shadow:
+    0 1px 0 var(--border-deep),
+    inset 0 1px 0 #1a1a1a;
+}
+.key:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+}
+.key--primary {
+  color: var(--text-on-accent);
+  background: linear-gradient(180deg, #ffc257, var(--amber));
+  box-shadow:
+    0 3px 0 var(--amber-dim),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.key--primary:hover { color: var(--text-on-accent); filter: brightness(1.05); }
+.key--primary:active { box-shadow: 0 1px 0 var(--amber-dim), inset 0 1px 0 rgba(255, 255, 255, 0.3); }
+.key__star { color: var(--amber); }
+
+.hud__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  justify-content: center;
+  margin-top: clamp(2px, 0.8vh, 8px);
+  pointer-events: auto;
+  font-family: var(--font-mono);
+  font-size: clamp(0.6rem, 1.1vw, 0.72rem);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+.hud__links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+.hud__links a:hover { color: var(--amber); }
+.hud__links span { color: var(--border-mid); }
+
+/* ── Monitor base / stand ────────────────────────────────────────────────── */
+.monitor__base {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  position: relative;
+  height: clamp(34px, 5vh, 46px);
+  margin: 8px auto 0;
+  width: min(60%, 520px);
+  border-radius: 0 0 14px 14px;
+  background: linear-gradient(180deg, var(--bg-panel), var(--bg-raised));
+  box-shadow:
+    0 6px 12px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 var(--border-hi);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.power-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--green-on);
+  box-shadow: 0 0 8px var(--green-on), inset 0 0 2px rgba(255, 255, 255, 0.6);
+}
+.monitor__brand { color: var(--text-secondary); }
+.monitor__meta { display: inline-flex; gap: 8px; }
+.monitor__meta a { color: var(--text-muted); text-decoration: none; }
+.monitor__meta a:hover { color: var(--amber); }
+.monitor__meta span { opacity: 0.5; }
+
+/* ── CRT power-on boot overlay (fixed → zero layout shift) ───────────────── */
+.crt-boot {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: #060504;
+  pointer-events: none;
+}
+.crt-boot::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 3px;
+  background: #eee8dc;
+  box-shadow: 0 0 24px 6px rgba(255, 255, 255, 0.6);
+  transform: translateY(-50%) scaleX(1);
+}
+.crt-boot.is-booting {
+  animation: crt-fade 0.9s ease-out forwards;
+}
+.crt-boot.is-booting::after {
+  animation: crt-line 0.7s ease-out forwards;
+}
+.crt-boot.is-done {
+  display: none;
+}
+
+/* ── Keyframes ───────────────────────────────────────────────────────────── */
+@keyframes stage-drift {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate(3%, -2.5%) scale(1.12) rotate(4deg); }
+  100% { transform: translate(-3%, 2%) scale(1.06) rotate(-3deg); }
+}
+@keyframes grain-jitter {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-4%, 3%); }
+  66% { transform: translate(3%, -3%); }
+  100% { transform: translate(-2%, -2%); }
+}
+@keyframes led-blink {
+  0%, 70% { opacity: 1; }
+  71%, 100% { opacity: 0.25; }
+}
+@keyframes crt-line {
+  0% { transform: translateY(-50%) scaleY(0.3) scaleX(0.02); opacity: 1; }
+  40% { transform: translateY(-50%) scaleY(1) scaleX(1); opacity: 1; }
+  100% { transform: translateY(-50%) scaleY(120) scaleX(1); opacity: 0; }
+}
+@keyframes crt-fade {
+  0%, 55% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── Responsive: portrait "handheld" fallback ────────────────────────────── */
+@media (max-width: 760px) {
+  .monitor { max-height: none; }
+  .monitor__frame { padding: 12px; border-radius: 20px; }
+  /* Thin the floating field so the small screen stays readable. */
+  .float-item:nth-child(n + 6) { display: none; }
+  .float-item__inner { transform: scale(calc(var(--scale, 1) * 0.82)); }
+  .monitor__base {
+    width: 88%;
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 12px;
+    gap: 6px 10px;
+    text-align: center;
+  }
+  .hud__tagline { max-width: 26ch; }
+}
+
+@media (max-width: 420px) {
+  .float-item:nth-child(n + 4) { display: none; }
+}
+
+/* ── Reduced motion: everything holds still ──────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .float-item,
+  .hud__stat::before,
+  .monitor-stage::before,
+  .monitor-stage::after {
+    animation: none;
+  }
+  .crt-boot { display: none; }
+}
