@@ -14,7 +14,7 @@ interface Props {
 const {
   title,
   description = "pudge-ui — the agentic design system for 2000s-inspired interfaces",
-  image = "/og-image.png",
+  image = "/og-image.jpg",
 } = Astro.props;
 const currentPath = Astro.url.pathname;
 const fullTitle = `${title} | pudge-ui`;
@@ -52,6 +52,7 @@ const jsonLd = {
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/jpeg" />
     <meta property="og:image:width" content="1344" />
     <meta property="og:image:height" content="768" />
 

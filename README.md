@@ -1,4 +1,4 @@
-<img src="./docs/public/og-image.png" />
+<img src="./docs/public/og-image.jpg" />
 
 <p align="center">
   <a href="https://github.com/pudge-studio/pudge-ui/stargazers"><img src="https://img.shields.io/github/stars/pudge-studio/pudge-ui?style=flat&logo=github&label=Star&color=f5a623" alt="Star pudge-ui on GitHub"></a>
